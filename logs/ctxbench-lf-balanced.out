@@ -1,0 +1,9 @@
+[lf-balanced]       0 warmup prompt=22 cached=0 ttft=0.19s prefill=156.3 gen=59 decode=113.7/107.9 vram=15056 rss=30.65 avail=21.59 disk=0 
+[lf-balanced]  131072 cold   prompt=132476 cached=0 ttft=56.19s prefill=2362.4 gen=240 decode=100.8/99.2 vram=15140 rss=34.04 avail=18.24 disk=0 
+[lf-balanced]  131072 turn1  prompt=132567 cached=132475 ttft=0.46s prefill=228.5 gen=600 decode=80.4/80.1 vram=15140 rss=34.04 avail=18.24 disk=0 
+[lf-balanced]  131072 turn2  prompt=132814 cached=132566 ttft=0.52s prefill=547.7 gen=361 decode=81.2/80.6 vram=15140 rss=34.04 avail=18.24 disk=0 
+[lf-balanced]  131072 turn3  prompt=132911 cached=132813 ttft=0.48s prefill=241.1 gen=450 decode=95.4/94.7 vram=15140 rss=34.04 avail=18.23 disk=0 
+[lf-balanced]  250000 cold   prompt=248278 cached=40960 ttft=130.18s prefill=1594.1 gen=240 decode=74.2/73.5 vram=15140 rss=34.68 avail=17.56 disk=0 
+[lf-balanced]  250000 turn1  prompt=248369 cached=248277 ttft=0.64s prefill=165.6 gen=600 decode=55.4/55.2 vram=15126 rss=34.69 avail=17.57 disk=0 
+[lf-balanced]  250000 turn2  prompt=248845 cached=248368 ttft=0.91s prefill=592.5 gen=345 decode=69.0/68.3 vram=15126 rss=34.69 avail=17.57 disk=0 
+[lf-balanced]  250000 turn3  prompt=248921 cached=248844 ttft=0.55s prefill=154.7 gen=459 decode=72.2/71.9 vram=15126 rss=34.69 avail=17.57 disk=0 

@@ -4,9 +4,12 @@ Notes, patches, launch profiles, benchmarks and agent tests from moving a local 
 **Inkling 2 Mini** on a single consumer card.
 
 - Machine: RTX 5080 16 GB, Ryzen 7 7800X3D, 64 GB DDR5, Windows 11.
-- Engine: [NInfer-all](https://github.com/iamwavecut/ninfer-all) PR #393 (quantized KV for Inkling 2) plus six local
-  patches published here; [Basalt](https://github.com/jesdga95/basalt) with four local patches as a second engine;
-  llama.cpp as a reference.
+- Engine: [NInfer-all](https://github.com/iamwavecut/ninfer-all). The work on it is now a fork anyone can run,
+  **[mopga/ninfer-all, branch `inkfer`](https://github.com/mopga/ninfer-all/tree/inkfer)**, with a
+  [Windows release](https://github.com/mopga/ninfer-all/releases/tag/inkfer-2026-11-22) — see
+  [Run it](#run-it-the-engine-fork). The journal's tables were measured on its predecessor, PR #393 (quantized KV
+  for Inkling 2) plus six local patches published here. [Basalt](https://github.com/jesdga95/basalt) with four local
+  patches was the second engine, llama.cpp a reference.
 - Agent: oh-my-pi 18.18.8 (terminal) and omp-web 0.5.1 (browser), OpenAI-compatible API on `127.0.0.1:8081`.
 - Quant: Unsloth UD-IQ4_XS in NInfer's v3 artifact format (15.4 GiB).
 
@@ -16,6 +19,111 @@ Vendor and engine-author claims were not copied into the tables. Dates: 21–22 
 The full write-up is in Russian: **[README.ru.md](README.ru.md)** (results, profiles, limits) and
 **[NOTES.md](NOTES.md)** (the measurement journal, 16 sections, including the dead ends). The engine build notes are
 in English: [src/BUILD-NOTES-ninfer.md](src/BUILD-NOTES-ninfer.md), [src/BUILD-NOTES-basalt.md](src/BUILD-NOTES-basalt.md).
+
+## Run it: the engine fork
+
+[mopga/ninfer-all, branch `inkfer`](https://github.com/mopga/ninfer-all/tree/inkfer) is upstream NInfer-all `master`
+(release 2026-11-22.5, commit `719119a2`) with the patches of this repository ported onto it, three launch files
+for a 16 GB card and a launcher. It runs the way upstream NInfer runs: same executables, same options, same model
+artifact. Its own page, with every measurement and everything that was not measured, is
+[docs/inkfer.md](https://github.com/mopga/ninfer-all/blob/inkfer/docs/inkfer.md).
+
+**Windows, RTX 50 series.** The
+[release `inkfer-2026-11-22`](https://github.com/mopga/ninfer-all/releases/tag/inkfer-2026-11-22) is a local build
+with CUDA 13.4 for `sm_120a` only. It needs a current NVIDIA driver and the Microsoft Visual C++ 2022 runtime, not
+the CUDA Toolkit. Download every `.7z.*` volume into one directory, extract `.7z.001` with 7-Zip, then in the
+unpacked folder:
+
+```powershell
+.\download-model.bat inkling2-mini     # 15.4 GiB from Hugging Face, resumable, verifies size and SHA256
+.\run-inkling.bat                      # 262,144 tokens of context with images, on http://127.0.0.1:8080/v1
+```
+
+`run-inkling.bat [balanced|small|max]` picks a launch file; anything after the profile goes to the server and wins
+over the file:
+
+```powershell
+.\run-inkling.bat max                                              # 524,288 tokens, rk4v4 KV
+.\run-inkling.bat small                                            # 131,072 tokens, MXFP8 KV, least RAM
+.\run-inkling.bat balanced --max-context 196608 --host-cache-mib 8192
+set NINFER_PORT=8081 && .\run-inkling.bat
+set NINFER_MODEL=D:\models\Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer && .\run-inkling.bat max
+```
+
+The launcher is a convenience; the same servers by hand, with a model anywhere on the machine:
+
+```bash
+ninfer-serve --config configs/inkling2-mini-16gb.ini          # balanced
+ninfer-serve --config configs/inkling2-mini-16gb-max.ini      # max
+ninfer-serve D:/models/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer \
+  --config configs/inkling2-mini-16gb.ini --port 8081 --host-cache-mib 8192
+# the balanced file written out as flags
+ninfer-serve models/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer --model-id inkling-2-mini \
+  --max-context 262144 --kv-dtype rk8v4 --expert-residency host --host-cache-mib 16384 \
+  --vision --vision-residency overlay --vision-upscale 1.5
+```
+
+Then any OpenAI or Anthropic client; an agent takes `http://127.0.0.1:8080/v1` as an OpenAI-compatible base URL,
+`inkling-2-mini` as the model and the profile's `max-context` as its context window:
+
+```bash
+curl http://127.0.0.1:8080/v1/chat/completions -H 'Content-Type: application/json' \
+  -d '{"model":"inkling-2-mini","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+| Profile | Context, KV | Engine RAM measured | Read to |
+|---|---|---:|---:|
+| `balanced` (default) | 262,144, `rk8v4` | 34.7 GiB | 248,278 tokens |
+| `max` | 524,288, `rk4v4` | 38.7 GiB | 498,322 tokens |
+| `small` | 131,072, MXFP8 | 29.8 GiB | 122,757 tokens |
+
+`small` is for a machine with less than 64 GB of RAM, not for speed: at 123k tokens it read and decoded slower than
+the other two. It is not the `speed` profile of this repository (exact bf16 KV), which the fork has no file for.
+
+**Other cards, Linux.** Build the branch as upstream describes; nothing in the build differs. Only one RTX 5080
+under Windows 11 has run it.
+
+### The fork against upstream `master`
+
+Same options (those of `max`: 524,288 window, `rk4v4`, experts in host memory, vision loaded), same requests, one run
+each on 22 November 2026. The second prompt shares its beginning with the first.
+
+| Build | Prompt tokens | Cold read | Decode | Next turn (cached) | Engine RAM |
+|---|---:|---|---:|---:|---:|
+| upstream `master` (`719119a2`) | 132,476 | 2,275 tok/s, 58.3 s | 46–78 tok/s | 0.66–0.82 s | 34.6 GiB |
+| | 498,322 | 923 tok/s, 540.4 s | 26–36 tok/s | 1.64–2.21 s | 34.7 GiB |
+| **fork, branch `inkfer`** | 132,476 | **2,629 tok/s, 50.5 s** | **88–113 tok/s** | 0.40–0.45 s | 36.4 GiB |
+| | 498,322 | **1,292 tok/s, 360.7 s** | **42–52 tok/s** | 0.85–1.05 s | 38.7 GiB |
+| the journal's build (PR #393 + patches 1–6) | 132,476 | 2,618 tok/s, 50.7 s | 86–113 tok/s | 0.46 s | not recorded |
+
+Upstream read the 498,322 tokens from the start; the fork resumed from a trail point at 32,768 tokens, and its rate
+and time are of the rest. The fork holds 1.8 to 4 GiB more host memory (trail points). The journal's build was not
+rerun at 498k on these requests; its earlier ladder (other requests) is the table under [Results](#results).
+
+What went where:
+
+- **Already in upstream `master`:** quantized KV for Inkling 2 (PR #393, `rk8v4` / `rk4v4`) and patch 2 (a host
+  image of quantized KV sized by its real bytes).
+- **Ported to the fork:** patches 1 and 4 (the context store holds the image a prompt resumes from and makes room
+  from superseded images first), patch 3 (trail points), patch 5 (far keys of a quantized KV on the tensor cores,
+  beside upstream's own far-field route, which other KV formats keep) and patch 6 (`--vision-upscale`).
+- **New in the fork:** upstream `master` runs Inkling 2 with host or disk experts without CUDA Graphs on Windows and
+  under WSL2, as a precaution against a stall it has not observed on Windows. On this machine that costs about 6 ms
+  a decode step (67 against 108 tok/s without drafts, 103 against 137 with them, short prompt). A native Windows
+  build of the fork keeps the graphs for host experts; `NINFER_INKLING2_EXPERT_GRAPHS=0` restores upstream's
+  behaviour. No stall in what ran here — one card, one driver, one request at a time.
+
+Checks on the fork build: the far-split route against an FP64 oracle of the whole attention (error equal to the
+scalar route's at 3K–508K keys, both formats); seven greedy requests identical to the build without far splits;
+trail points answering as a server without them; the API check 13 of 13; the vision check 10 of 11 (the miss — a
+tool called a second time instead of an answer — passed in four repeats); each launch file started through
+`run-inkling.bat`. The released archive was then unpacked into an empty directory on the same machine: the three
+profiles started through `run-inkling.bat` and answered, and `max` read 132,476 tokens at 2,610 tok/s (50.8 s),
+decoded at 87–104 tok/s and found the three planted notes (`bench/runs/rel-max-131k.*`); the other checks were not
+repeated on that binary. Not run: upstream's test suite, any other GPU, driver or OS, more than one request at a time,
+disk experts, MXFP8 beyond 123k and `rk8v4` beyond 248k tokens. Raw data: `bench/runs/{up,fork,fork5,fork6}-512k.*`,
+`lf-*.{json,tsv}` (`lf-speed` is the `small` file under its earlier name), `trail-same-131k.*`; plans
+`plans/p8`–`p12`; logs `logs/launchcheck-*.out`, `logs/attnbench-fork-check*.txt`, `logs/archivecheck.out`.
 
 ## Results
 
@@ -92,8 +200,12 @@ correct).
 
 ## Engine patches
 
+These are the original patches, as the journal's build had them. Their current form, on upstream `master`, is the
+fork's branch ([what went where](#the-fork-against-upstream-master)).
+
 NInfer, on top of PR #393 head `f66e789eda919a15191e34828a9b73c41fc231a2` (the head as of 2026-11-21; the PR has
-moved since). Series: [src/patches/ninfer](src/patches/ninfer); the same changes as two cumulative diffs in `src/`.
+since been merged). Series: [src/patches/ninfer](src/patches/ninfer); the same changes as two cumulative diffs in
+`src/`.
 
 | # | Commit | What | Measured effect |
 |---|---|---|---|
@@ -153,52 +265,58 @@ an answer. Sampling is not pinned in these checks.
 | `bench/` | `ctxbench.py` (context-fill ladder with planted notes), `detcheck.py` (bit-exact output comparison), `summarize.py`, raw data in `bench/runs`, vision test images |
 | `tools/` | `apicheck.py` (agent-facing API: streaming, reasoning, tool calls, stop/continue), `vischeck.py`, `visscale.py`, `mkvisimages.py`, `trailtest.py`, `alttest.py`, `logproxy.py`, `promptdiff.py`, `ninferlog.py`, `refcheck.py`, `make_shortcuts.ps1`, `attnbench/` |
 | `agent-tests/` | task prompts, run scripts, graders (`grade.py`, `grade_long.py`), per-run grades and the comparison tables in `runs/` |
-| `plans/`, `sweep.sh`, `run_*.sh` | benchmark series and engine start scripts for them |
+| `plans/`, `sweep.sh`, `run_*.sh` | benchmark series and engine start scripts for them; `p8`–`p12` and `quickdec.sh` are the fork's against upstream |
+| `agent-tests/launchfiles_check.sh`, `agent-tests/archive_check.sh` | the fork's three launch files through `run-inkling.bat`; the unpacked release archive started the same way |
 | `logs/` | engine and benchmark logs per run |
 | `agent-config/` | the oh-my-pi / omp-web `config.yml` and `models.yml` used (provider, context windows, compaction thresholds) |
 
 ## Reproducing
 
-This is a working directory published as is, not a packaged product. Paths are hard-coded for the original machine
-(`C:\WORKDIR\inkling` for this folder, `D:\MODELS\inkling2mini` for the model files, a Python 3.12
-at `D:\MODELS\Strata\control\python`); expect to edit them. The scripts need only the standard library, plus
-`psutil` (`bench/ctxbench.py`) and `Pillow` (`tools/mkvisimages.py`, `tools/visscale.py`).
+The engine, its launch files and the model download are in the fork; this repository has the measuring scripts, the
+raw data and the journal.
 
-1. Get the model: Inkling 2 Mini, Unsloth UD-IQ4_XS, as a NInfer v3 artifact (`…UD-IQ4_XS-ninfer-v3.ninfer`).
-2. Build the engine (details in [src/BUILD-NOTES-ninfer.md](src/BUILD-NOTES-ninfer.md)):
-
-   ```
-   git clone https://github.com/iamwavecut/ninfer-all
-   cd ninfer-all
-   git fetch origin f66e789eda919a15191e34828a9b73c41fc231a2
-   git checkout -b local/pr393-inkling f66e789eda919a15191e34828a9b73c41fc231a2
-   git am /path/to/inkfer/src/patches/ninfer/*.patch
-   ```
-
-   If that commit is no longer served by GitHub, take the current PR #393 head and rebase the series.
-3. Point `exe` and the model path in `profiles.json` at your build and file, then start a profile:
+1. Get the engine and the model as in [Run it](#run-it-the-engine-fork): the fork's
+   [release](https://github.com/mopga/ninfer-all/releases/tag/inkfer-2026-11-22) on Windows with an RTX 50 card, or a
+   build of branch `inkfer` anywhere else
+   ([docs/inkfer.md](https://github.com/mopga/ninfer-all/blob/inkfer/docs/inkfer.md)), then
+   `download-model.bat inkling2-mini`.
+2. Start a profile, for example the one the tables above use:
 
    ```
-   pythonw start_inkling.pyw balanced
+   .\run-inkling.bat max
    ```
 
-   or run the command line from the profile directly; the API is `http://127.0.0.1:8081/v1`.
-4. Check and measure:
+   The API is `http://127.0.0.1:8080/v1`, the model `inkling-2-mini`.
+3. Check and measure from a clone of this repository, with any Python 3.11 or newer. The scripts use the standard
+   library, plus `psutil` (`bench/ctxbench.py`) and `Pillow` (`tools/mkvisimages.py`, `tools/visscale.py`):
 
    ```
-   python tools/apicheck.py 8081
-   python tools/vischeck.py 8081
-   python bench/ctxbench.py --base http://127.0.0.1:8081 --model inkling-max --label LABEL --lean --fills 131072,262144,393216,507904 --proc ninfer-serve.exe --extra "{\"reasoning_effort\":\"low\"}"
-   bash agent-tests/trail_check.sh
-   bash agent-tests/alt_check.sh
+   python tools/apicheck.py 8080
+   python tools/vischeck.py 8080
+   python bench/ctxbench.py --base http://127.0.0.1:8080 --model inkling-2-mini --label LABEL --lean --gen 600 --turn-tokens 800 --turns 3 --fills 131072,498000 --proc ninfer-serve.exe --extra "{\"reasoning_effort\":\"low\"}"
+   python bench/summarize.py LABEL
    ```
 
-   The ladder to 504k takes about 25 minutes.
+   That ladder is the one of [the fork against upstream](#the-fork-against-upstream-master) and takes about ten
+   minutes; the results land in `bench/runs/LABEL.json` and `.tsv`. `--fills 131072,262144,393216,507904` is the
+   longer ladder of [Results](#results), about 25 minutes. The document `ctxbench.py` fills the context with is a
+   llama.cpp source tree: set `CTXBENCH_CORPUS` to a checkout of
+   [llama.cpp](https://github.com/ggml-org/llama.cpp). The published runs read the copy inside a Strata
+   installation, so another revision gives other token counts for the same `--fills`.
+
+The series scripts (`sweep.sh` with `plans/`, `agent-tests/*.sh`, `run_*.sh`, `start_inkling.pyw` with
+`profiles.json`) are the record of how each table was produced. They start engines from the original stack folder,
+written here as `C:\WORKDIR\inkling`, with the models under `D:\MODELS`.
+
+The journal's build (PR #393 + patches 1–6) can still be rebuilt from the series in `src/patches/ninfer` on commit
+`f66e789eda919a15191e34828a9b73c41fc231a2` ([src/BUILD-NOTES-ninfer.md](src/BUILD-NOTES-ninfer.md)); the fork
+replaces it.
 
 ## What is not in this repository
 
-- The model files and the engine binaries (they include NVIDIA runtime libraries), the build toolchain and the
-  upstream source trees — only the patches are here.
+- The model files, the engine binaries, the build toolchain and the upstream source trees. The engine source is
+  the [fork](https://github.com/mopga/ninfer-all/tree/inkfer) and its binaries are that fork's release; here are
+  only the original patches.
 - The test project the agent tasks ran on. It is a copy of third-party source code without a licence that allows
   redistribution, so the working copies and the agents' session transcripts are left out. The prompts, the graders
   and the grades are here; to re-run the tasks you need a project of your own and adapted graders.

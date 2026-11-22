@@ -1,0 +1,49 @@
+== depth 16384 kv rk8v4 --chunk 64 --rows 1,3,8
+depth 16384, kv rk8v4, 84 SMs, scalar splits 21, far route 21 + 107, KV of one visit 25.5 MiB
+prompt chunk 64 rows after 16320 keys: scalar 2.77 ms per visit, x8 visits 22.1 ms = 2890 tok/s attention only, 4.6 TFLOPS
+prompt chunk far route (1 + 1 slots): 0.63 ms per visit, x8 visits 5.0 ms = 12791 tok/s attention only, 20.6 TFLOPS, 4.43x
+   chunk scalar vs FP64 oracle: max abs 6.218e-05 (max |o| 3.088e-02, rel 2.014e-03), rms rel 1.656e-03
+   chunk far    vs FP64 oracle: max abs 6.246e-05 (max |o| 3.088e-02, rel 2.023e-03), rms rel 1.656e-03
+decode 1 row(s): scalar 0.110 ms per visit (x8 0.88 ms, 243 GB/s); far route 0.067 ms (x8 0.54 ms, 398 GB/s), 1.64x
+   scalar vs FP64 oracle: max abs 6.149e-05 (max |o| 2.944e-02, rel 2.089e-03), rms rel 1.662e-03
+   far    vs FP64 oracle: max abs 6.149e-05 (max |o| 2.944e-02, rel 2.089e-03), rms rel 1.662e-03
+decode 3 row(s): scalar 0.151 ms per visit (x8 1.21 ms, 177 GB/s); far route 0.096 ms (x8 0.77 ms, 278 GB/s), 1.57x
+   scalar vs FP64 oracle: max abs 6.153e-05 (max |o| 3.102e-02, rel 1.983e-03), rms rel 1.621e-03
+   far    vs FP64 oracle: max abs 6.153e-05 (max |o| 3.102e-02, rel 1.983e-03), rms rel 1.621e-03
+decode 8 row(s): scalar 0.348 ms per visit (x8 2.78 ms, 77 GB/s); far route 0.209 ms (x8 1.68 ms, 128 GB/s), 1.66x
+   scalar vs FP64 oracle: max abs 6.193e-05 (max |o| 3.059e-02, rel 2.025e-03), rms rel 1.654e-03
+   far    vs FP64 oracle: max abs 6.193e-05 (max |o| 3.059e-02, rel 2.025e-03), rms rel 1.654e-03
+exit=0
+== depth 3000 kv rk8v4 --chunk 64 --rows 1,3,8
+depth 3000, kv rk8v4, 84 SMs, scalar splits 21, far route 21 + 107, KV of one visit 4.7 MiB
+prompt chunk 64 rows after 2936 keys: scalar 0.54 ms per visit, x8 visits 4.3 ms = 14890 tok/s attention only, 4.3 TFLOPS
+prompt chunk far route (1 + 1 slots): 0.28 ms per visit, x8 visits 2.2 ms = 28445 tok/s attention only, 8.3 TFLOPS, 1.91x
+   chunk scalar vs FP64 oracle: max abs 1.232e-04 (max |o| 4.196e-02, rel 2.936e-03), rms rel 1.629e-03
+   chunk far    vs FP64 oracle: max abs 1.232e-04 (max |o| 4.196e-02, rel 2.936e-03), rms rel 1.629e-03
+decode 1 row(s): scalar 0.028 ms per visit (x8 0.22 ms, 175 GB/s); far route 0.050 ms (x8 0.40 ms, 97 GB/s), 0.55x
+   scalar vs FP64 oracle: max abs 1.221e-04 (max |o| 3.990e-02, rel 3.060e-03), rms rel 1.630e-03
+   far    vs FP64 oracle: max abs 1.221e-04 (max |o| 3.990e-02, rel 3.060e-03), rms rel 1.630e-03
+decode 3 row(s): scalar 0.036 ms per visit (x8 0.29 ms, 135 GB/s); far route 0.072 ms (x8 0.57 ms, 68 GB/s), 0.50x
+   scalar vs FP64 oracle: max abs 1.162e-04 (max |o| 3.901e-02, rel 2.978e-03), rms rel 1.618e-03
+   far    vs FP64 oracle: max abs 1.162e-04 (max |o| 3.901e-02, rel 2.978e-03), rms rel 1.618e-03
+decode 8 row(s): scalar 0.073 ms per visit (x8 0.58 ms, 67 GB/s); far route 0.160 ms (x8 1.28 ms, 31 GB/s), 0.46x
+   scalar vs FP64 oracle: max abs 1.227e-04 (max |o| 3.907e-02, rel 3.140e-03), rms rel 1.619e-03
+   far    vs FP64 oracle: max abs 1.227e-04 (max |o| 3.907e-02, rel 3.140e-03), rms rel 1.619e-03
+exit=0
+== depth 131072 kv rk4v4 --chunk 64 --rows 1,3,8
+depth 131072, kv rk4v4, 84 SMs, scalar splits 21, far route 21 + 107, KV of one visit 140.0 MiB
+prompt chunk 64 rows after 131008 keys: scalar 25.78 ms per visit, x8 visits 206.2 ms = 310 tok/s attention only, 4.0 TFLOPS
+prompt chunk far route (1 + 1 slots): 3.60 ms per visit, x8 visits 28.8 ms = 2220 tok/s attention only, 28.6 TFLOPS, 7.15x
+   chunk scalar vs FP64 oracle: max abs 1.212e-04 (max |o| 3.291e-02, rel 3.684e-03), rms rel 1.596e-03
+   chunk far    vs FP64 oracle: max abs 1.231e-04 (max |o| 3.291e-02, rel 3.740e-03), rms rel 1.597e-03
+decode 1 row(s): scalar 5.735 ms per visit (x8 45.88 ms, 26 GB/s); far route 4.148 ms (x8 33.19 ms, 35 GB/s), 1.38x
+   scalar vs FP64 oracle: max abs 6.129e-05 (max |o| 3.174e-02, rel 1.931e-03), rms rel 1.563e-03
+   far    vs FP64 oracle: max abs 6.129e-05 (max |o| 3.174e-02, rel 1.931e-03), rms rel 1.563e-03
+decode 3 row(s): scalar 5.960 ms per visit (x8 47.68 ms, 25 GB/s); far route 4.271 ms (x8 34.17 ms, 34 GB/s), 1.40x
+   scalar vs FP64 oracle: max abs 1.030e-04 (max |o| 3.203e-02, rel 3.216e-03), rms rel 1.589e-03
+   far    vs FP64 oracle: max abs 1.030e-04 (max |o| 3.203e-02, rel 3.216e-03), rms rel 1.589e-03
+decode 8 row(s): scalar 3.047 ms per visit (x8 24.37 ms, 48 GB/s); far route 0.489 ms (x8 3.91 ms, 300 GB/s), 6.23x
+   scalar vs FP64 oracle: max abs 1.107e-04 (max |o| 3.245e-02, rel 3.412e-03), rms rel 1.595e-03
+   far    vs FP64 oracle: max abs 1.107e-04 (max |o| 3.245e-02, rel 3.412e-03), rms rel 1.595e-03
+exit=0
+== depth 262144 kv rk8v4 --chunk 64 --rows 1,3,8

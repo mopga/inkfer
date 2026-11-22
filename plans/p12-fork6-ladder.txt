@@ -1,0 +1,2 @@
+# The fork build with the far-split attention (patch 5 port) on the max profile, short ladder + greedy determinism set.
+nfork|fork6-512k|--max-context 524288 --expert-residency host --host-cache-mib 20480 --kv-dtype rk4v4 --vision --vision-residency overlay --vision-upscale 1.5|--lean --gen 600 --turn-tokens 800 --turns 3 --extra '{"reasoning_effort":"low"}' --fills 131072,498000 --det

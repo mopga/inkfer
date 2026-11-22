@@ -1,0 +1,9 @@
+[fork5-512k]       0 warmup prompt=22 cached=0 ttft=0.4s prefill=64.2 gen=60 decode=90.8/87.3 vram=15127 rss=34.59 avail=16.79 disk=0 
+[fork5-512k]  131072 cold   prompt=132476 cached=0 ttft=50.38s prefill=2633.8 gen=292 decode=87.7/86.8 vram=15129 rss=36.27 avail=15.6 disk=0 
+[fork5-512k]  131072 turn1  prompt=132567 cached=132475 ttft=0.44s prefill=249.8 gen=600 decode=68.5/68.2 vram=15127 rss=36.27 avail=15.6 disk=0 
+[fork5-512k]  131072 turn2  prompt=132806 cached=132566 ttft=0.46s prefill=589.7 gen=254 decode=76.8/75.8 vram=15127 rss=36.27 avail=15.6 disk=0 
+[fork5-512k]  131072 turn3  prompt=132881 cached=132805 ttft=0.39s prefill=218.4 gen=414 decode=83.1/82.5 vram=15127 rss=36.27 avail=15.56 disk=0 
+[fork5-512k]  498000 cold   prompt=498322 cached=32768 ttft=360.29s prefill=1293.2 gen=292 decode=45.2/44.7 vram=15162 rss=38.6 avail=7.89 disk=7 
+[fork5-512k]  498000 turn1  prompt=498413 cached=498321 ttft=0.89s prefill=118.0 gen=600 decode=37.9/37.7 vram=15143 rss=38.61 avail=13.47 disk=0 
+[fork5-512k]  498000 turn2  prompt=498767 cached=498412 ttft=1.15s prefill=342.6 gen=734 decode=45.7/45.5 vram=15146 rss=38.61 avail=13.49 disk=0 
+[fork5-512k]  498000 turn3  prompt=498842 cached=498766 ttft=0.79s prefill=111.3 gen=432 decode=47.3/47.0 vram=15131 rss=38.61 avail=13.52 disk=0 

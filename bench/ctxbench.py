@@ -12,14 +12,17 @@ Timed on the client; when the engine reports its own timings (llama.cpp `timings
 While a request runs, once a second: VRAM used, engine RSS / private bytes, available RAM, page file in use, CPU load,
 disk read rate. Results: runs/LABEL.json (+ runs/LABEL.tsv with the monitor's samples).
 
-Needs psutil: run with Strata's bundled python (D:\\MODELS\\Strata\\control\\python\\python.exe).
+Needs psutil. The document is a llama.cpp source tree read in sorted order: CTXBENCH_CORPUS names a checkout of it;
+without the variable the copy inside a Strata installation is used, which is what the published runs read (another
+revision of llama.cpp gives other token counts for the same --fills).
 """
 import argparse, json, os, subprocess, sys, threading, time, urllib.error, urllib.request
 from pathlib import Path
 
 import psutil
 
-CORPUS_DIR = Path(os.environ["LOCALAPPDATA"]) / "Strata" / "install" / "third_party" / "llama.cpp"
+CORPUS_DIR = Path(os.environ.get("CTXBENCH_CORPUS")
+                  or Path(os.environ["LOCALAPPDATA"]) / "Strata" / "install" / "third_party" / "llama.cpp")
 OUT = Path(__file__).parent / "runs"
 
 Q_COLD = ("Выше приведены исходные файлы проекта. Напиши связный технический обзор на русском языке: архитектура, ключевые "
@@ -272,6 +275,8 @@ def main():
     fills = [int(x) for x in a.fills.split(",") if x]
     extra = json.loads(a.extra)
     text = corpus(int(max(fills) * 4.6) + 200000)
+    if not text:
+        sys.exit(f"no corpus in {CORPUS_DIR}: set CTXBENCH_CORPUS to a llama.cpp source tree")
     mon = Monitor(a.proc.split(","), a.disk, OUT / f"{a.label}.tsv")
     mon.start()
     time.sleep(2.5)

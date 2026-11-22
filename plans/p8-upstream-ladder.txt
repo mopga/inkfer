@@ -1,0 +1,2 @@
+# Unpatched upstream master (719119a2) on the max profile's arguments (no --vision-upscale: upstream has none), short ladder.
+nup|up-512k|--max-context 524288 --expert-residency host --host-cache-mib 20480 --kv-dtype rk4v4 --vision --vision-residency overlay|--lean --gen 600 --turn-tokens 800 --turns 3 --extra '{"reasoning_effort":"low"}' --fills 131072,498000

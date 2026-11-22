@@ -1,0 +1,5 @@
+[lf-speed]       0 warmup prompt=22 cached=0 ttft=0.19s prefill=176.3 gen=60 decode=117.9/111.7 vram=14930 rss=26.65 avail=25.62 disk=0 
+[lf-speed]  122000 cold   prompt=122757 cached=0 ttft=53.0s prefill=2319.7 gen=325 decode=82.9/82.1 vram=15140 rss=29.57 avail=22.67 disk=0 
+[lf-speed]  122000 turn1  prompt=122848 cached=122756 ttft=0.65s prefill=157.5 gen=600 decode=71.8/71.4 vram=15128 rss=29.58 avail=22.69 disk=0 
+[lf-speed]  122000 turn2  prompt=123019 cached=122847 ttft=0.67s prefill=272.7 gen=296 decode=73.0/72.4 vram=15128 rss=29.78 avail=22.48 disk=0 
+[lf-speed]  122000 turn3  prompt=123110 cached=123018 ttft=0.66s prefill=155.1 gen=411 decode=87.0/86.5 vram=15128 rss=29.79 avail=22.48 disk=0 

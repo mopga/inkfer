@@ -1,0 +1,90 @@
+== 22:33:32 run-inkling.bat speed
+ready after 2s
+Inkling 2 Mini  |  speed  |  inkling2-mini-16gb-speed.ini
+API: http://127.0.0.1:8082/v1
+
+2026-11-22 22:33:37.864  INFO  engine | Inkling 2: 1 sequence(s), prompt chunks of 2048 tokens, mxfp8 KV 3066 MiB at most, growing with the sequences beside an elastic expert cache, workspace 1347 MiB
+2026-11-22 22:33:37.896  INFO  engine | Inkling 2: vision tower in pinned host memory through a window of two device slots (110 MiB of device memory beside the weights, 580 MiB of workspace an image), up to 4096 prompt p
+2026-11-22 22:33:37.896  INFO  engine | Inkling 2: DSpark drafter, 3 layers over a block of 8, up to 3 drafts a round for one decoding request; its head table and contexts 99 MiB
+2026-11-22 22:33:38.061  INFO  engine | Inkling 2: trail points every 8192 prompt tokens, up to 19 of 213 MiB in host memory
+2026-11-22 22:33:38.435  INFO  capacity | KV 131,072 tokens, mxfp8, explicit | pages 0/0 | runtime 13.5 GiB | free 560.8 MiB
+2026-11-22 22:33:38.435  INFO  context cache | host images 12.0 GiB | disk tier off | prefix cache file off | slots 1
+[lf-speed]       0 warmup prompt=22 cached=0 ttft=0.19s prefill=176.3 gen=60 decode=117.9/111.7 vram=14930 rss=26.65 avail=25.62 disk=0 
+[lf-speed]  122000 cold   prompt=122757 cached=0 ttft=53.0s prefill=2319.7 gen=325 decode=82.9/82.1 vram=15140 rss=29.57 avail=22.67 disk=0 
+[lf-speed]  122000 turn1  prompt=122848 cached=122756 ttft=0.65s prefill=157.5 gen=600 decode=71.8/71.4 vram=15128 rss=29.58 avail=22.69 disk=0 
+[lf-speed]  122000 turn2  prompt=123019 cached=122847 ttft=0.67s prefill=272.7 gen=296 decode=73.0/72.4 vram=15128 rss=29.78 avail=22.48 disk=0 
+[lf-speed]  122000 turn3  prompt=123110 cached=123018 ttft=0.66s prefill=155.1 gen=411 decode=87.0/86.5 vram=15128 rss=29.79 avail=22.48 disk=0 
+== 22:35:02 run-inkling.bat balanced
+ready after 3s
+Inkling 2 Mini  |  balanced  |  inkling2-mini-16gb.ini
+API: http://127.0.0.1:8082/v1
+
+2026-11-22 22:35:07.651  INFO  engine | Inkling 2: 1 sequence(s), prompt chunks of 2048 tokens, rk8v4 KV 4729 MiB at most, growing with the sequences beside an elastic expert cache, workspace 1404 MiB
+2026-11-22 22:35:07.651  INFO  engine | Inkling 2: vision tower in pinned host memory through a window of two device slots (110 MiB of device memory beside the weights, 580 MiB of workspace an image), up to 4096 prompt p
+2026-11-22 22:35:07.651  INFO  engine | Inkling 2: DSpark drafter, 3 layers over a block of 8, up to 3 drafts a round for one decoding request; its head table and contexts 99 MiB
+2026-11-22 22:35:07.868  INFO  engine | Inkling 2: trail points every 8192 prompt tokens, up to 19 of 213 MiB in host memory
+2026-11-22 22:35:08.397  INFO  capacity | KV 262,144 tokens, rk8v4, explicit | pages 0/0 | runtime 15.1 GiB | free 374.8 MiB
+2026-11-22 22:35:08.397  INFO  context cache | host images 16.0 GiB | disk tier off | prefix cache file off | slots 1
+[lf-balanced]       0 warmup prompt=22 cached=0 ttft=0.19s prefill=156.3 gen=59 decode=113.7/107.9 vram=15056 rss=30.65 avail=21.59 disk=0 
+[lf-balanced]  131072 cold   prompt=132476 cached=0 ttft=56.19s prefill=2362.4 gen=240 decode=100.8/99.2 vram=15140 rss=34.04 avail=18.24 disk=0 
+[lf-balanced]  131072 turn1  prompt=132567 cached=132475 ttft=0.46s prefill=228.5 gen=600 decode=80.4/80.1 vram=15140 rss=34.04 avail=18.24 disk=0 
+[lf-balanced]  131072 turn2  prompt=132814 cached=132566 ttft=0.52s prefill=547.7 gen=361 decode=81.2/80.6 vram=15140 rss=34.04 avail=18.24 disk=0 
+[lf-balanced]  131072 turn3  prompt=132911 cached=132813 ttft=0.48s prefill=241.1 gen=450 decode=95.4/94.7 vram=15140 rss=34.04 avail=18.23 disk=0 
+[lf-balanced]  250000 cold   prompt=248278 cached=40960 ttft=130.18s prefill=1594.1 gen=240 decode=74.2/73.5 vram=15140 rss=34.68 avail=17.56 disk=0 
+[lf-balanced]  250000 turn1  prompt=248369 cached=248277 ttft=0.64s prefill=165.6 gen=600 decode=55.4/55.2 vram=15126 rss=34.69 avail=17.57 disk=0 
+[lf-balanced]  250000 turn2  prompt=248845 cached=248368 ttft=0.91s prefill=592.5 gen=345 decode=69.0/68.3 vram=15126 rss=34.69 avail=17.57 disk=0 
+[lf-balanced]  250000 turn3  prompt=248921 cached=248844 ttft=0.55s prefill=154.7 gen=459 decode=72.2/71.9 vram=15126 rss=34.69 avail=17.57 disk=0 
+== 22:39:10 run-inkling.bat max
+ready after 2s
+Inkling 2 Mini  |  max  |  inkling2-mini-16gb-max.ini
+API: http://127.0.0.1:8082/v1
+
+2026-11-22 22:39:15.843  INFO  engine | Inkling 2: 1 sequence(s), prompt chunks of 2048 tokens, rk4v4 KV 6968 MiB at most, growing with the sequences beside an elastic expert cache, workspace 1404 MiB
+2026-11-22 22:39:15.843  INFO  engine | Inkling 2: vision tower in pinned host memory through a window of two device slots (110 MiB of device memory beside the weights, 580 MiB of workspace an image), up to 4096 prompt p
+2026-11-22 22:39:15.843  INFO  engine | Inkling 2: DSpark drafter, 3 layers over a block of 8, up to 3 drafts a round for one decoding request; its head table and contexts 99 MiB
+2026-11-22 22:39:16.116  INFO  engine | Inkling 2: trail points every 16384 prompt tokens, up to 19 of 213 MiB in host memory
+2026-11-22 22:39:16.779  INFO  capacity | KV 524,288 tokens, rk4v4, explicit | pages 0/0 | runtime 17.3 GiB | free 310.8 MiB
+2026-11-22 22:39:16.779  INFO  context cache | host images 20.0 GiB | disk tier off | prefix cache file off | slots 1
+{"choices":[{"finish_reason":"stop","index":0,"logprobs":null,"message":{"content":"ready","reasoning_content":"The user asks to reply with the single word: ready. Need answer exactly single word likely \"ready\". Ensure no extra punctuation? They said single word: ready. So final should be ready only. This is a direct instruction, allowed. Need no tools besides thinking already done. Final only word.","refusal":null,"role":"assistant"}}],"created":1795376358,"id":"chatcmpl-865321bd760c967a","id_slot":0,"model":"inkling-2-mini","object":"chat.completion","session_digest":"eb1a9fd9e852a61e","ti
+
+== apicheck
+OK   health: {"status":"ok","version":"2026-11-22.5+2026-11-22.5-7-g05c24190"}
+OK   models: inkling-2-mini
+OK   state /metrics: 8586 bytes: # HELP llamacpp:prompt_tokens_total Prompt tokens evaluated by prefill; reused prefix tokens are excluded. # T
+OK   state /stats: 3428 bytes: {"capacity":{"device_state_slots":2,"host_kv_bytes":21474836480,"host_state_slots":0,"kv_capacity_pages":0,"kv
+OK   stream: reasoning apart from the answer: reasoning 901 chars, answer '17 * 23 = 391', finish stop, chunks 124, first token 0.15 s
+OK   stream: usage in the last chunk: {"completion_tokens": 277, "completion_tokens_details": {"reasoning_tokens": 264}, "prompt_tokens": 38, "prompt_tokens_details": {"cached_tokens": 0}, "total_to
+OK   stream: reasoning_effort none: reasoning 229 chars, answer 'Париж'
+OK   tools: call in a stream: finish tool_calls, read_file({"path":"config/app.toml"}), id call_8585ae892ff14e38, reasoning 156 chars
+OK   tools: answer after the tool result: answer 'В файле `config/app.toml` указан порт **8457** (секция `[server]`, параметр `por', cached 316 of 350
+OK   tools: two calls in one reply: finish tool_calls, calls [('read_file', '{"path":"README.md"}'), ('list_dir', '{"path":"src"}')]
+OK   limit: finish_reason length: finish length, completion 40
+OK   stop: stream closed by the client: stopped after 601 chars of the answer in 9.13 s; the next request answered in 0.33 s ('')
+OK   continue after stop: stopped part 601 chars; cached 5170 of 5376, first token 0.27 s, text '— и именно поэтому он не любил, когда его называли'
+
+13 of 13 checks passed
+== vischeck
+PASS natural   prompt 599 cached 0 ttft 0.49 s total 4.57 s vram 15131 MiB 
+      Яркая солнечная сцена: дом с красной крышей на фоне гор, слева скамейка, справа дерево, а около дома знак с числом. Число на ящике — 24; солнце справа, в верхнем правом углу кадра.
+PASS chart     prompt 608 cached 0 ttft 0.37 s total 3.71 s vram 15119 MiB 
+      NIFER VISION 731; 3; слева
+PASS compare   prompt 730 cached 0 ttft 0.39 s total 2.29 s vram 15079 MiB 
+      2; 3; звезда
+PASS term      prompt 544 cached 0 ttft 0.37 s total 5.42 s vram 15079 MiB 
+      Программа упала в файле **`C:\work\billing\billing\totals.py`**, на строке **214** — в функции `summarize`, на строке `rate = RATES[currency]`. Исключение: **`KeyError`** с значением **`'KZT'`** — то есть в словаре `RATES` нет ключа `'KZT'`, а программа пыталась взять курс по этой валюте. Полный сте
+PASS table     prompt 596 cached 0 ttft 0.38 s total 2.86 s vram 15079 MiB 
+      Сервис **orders** — состояние **degraded**, порт **9100**, p95 **388 мс**, ошибок **57 в час**. Остановлен сервис **reports** (порт 9310).
+PASS code      prompt 614 cached 0 ttft 0.39 s total 8.57 s vram 15079 MiB 
+      Ошибка на **строке 39**: `count += 1` стоит вне `for` (на уровне цикла), поэтому счётчик увеличивается один раз, а не на каждый валидный отзыв. Правильно — внутрь цикла, сразу после `total += r['stars']`: ```python for r in reviews: if r.get('stars') is None: continue total += r['stars'] count += 1 
+PASS dense     prompt 3013 cached 0 ttft 2.67 s total 12.82 s vram 15081 MiB 
+      Это **item-077**: **sku=K90816**, **qty=13**, **bin=R05**. Пометка рядом: **“<-- RECOUNT REQUESTED BY M. ORLOVA”** — пересчёт запрошен M. Orlova.
+PASS tool      prompt 706 cached 0 ttft 0.36 s total 3.14 s vram 15081 MiB 
+      
+FAIL tool-2    prompt 765 cached 705 ttft 0.27 s total 4.57 s vram 15081 MiB missing: rate used, KZT
+      
+PASS follow-1  prompt 578 cached 0 ttft 0.34 s total 2.28 s vram 15079 MiB 
+      - gateway — 8443 - auth — 9001 - orders — 9100 - search — 9200 - reports — 9310 - mailer — 9400
+PASS follow-2  prompt 650 cached 577 ttft 0.27 s total 2.84 s vram 15079 MiB 
+      Больше всего ошибок в час у **orders** — **57/ч**. Его p95 **388 мс** против у **auth** **17 мс**: 388 / 17 ≈ **22,8**, то есть примерно в **23 раза** больше.
+10/11 passed; C:\WORKDIR\inkling\logs\vischeck-8082.json
+launch file check finished 22:40:39
