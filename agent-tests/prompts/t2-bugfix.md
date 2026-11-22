@@ -2,7 +2,7 @@
 
 Тесты написаны на unittest с мок-движком и запускаются так (другого Python не используй, ничего не устанавливай):
 
-    C:/distrib/strata-tuning/harness/task-python/python.exe -m unittest serve.test_parallel
+    C:/WORKDIR/harness/task-python/python.exe -m unittest serve.test_parallel
 
 Из команд оболочки разрешены только запуск тестов именно в таком виде (одна команда, без `cd`, конвейеров и перенаправлений; после `unittest` — любые модули и ключи) и `git status` / `git diff` / `git log`. Остальные команды будут отклонены. Для чтения, поиска и правки файлов используй встроенные инструменты.
 

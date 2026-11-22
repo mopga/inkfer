@@ -19,17 +19,17 @@ tools:
     - 'C:\Program Files'
     - 'C:\Program Files (x86)'
     - 'C:\ProgramData'
-    - 'C:\distrib\strata-tuning\cfg'
-    - 'C:\distrib\strata-tuning\profiles'
-    - 'C:\distrib\strata-tuning\runs'
-    - 'C:\distrib\strata-tuning\tools'
-    - 'C:\distrib\strata-tuning\tune-work'
-    - 'C:\distrib\strata-tuning\vocab'
-    - 'C:\distrib\strata-tuning\inkling'
-    - 'C:\distrib\strata-tuning\harness'
+    - 'C:\WORKDIR\cfg'
+    - 'C:\WORKDIR\profiles'
+    - 'C:\WORKDIR\runs'
+    - 'C:\WORKDIR\tools'
+    - 'C:\WORKDIR\tune-work'
+    - 'C:\WORKDIR\vocab'
+    - 'C:\WORKDIR\inkling'
+    - 'C:\WORKDIR\harness'
 bash:
   patterns:
-    - match: 'C:/distrib/strata-tuning/harness/task-python/python.exe -m unittest *'
+    - match: 'C:/WORKDIR/harness/task-python/python.exe -m unittest *'
       approval: allow
     - match: 'git status'
       approval: allow

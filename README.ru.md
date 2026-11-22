@@ -59,9 +59,9 @@ Inkling или «Вернуть Qwen + omp-web», а не старый «Strata 
 
 То же из командной строки (питон из поставки Strata, окна консоли нет):
 
-    D:\AI\models\Strata\control\python\pythonw.exe C:\distrib\strata-tuning\inkling\start_inkling.pyw balanced --web
-    D:\AI\models\Strata\control\python\pythonw.exe C:\distrib\strata-tuning\inkling\start_inkling.pyw max --tui
-    D:\AI\models\Strata\control\python\pythonw.exe C:\distrib\strata-tuning\inkling\start_qwen.pyw --web
+    D:\MODELS\Strata\control\python\pythonw.exe C:\WORKDIR\inkling\start_inkling.pyw balanced --web
+    D:\MODELS\Strata\control\python\pythonw.exe C:\WORKDIR\inkling\start_inkling.pyw max --tui
+    D:\MODELS\Strata\control\python\pythonw.exe C:\WORKDIR\inkling\start_qwen.pyw --web
 
 - `start_inkling.pyw ПРОФИЛЬ [--web | --tui] [--no-switch]` — профили `speed`, `balanced`, `max`, `basalt`
   ([profiles.json](profiles.json)); `--tui` открывает oh-my-pi в терминале; `--no-switch` не трогает модель по умолчанию.
@@ -308,7 +308,7 @@ VRAM в обоих режимах 14.9 ГиБ (движок сам уменьш�
 патчем контрольных точек.
 
 Квант: взят UD-IQ4_XS (KLD 0.0109 к Q8 по данным Unsloth — не проверялось) — он из списка предпочтительных и есть в
-готовом виде для NInfer. UD-Q4_K_XL скачан (`D:\AI\models\inkling2mini`), но на 1.8 ГиБ больше при том же заявленном
+готовом виде для NInfer. UD-Q4_K_XL скачан (`D:\MODELS\inkling2mini`), но на 1.8 ГиБ больше при том же заявленном
 качестве (0.0107): на 16 ГБ это минус ~370 экспертов в VRAM, то есть ниже скорость без измеримой пользы.
 
 ## 6. Что сделано в движках (локальные сборки)
@@ -409,7 +409,7 @@ VRAM в обоих режимах 14.9 ГиБ (движок сам уменьш�
 | `tools\vischeck.py`, `tools\visscale.py`, `tools\mkvisimages.py` | проверки зрения по заложенным фактам, подбор `--vision-upscale`, генератор тестовых картинок |
 | `tools\attnbench\` | микрозамер и FP64-оракул внимания для патча 5 |
 | `logs\` | журналы движков по каждому прогону |
-| `D:\AI\models\inkling2mini\` | модели: `ninfer\…UD-IQ4_XS-ninfer-v3.ninfer` (15.4 ГиБ), `basalt\…NVFP4-q8.basalt` (18.4 ГиБ), GGUF IQ4_XS и Q4_K_XL, черновик DSpark |
+| `D:\MODELS\inkling2mini\` | модели: `ninfer\…UD-IQ4_XS-ninfer-v3.ninfer` (15.4 ГиБ), `basalt\…NVFP4-q8.basalt` (18.4 ГиБ), GGUF IQ4_XS и Q4_K_XL, черновик DSpark |
 | `..\harness\omp-home\{config.yml,models.yml}`, `..\harness\omp-web\home\…` | конфигурация агентов: добавлен провайдер `inkling` и пороги сжатия; `modelRoles.default` переключают лаунчеры, остальное не менялось |
 
 Не изменялись: установка Strata и её настройки модели, прежние лаунчеры `..\start_*.pyw`, прежний ярлык, посторонние программы на машине.

@@ -3,12 +3,12 @@
 # The existing shortcut "Strata + omp-web.lnk" is not touched. Run again after moving the folder.
 $ErrorActionPreference = 'Stop'
 $inkling = Split-Path -Parent $PSScriptRoot
-$pythonw = 'D:\AI\models\Strata\control\python\pythonw.exe'
+$pythonw = 'D:\MODELS\Strata\control\python\pythonw.exe'
 $desktop = [Environment]::GetFolderPath('Desktop')
 $copies  = Join-Path $inkling 'shortcuts'
 New-Item -ItemType Directory -Force -Path $copies | Out-Null
 $chip    = "$env:SystemRoot\System32\shell32.dll,12"
-$strata  = 'D:\AI\models\Strata\strata-desktop.exe,0'
+$strata  = 'D:\MODELS\Strata\strata-desktop.exe,0'
 $items = @(
     @{ Name = 'Inkling баланс 262k + omp-web';   Args = "`"$inkling\start_inkling.pyw`" balanced --web"; Icon = $chip;
        Text = 'Inkling 2 Mini, окно 262144 (NInfer, KV rk8v4) и веб-окно агента' },

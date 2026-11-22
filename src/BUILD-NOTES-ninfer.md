@@ -7,18 +7,18 @@ only `--help` was executed. Everything below is reproducible without system inst
 
 | | |
 |---|---|
-| Source | `C:\distrib\strata-tuning\inkling\src\ninfer-all` (github.com/iamwavecut/ninfer-all) |
+| Source | `C:\WORKDIR\inkling\src\ninfer-all` (github.com/iamwavecut/ninfer-all) |
 | Branch | `local/pr393-inkling` = PR #393 head `f66e789` + 6 local commits (`8a37fdd`, `88caff1`, `50d8a1e` trail points, `a9df5bf` host store eviction, `5b8595a` far keys on the tensor cores, `d0bd340` `--vision-upscale`) |
 | Base of the PR | release `2026-11-21.4` (`bd8195f42e87`), the build already used in `engines\ninfer` |
-| Build tree | `C:\distrib\strata-tuning\inkling\src\build-ninfer-pr393` |
-| Package | `C:\distrib\strata-tuning\inkling\engines\ninfer-pr393\app` |
+| Build tree | `C:\WORKDIR\inkling\src\build-ninfer-pr393` |
+| Package | `C:\WORKDIR\inkling\engines\ninfer-pr393\app` |
 | GPU architectures | `120a` only (RTX 50 series). The release carries `75 80 86 89 120a`. |
 | Layout | the release's `shared-runtime-v1`: small launchers + `backends\cuda13\ninfer-runtime.dll`, `ninfer_kernels.dll` |
 
 PR #393 is open and unmerged upstream (state checked 2026-11-22). It differs from the release only in
 `src/models/inkling2/*`, `src/runtime/engine/inkling2_core.cpp`, docs and tests; the artifact reader and the
 converter are untouched, so the existing pack
-`D:\AI\models\inkling2mini\ninfer\Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer` (magic `NINFER`, version 3) loads as is.
+`D:\MODELS\inkling2mini\ninfer\Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer` (magic `NINFER`, version 3) loads as is.
 
 ## Result and checks
 
@@ -45,9 +45,9 @@ does not. The files in `help\` were generated from this build with the folder te
 |---|---|---|
 | MSVC | 19.44.35229 (toolset 14.44.35207), VS 2022 BuildTools | `C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools` (already installed) |
 | CMake, Ninja | the ones bundled with BuildTools | on PATH after `vcvars64.bat` |
-| CUDA toolkit | 13.4.3 redistributables, nvcc V13.4.92 | `C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4` (see `READY.txt` there) |
-| vcpkg | master `93ad765c7b`, manifest baseline `4bca8fd8` from the repo's `vcpkg.json` | `C:\distrib\strata-tuning\inkling\toolchain\vcpkg` |
-| vcpkg packages | curl, ffmpeg 8.1.2 [avcodec, avdevice, avfilter, avformat, swresample, swscale, zlib], pkgconf, zlib (x64-windows) | `C:\distrib\strata-tuning\inkling\toolchain\vcpkg_installed\x64-windows` |
+| CUDA toolkit | 13.4.3 redistributables, nvcc V13.4.92 | `C:\WORKDIR\inkling\toolchain\cuda-13.4` (see `READY.txt` there) |
+| vcpkg | master `93ad765c7b`, manifest baseline `4bca8fd8` from the repo's `vcpkg.json` | `C:\WORKDIR\inkling\toolchain\vcpkg` |
+| vcpkg packages | curl, ffmpeg 8.1.2 [avcodec, avdevice, avfilter, avformat, swresample, swscale, zlib], pkgconf, zlib (x64-windows) | `C:\WORKDIR\inkling\toolchain\vcpkg_installed\x64-windows` |
 
 The CUDA toolkit is a merge of NVIDIA's official per-component archives
 (`https://developer.download.nvidia.com/compute/cuda/redist/`, manifest `redistrib_13.4.3.json`, every archive
@@ -60,7 +60,7 @@ built with vcpkg (14 minutes) instead of being patched out.
 
 ## Build commands
 
-Three small scripts in `C:\distrib\strata-tuning\inkling\src` (run from cmd or PowerShell, not Git Bash):
+Three small scripts in `C:\WORKDIR\inkling\src` (run from cmd or PowerShell, not Git Bash):
 
 ```
 build-ninfer-env.bat         sets MSVC 14.44, CUDA_PATH, VCPKG_ROOT, source and build paths
@@ -71,18 +71,18 @@ build-ninfer-build.bat [N]   ninja build with N jobs (default 6), low process pr
 Dependencies (once):
 
 ```
-C:\distrib\strata-tuning\inkling\toolchain\vcpkg-install.bat
+C:\WORKDIR\inkling\toolchain\vcpkg-install.bat
 ```
 
 Configure (what `build-ninfer-configure.bat` runs after `vcvars64.bat -vcvars_ver=14.44`):
 
 ```
-cmake -S C:\distrib\strata-tuning\inkling\src\ninfer-all -B C:\distrib\strata-tuning\inkling\src\build-ninfer-pr393 -G Ninja -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_TOOLCHAIN_FILE=C:\distrib\strata-tuning\inkling\toolchain\vcpkg\scripts\buildsystems\vcpkg.cmake ^
+cmake -S C:\WORKDIR\inkling\src\ninfer-all -B C:\WORKDIR\inkling\src\build-ninfer-pr393 -G Ninja -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_TOOLCHAIN_FILE=C:\WORKDIR\inkling\toolchain\vcpkg\scripts\buildsystems\vcpkg.cmake ^
   -DVCPKG_TARGET_TRIPLET=x64-windows -DVCPKG_HOST_TRIPLET=x64-windows ^
-  -DVCPKG_INSTALLED_DIR=C:\distrib\strata-tuning\inkling\toolchain\vcpkg_installed -DVCPKG_MANIFEST_INSTALL=OFF ^
-  -DCMAKE_CUDA_COMPILER=C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\bin\nvcc.exe ^
-  -DCUDAToolkit_ROOT=C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4 ^
+  -DVCPKG_INSTALLED_DIR=C:\WORKDIR\inkling\toolchain\vcpkg_installed -DVCPKG_MANIFEST_INSTALL=OFF ^
+  -DCMAKE_CUDA_COMPILER=C:\WORKDIR\inkling\toolchain\cuda-13.4\bin\nvcc.exe ^
+  -DCUDAToolkit_ROOT=C:\WORKDIR\inkling\toolchain\cuda-13.4 ^
   -DCMAKE_CUDA_ARCHITECTURES=120a -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl ^
   -DNINFER_WINDOWS_KERNEL_DLL=ON -DNINFER_SHARED_RUNTIME=ON -DBUILD_TESTING=OFF -DNINFER_BUILD_BENCHMARKS=ON
 ```
@@ -93,7 +93,7 @@ pruning, with one architecture instead of five.
 Build:
 
 ```
-cmake --build C:\distrib\strata-tuning\inkling\src\build-ninfer-pr393 --parallel 6 --target ninfer-serve ninfer ninfer-perplexity ninfer_bench ninfer-calibrate ninfer-ngram-profile
+cmake --build C:\WORKDIR\inkling\src\build-ninfer-pr393 --parallel 6 --target ninfer-serve ninfer ninfer-perplexity ninfer_bench ninfer-calibrate ninfer-ngram-profile
 ```
 
 1,250 build steps (778 CUDA, 439 C++). The job count was kept at 6 and the priority low because the machine was
@@ -102,7 +102,7 @@ running model benchmarks at the same time and had about 10 GiB of free RAM.
 Package:
 
 ```
-bash C:\distrib\strata-tuning\inkling\src\package-ninfer-pr393.sh
+bash C:\WORKDIR\inkling\src\package-ninfer-pr393.sh
 ```
 
 It copies the launchers and `portable\backends\cuda13\*.dll` from the build tree, the FFmpeg/curl/zlib/pkgconf DLLs
@@ -112,7 +112,7 @@ only read), and `configs\` from the source tree.
 ## How to rebuild after a source change
 
 ```
-cd /d C:\distrib\strata-tuning\inkling\src
+cd /d C:\WORKDIR\inkling\src
 build-ninfer-build.bat 12
 bash package-ninfer-pr393.sh
 ```
@@ -123,7 +123,7 @@ and relinks `ninfer-runtime.dll`.
 
 ## Local patches
 
-All six are commits on `local/pr393-inkling`. Patches 1–4: `C:\distrib\strata-tuning\inkling\src\ninfer-local-patches.diff`
+All six are commits on `local/pr393-inkling`. Patches 1–4: `C:\WORKDIR\inkling\src\ninfer-local-patches.diff`
 (`git diff f66e789..a9df5bf`); patches 5–6: `ninfer-local-patches-far-vision.diff` beside it (`git diff a9df5bf..d0bd340`). Patches 1 and 2 were then checked on the GPU by the context ladders (`inkling\NOTES.md`, section 6: the follow-up
 turn takes 100 % from the cache at 66K to 496K tokens); patch 3 has its own check, described with it.
 
@@ -202,7 +202,7 @@ The store reserved F16-sized pages for every image and charged them to the host 
 
 ### 3. `50d8a1e` — trail points: a prompt that parts from the cached tokens mid-way resumes from a saved ring state
 
-Packaged separately: `C:\distrib\strata-tuning\inkling\engines\ninfer-trail\app` (a copy of `ninfer-pr393\app` with the
+Packaged separately: `C:\WORKDIR\inkling\engines\ninfer-trail\app` (a copy of `ninfer-pr393\app` with the
 rebuilt launchers, `ninfer-runtime.dll` and `ninfer_kernels.dll`; `--version` prints `...-g88caff1-dirty` because the
 build ran before the commit). `engines\ninfer-pr393\app` stays as the build without this patch.
 
@@ -381,8 +381,8 @@ this Windows build is the first of this branch as far as the repository shows.
 Same command line as the release, from the new folder, plus the KV format:
 
 ```
-cd /d C:\distrib\strata-tuning\inkling\engines\ninfer-pr393\app
-ninfer-serve.exe D:\AI\models\inkling2mini\ninfer\Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer --model-id inkling --host 127.0.0.1 --port 8082 --cuda-backend 13 --kv-dtype rk4v4 <the other flags as before>
+cd /d C:\WORKDIR\inkling\engines\ninfer-pr393\app
+ninfer-serve.exe D:\MODELS\inkling2mini\ninfer\Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer --model-id inkling --host 127.0.0.1 --port 8082 --cuda-backend 13 --kv-dtype rk4v4 <the other flags as before>
 ```
 
 Differences from the release: the folder; `--kv-dtype rk4v4` or `rk8v4` is accepted; the binary contains only

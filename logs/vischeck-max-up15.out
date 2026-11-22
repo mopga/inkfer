@@ -24,4 +24,4 @@ PASS long-img-first prompt 331545 cached 0 ttft 189.59 s total 198.4 s vram 1481
       Есть пометка у строки **item-077**: **sku=K90816**, **qty=13**.
 PASS long-img-last prompt 329088 cached 0 ttft 188.02 s total 201.66 s vram 14897 MiB 
       Программа упала в файле `C:\work\billing\billing\totals.py` на строке 214, в функции `summarize` (вызвано из `run.py`, строка 88). Причина: `rate = RATES[currency]` — ключ `'KZT'` отсутствует в словаре `RATES`, отсюда `KeyError: 'KZT'`. То есть в программе не задан курс для валюты KZT. В журнале зам
-13/13 passed; C:\distrib\strata-tuning\inkling\logs\vischeck-8082-long250000.json
+13/13 passed; C:\WORKDIR\inkling\logs\vischeck-8082-long250000.json

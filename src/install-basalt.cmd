@@ -3,7 +3,7 @@ rem Copies the engine programs built by build-basalt.cmd (src\basalt\bin) into t
 rem engines\basalt-src\app\bin. The unpatched 0.5.6 build stays in engines\basalt-src\baseline\bin and is never written here.
 rem Stop the engine first: Windows does not replace a running program. See BUILD-NOTES-basalt.md.
 setlocal
-set ROOT=C:\distrib\strata-tuning\inkling
+set ROOT=C:\WORKDIR\inkling
 set FROM=%ROOT%\src\basalt\bin
 set TO=%ROOT%\engines\basalt-src\app\bin
 if not exist "%FROM%\basalt.exe" (echo no build in %FROM% & exit /b 1)

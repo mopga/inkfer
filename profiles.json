@@ -7,7 +7,7 @@
       "title": "скорость (окно 131k, точный KV)",
       "exe": "{HERE}\\engines\\ninfer-trail\\app\\ninfer-serve.exe",
       "args": [
-        "D:/AI/models/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
+        "D:/MODELS/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
         "--model-id", "{MODEL_ID}", "--host", "127.0.0.1", "--port", "{PORT}", "--cuda-backend", "13",
         "--max-context", "131072", "--expert-residency", "host", "--host-cache-mib", "12288",
         "--vision", "--vision-residency", "overlay", "--vision-upscale", "1.5",
@@ -21,7 +21,7 @@
       "title": "баланс (окно 262k)",
       "exe": "{HERE}\\engines\\ninfer-trail\\app\\ninfer-serve.exe",
       "args": [
-        "D:/AI/models/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
+        "D:/MODELS/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
         "--model-id", "{MODEL_ID}", "--host", "127.0.0.1", "--port", "{PORT}", "--cuda-backend", "13",
         "--max-context", "262144", "--expert-residency", "host", "--host-cache-mib", "16384", "--kv-dtype", "rk8v4",
         "--vision", "--vision-residency", "overlay", "--vision-upscale", "1.5",
@@ -35,7 +35,7 @@
       "title": "максимальный контекст (окно 524k)",
       "exe": "{HERE}\\engines\\ninfer-trail\\app\\ninfer-serve.exe",
       "args": [
-        "D:/AI/models/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
+        "D:/MODELS/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
         "--model-id", "{MODEL_ID}", "--host", "127.0.0.1", "--port", "{PORT}", "--cuda-backend", "13",
         "--max-context", "524288", "--expert-residency", "host", "--host-cache-mib", "20480", "--kv-dtype", "rk4v4",
         "--vision", "--vision-residency", "overlay", "--vision-upscale", "1.5",
@@ -50,7 +50,7 @@
       "exe": "{HERE}\\engines\\basalt-src\\app\\bin\\basalt.exe",
       "cwd": "{HERE}\\engines\\basalt-src\\app",
       "args": [
-        "serve", "D:/AI/models/inkling2mini/basalt/Inkling-2-Mini-NVFP4-q8.basalt",
+        "serve", "D:/MODELS/inkling2mini/basalt/Inkling-2-Mini-NVFP4-q8.basalt",
         "--port", "{PORT}", "--alias", "{MODEL_ID}", "--max-context", "262144", "--kv", "fp8"
       ],
       "env": {

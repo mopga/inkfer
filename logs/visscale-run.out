@@ -10,4 +10,4 @@ term   x2.0    2200x660: 3/3 pass, prompt 987, out 672, 5.4 s
 table  x1.0     900x420: 3/3 pass, prompt 305, out 269, 2.0 s
 table  x1.5    1350x630: 3/3 pass, prompt 596, out 260, 2.0 s
 table  x2.0    1800x840: 3/3 pass, prompt 997, out 247, 2.0 s
-C:\distrib\strata-tuning\inkling\logs\visscale-8081.json
+C:\WORKDIR\inkling\logs\visscale-8081.json

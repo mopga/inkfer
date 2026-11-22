@@ -5,7 +5,7 @@ import json, os, re, shutil, subprocess, sys, tempfile
 
 sys.stdout.reconfigure(encoding="utf-8")
 A = os.path.dirname(os.path.abspath(__file__))
-TASK_PY = r"C:\distrib\strata-tuning\harness\task-python\python.exe"
+TASK_PY = r"C:\WORKDIR\harness\task-python\python.exe"
 MODS = ["serve.test_admit_order", "serve.test_parallel", "serve.test_yield_accounting"]
 EVENTS = ["queued", "admitted", "reading", "first_token", "finished", "cancelled", "disconnected", "timeout", "error"]
 OUTCOMES = ["stop", "length", "cancel", "disconnect", "timeout", "error"]

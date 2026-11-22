@@ -160,8 +160,8 @@ an answer. Sampling is not pinned in these checks.
 ## Reproducing
 
 This is a working directory published as is, not a packaged product. Paths are hard-coded for the original machine
-(`C:\distrib\strata-tuning\inkling` for this folder, `D:\AI\models\inkling2mini` for the model files, a Python 3.12
-at `D:\AI\models\Strata\control\python`); expect to edit them. The scripts need only the standard library, plus
+(`C:\WORKDIR\inkling` for this folder, `D:\MODELS\inkling2mini` for the model files, a Python 3.12
+at `D:\MODELS\Strata\control\python`); expect to edit them. The scripts need only the standard library, plus
 `psutil` (`bench/ctxbench.py`) and `Pillow` (`tools/mkvisimages.py`, `tools/visscale.py`).
 
 1. Get the model: Inkling 2 Mini, Unsloth UD-IQ4_XS, as a NInfer v3 artifact (`…UD-IQ4_XS-ninfer-v3.ninfer`).

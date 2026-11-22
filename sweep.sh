@@ -5,8 +5,8 @@
 #   ENV: space-separated VAR=VALUE for the engine (BASALT_INK_* switches). After ctxbench a greedy determinism set is saved
 #   (bench/runs/det-LABEL.json) when the plan line's CTXBENCH ARGS contain --det (the flag itself is not passed on).
 # Engine log: logs/LABEL.log, bench output: logs/ctxbench-LABEL.out, results: bench/runs/LABEL.json. Progress: logs/sweep.log
-ROOT=/c/distrib/strata-tuning/inkling
-PY="/d/AI/models/Strata/control/python/python.exe"
+ROOT=/c/WORKDIR/inkling
+PY="/d/MODELS/Strata/control/python/python.exe"
 cd "$ROOT" || exit 1
 while IFS='|' read -r ENGINE LABEL EARGS BARGS ENVS; do
   case "$ENGINE" in ''|\#*) continue;; esac

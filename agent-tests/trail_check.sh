@@ -2,7 +2,7 @@
 # Check of the trail-point patch (engines\ninfer-trail): tools\trailtest.py on the patched build with the trail on,
 # then with the trail off (NINFER_TRAIL_GRID=0), then a comparison of the greedy answers.
 #   trail_check.sh [TOKENS] [engine args...]      default 45000 tokens, 262144 window, rk8v4
-ROOT=/c/distrib/strata-tuning/inkling
+ROOT=/c/WORKDIR/inkling
 TOKENS="${1:-45000}"; shift
 ARGS="${*:---max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk8v4}"
 cd "$ROOT" || exit 1

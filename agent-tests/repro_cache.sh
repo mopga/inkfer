@@ -2,7 +2,7 @@
 # Diagnostics: why does the first request of a resumed session (omp -c) miss the engine's prompt cache?
 #   repro_cache.sh NAME [engine args...]      NInfer PR393 on port 8082, logging proxy on 8081, three short omp steps
 # Request bodies: logs\proxy-NAME\NNNN.json, one line per request: logs\proxy-NAME\index.txt
-ROOT=/c/distrib/strata-tuning/inkling; A=$ROOT/agent-tests; W="C:/distrib/strata-tuning/agent-work"
+ROOT=/c/WORKDIR/inkling; A=$ROOT/agent-tests; W="C:/WORKDIR/agent-work"
 NAME="$1"; shift
 cd "$ROOT" || exit 1
 bash stop_engine.sh basalt >/dev/null 2>&1; bash stop_engine.sh ninfer >/dev/null 2>&1

@@ -16,18 +16,18 @@
  M src/serve/serve_options.cpp
  M src/serve/serve_options.h
 [2/4] Building CXX object src\models\CMakeFiles\ninfer_model_runtime.dir\inkling2\executor.cpp.obj
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/executor.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device_launch.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_config.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\builtin_types.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\device_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
-Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/executor.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\core/device.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\core/device_launch.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\crt/host_config.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\builtin_types.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\device_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:         C:\WORKDIR\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
 Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\limits.h
 Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime.h
 Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\sal.h
@@ -35,37 +35,37 @@
 Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vadefs.h
 Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stddef.h
 Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\surface_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\texture_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\library_types.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\channel_descriptor.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\builtin_types.h
-Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\device_types.h
-Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
-Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\surface_types.h
-Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\texture_types.h
-Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_device_runtime_api.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_functions.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\builtin_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\device_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\surface_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\texture_types.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.hpp
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\surface_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\texture_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\library_types.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\channel_descriptor.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\builtin_types.h
+Примечание: включение файла:         C:\WORKDIR\inkling\toolchain\cuda-13.4\include\device_types.h
+Примечание: включение файла:         C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:         C:\WORKDIR\inkling\toolchain\cuda-13.4\include\surface_types.h
+Примечание: включение файла:         C:\WORKDIR\inkling\toolchain\cuda-13.4\include\texture_types.h
+Примечание: включение файла:         C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_device_runtime_api.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_functions.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\builtin_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\device_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\surface_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\texture_types.h
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_functions.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_functions.hpp
+Примечание: включение файла:        C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\utility
 Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\yvals_core.h
 Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xkeycheck.h
@@ -85,7 +85,7 @@
 Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\compare
 Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\concepts
 Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime_new.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
 Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\algorithm
 Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_heap_algorithms.hpp
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xutility
@@ -191,8 +191,8 @@
 Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_bit_utils.hpp
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xbit_ops.h
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xnode_handle.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_disk.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/model_enums.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\core/expert_disk.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/model_enums.h
 Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\filesystem
 Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\chrono
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xfilesystem_abi.h
@@ -230,18 +230,18 @@
 Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_ostream.hpp
 Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ios
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\sstream
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/tensor.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/dtype.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/expert_profile.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/framing.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\core/tensor.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\core/dtype.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\models/expert_profile.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\artifact/framing.h
 Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\string_view
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/kv_format.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/kv_cache_storage.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/model.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/materializer.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/schema.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/kv_format.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/kv_cache_storage.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/model.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\artifact/materializer.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\artifact/schema.h
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\functional
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\third_party\nlohmann/json.hpp
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\third_party\nlohmann/json.hpp
 Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\map
 Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xtree
 Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\valarray
@@ -255,100 +255,100 @@
 Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ostream
 Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\any
 Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\variant
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/selection.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/weight_view.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/qtype.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/weight.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/arena.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/host_pages.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/pinned_memory.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/evictable_weight_pool.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/vmm.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/startup.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_delivery.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_tier.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/startup.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/model.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/config.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/weights.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/stage_plan.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/config.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/load_options.h
-Примечание: включение файла:        C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/engine_options.h
-Примечание: включение файла:         C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/base.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/registry.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/linear_policy.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/weight_input.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/sparse_moe.h
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/config.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/frontend/resources.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/frontend/tokenizer.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\text/byte_span.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/model.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/auxiliary_replicas.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device_buffer.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/expert_sources.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/expert_layout.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/decode_graph.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device_wait.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_parallel.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/stage_link.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/growable_region.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/tensor_parallel.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_bf16.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_fp16.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\nv/target
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\nv/detail/__target_macros
-Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\nv/detail/__preprocessor
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_fp16.hpp
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_bf16.hpp
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/divided_head.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/runtime.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/cyclic_kv_cache.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/layout.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/drafter.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/sampling.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/cpu_experts.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops/moe_experts/gguf_expert_cpu.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/kernels.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/kv_planes.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/vision.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cublas_v2.h
-Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cublas_api.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuComplex.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\artifact/selection.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\src\core/weight_view.h
+Примечание: включение файла:       C:\WORKDIR\inkling\src\ninfer-all\src\core/qtype.h
+Примечание: включение файла:       C:\WORKDIR\inkling\src\ninfer-all\src\core/weight.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\core/arena.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\core/host_pages.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\src\core/pinned_memory.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\core/evictable_weight_pool.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\core/vmm.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/startup.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\core/expert_delivery.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\core/expert_tier.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\core/startup.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\models/dspine/model.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\models/dspine/config.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/weights.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\src\core/stage_plan.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/config.h
+Примечание: включение файла:       C:\WORKDIR\inkling\src\ninfer-all\src\models/load_options.h
+Примечание: включение файла:        C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/engine_options.h
+Примечание: включение файла:         C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/base.h
+Примечание: включение файла:       C:\WORKDIR\inkling\src\ninfer-all\src\models/registry.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/ops/linear_policy.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/ops/weight_input.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/ops/sparse_moe.h
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/config.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/frontend/resources.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/frontend/tokenizer.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\src\text/byte_span.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/model.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/auxiliary_replicas.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\src\core/device_buffer.h
+Примечание: включение файла:     C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/expert_sources.h
+Примечание: включение файла:      C:\WORKDIR\inkling\src\ninfer-all\src\models/qwen3_5/expert_layout.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\core/decode_graph.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\core/device_wait.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\core/expert_parallel.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\core/stage_link.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\core/growable_region.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\core/tensor_parallel.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_bf16.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_fp16.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_functions.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\nv/target
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\nv/detail/__target_macros
+Примечание: включение файла:       C:\WORKDIR\inkling\toolchain\cuda-13.4\include\nv/detail/__preprocessor
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_fp16.hpp
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_functions.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_bf16.hpp
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\models/divided_head.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\models/dspine/runtime.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\core/cyclic_kv_cache.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\src\core/layout.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\models/dspine/drafter.h
+Примечание: включение файла:    C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/ops/sampling.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/cpu_experts.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\ops/moe_experts/gguf_expert_cpu.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/kernels.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/kv_planes.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\models/inkling2/vision.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cublas_v2.h
+Примечание: включение файла:    C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cublas_api.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuComplex.h
 Примечание: включение файла:      C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\math.h
-Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
-Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\library_types.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/linear.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops/linear/gguf/ggml_bridge.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops\linear\gguf\ggml_bridge_args.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
-Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops/linear/gguf/gguf_linear.h
-Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:      C:\WORKDIR\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:     C:\WORKDIR\inkling\toolchain\cuda-13.4\include\library_types.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\include\ninfer/ops/linear.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\ops/linear/gguf/ggml_bridge.h
+Примечание: включение файла:   C:\WORKDIR\inkling\src\ninfer-all\src\ops\linear\gguf\ggml_bridge_args.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\WORKDIR\inkling\src\ninfer-all\src\ops/linear/gguf/gguf_linear.h
+Примечание: включение файла:   C:\WORKDIR\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
 [3/4] Linking CXX static library src\models\ninfer_model_runtime.lib
 [4/4] Linking CXX shared library portable\backends\cuda13\ninfer-runtime.dll
 build_exit=0

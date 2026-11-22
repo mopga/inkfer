@@ -41,7 +41,7 @@ tools:
   approvalMode: write
   restrictedFolders:
     - 'D:\path\to\protect'
-    - 'D:\AI\models'
+    - 'D:\MODELS'
     - 'C:\Users\USER\AppData\Local\Strata'
     - 'C:\Users\USER\.strata'
 bash:

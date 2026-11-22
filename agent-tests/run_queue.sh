@@ -2,8 +2,8 @@
 # The comparison queue after long-ink1: Inkling chain (max) and big task (balanced), then Qwen's long task and a second
 # Qwen chain on the Strata engine, then the balanced Inkling profile back through the launcher (agents' default = Inkling).
 #   run_queue.sh            (waits for runs/long-ink1.log to say "finished")
-ROOT=/c/distrib/strata-tuning/inkling; A=$ROOT/agent-tests; PY=/d/AI/models/Strata/control/python/python.exe
-PYW=/d/AI/models/Strata/control/python/pythonw.exe
+ROOT=/c/WORKDIR/inkling; A=$ROOT/agent-tests; PY=/d/MODELS/Strata/control/python/python.exe
+PYW=/d/MODELS/Strata/control/python/pythonw.exe
 cd "$ROOT" || exit 1
 until grep -q "long-ink1 finished" "$A/runs/long-ink1.log" 2>/dev/null; do sleep 20; done
 echo "$(date +%T) queue start"

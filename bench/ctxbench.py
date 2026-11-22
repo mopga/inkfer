@@ -12,7 +12,7 @@ Timed on the client; when the engine reports its own timings (llama.cpp `timings
 While a request runs, once a second: VRAM used, engine RSS / private bytes, available RAM, page file in use, CPU load,
 disk read rate. Results: runs/LABEL.json (+ runs/LABEL.tsv with the monitor's samples).
 
-Needs psutil: run with Strata's bundled python (D:\\AI\\models\\Strata\\control\\python\\python.exe).
+Needs psutil: run with Strata's bundled python (D:\\MODELS\\Strata\\control\\python\\python.exe).
 """
 import argparse, json, os, subprocess, sys, threading, time, urllib.error, urllib.request
 from pathlib import Path

@@ -1,6 +1,6 @@
 # Basalt: experimental Windows build with an adaptive on-card expert set (Inkling 2 Mini)
 
-Source: `C:\distrib\strata-tuning\inkling\src\basalt`, branch `ink-adaptive-experts` on top of main `97e2e71` (0.5.6).
+Source: `C:\WORKDIR\inkling\src\basalt`, branch `ink-adaptive-experts` on top of main `97e2e71` (0.5.6).
 Nothing was pushed. The whole change as one diff: `src\basalt-ink-patches.diff`.
 
 | Commit | What | Switch |
@@ -26,7 +26,7 @@ under "What to check on the GPU" below is unverified.
 Launch is the same as the release, only the path differs:
 
 ```
-C:\distrib\strata-tuning\inkling\engines\basalt-src\app\bin\basalt.exe serve PACK.basalt --port 8081 ...
+C:\WORKDIR\inkling\engines\basalt-src\app\bin\basalt.exe serve PACK.basalt --port 8081 ...
 ```
 
 `basalt.exe serve` starts `<tree>\.venv\Scripts\python.exe -m serve.server --engine-bin <itself>`; the environment is
@@ -46,12 +46,12 @@ against unpatched main use `engines\basalt-src\baseline\bin\basalt.exe` with the
 ## Build, test, install
 
 ```
-C:\distrib\strata-tuning\inkling\src\build-basalt.cmd            rem engine programs -> src\basalt\bin (2-3 min incremental)
-C:\distrib\strata-tuning\inkling\src\build-basalt.cmd tests      rem + the CPU tests of the Inkling model
-C:\distrib\strata-tuning\inkling\src\install-basalt.cmd          rem copy basalt*.exe -> engines\basalt-src\app\bin (stop the engine first)
+C:\WORKDIR\inkling\src\build-basalt.cmd            rem engine programs -> src\basalt\bin (2-3 min incremental)
+C:\WORKDIR\inkling\src\build-basalt.cmd tests      rem + the CPU tests of the Inkling model
+C:\WORKDIR\inkling\src\install-basalt.cmd          rem copy basalt*.exe -> engines\basalt-src\app\bin (stop the engine first)
 ```
 
-From Git Bash: `cmd.exe //c "C:\distrib\strata-tuning\inkling\src\build-basalt.cmd tests" > build.log 2>&1 < /dev/null`.
+From Git Bash: `cmd.exe //c "C:\WORKDIR\inkling\src\build-basalt.cmd tests" > build.log 2>&1 < /dev/null`.
 
 CPU tests (in `src\basalt\build-ink`, all pass): `inkling2_ink_test` (new: re-ranking, swap planning, hysteresis, sizes,
 bounds), `inkling2_spill_test`, `inkling2_expert_map_test`, `inkling2_walk_test`, `inkling2_pretok_test`.

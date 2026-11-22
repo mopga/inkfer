@@ -4,7 +4,7 @@
 #   run_long.sh RUN MODEL        e.g. run_long.sh long-ink1 inkling/inkling-max ; run_long.sh long-qwen1 strata/iq3_s
 # The engine must already be running (run_ink.sh CONFIG RUN long starts Inkling; for Qwen: start_qwen.pyw --engine).
 # Results: agent-tests\runs\RUN\{L1,L2}; the working copy is moved to agent-tests\done\RUN.
-A="C:/distrib/strata-tuning/inkling/agent-tests"; W="C:/distrib/strata-tuning/agent-work"
+A="C:/WORKDIR/inkling/agent-tests"; W="C:/WORKDIR/agent-work"
 RUN="$1"; MODEL="$2"
 [ -e "$W/$RUN" ] && { echo "work copy $W/$RUN exists"; exit 1; }
 git clone -q "$A/repos/_seed" "$W/$RUN" || exit 1

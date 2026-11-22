@@ -1,2 +1,2 @@
-mv: cannot move 'C:/distrib/strata-tuning/agent-work/qwen-a' to 'C:/distrib/strata-tuning/inkling/agent-tests/done/qwen-a': Device or resource busy
+mv: cannot move 'C:/WORKDIR/agent-work/qwen-a' to 'C:/WORKDIR/inkling/agent-tests/done/qwen-a': Device or resource busy
 chain qwen-a finished 01:38:40

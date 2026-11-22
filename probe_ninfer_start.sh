@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Does NInfer start with these options? probe_ninfer_start.sh LABEL [args]  -> prints the capacity lines or the error. Stops the server afterwards.
-ROOT=/c/distrib/strata-tuning/inkling; L="$1"; shift
+ROOT=/c/WORKDIR/inkling; L="$1"; shift
 cd "$ROOT"; bash stop_engine.sh ninfer >/dev/null 2>&1
 (bash run_ninfer.sh "$L" "$@" &)
 for i in $(seq 1 60); do

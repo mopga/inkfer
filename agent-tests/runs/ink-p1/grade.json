@@ -1,6 +1,6 @@
 {
  "run": "ink-p1",
- "params": "model=inkling/inkling-max prompt=C:/distrib/strata-tuning/inkling/agent-tests/prompts/t1-analysis.md thinking=high maxtime=60m extra= args=",
+ "params": "model=inkling/inkling-max prompt=C:/WORKDIR/inkling/agent-tests/prompts/t1-analysis.md thinking=high maxtime=60m extra= args=",
  "steps": {
   "step1": {
    "requests": 38,

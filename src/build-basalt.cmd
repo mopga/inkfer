@@ -1,11 +1,11 @@
 @echo off
-rem Builds Basalt (inkling2 only) from C:\distrib\strata-tuning\inkling\src\basalt with MSVC 14.44 + the unpacked CUDA 13.4 toolkit.
+rem Builds Basalt (inkling2 only) from C:\WORKDIR\inkling\src\basalt with MSVC 14.44 + the unpacked CUDA 13.4 toolkit.
 rem   build-basalt.cmd            configure (first time) and build the engine programs
 rem   build-basalt.cmd tests      the same with the CPU tests of the Inkling model (spill, ink, expert map, walk, pretok)
 rem The executables land in src\basalt\bin (basalt.exe, basalt-bench.exe, basalt-probe.exe). install-basalt.cmd copies
 rem basalt.exe into the runnable tree (engines\basalt-src\app\bin).
 setlocal
-set ROOT=C:\distrib\strata-tuning\inkling
+set ROOT=C:\WORKDIR\inkling
 set SRC=%ROOT%\src\basalt
 set CUDA_PATH=%ROOT%\toolchain\cuda-13.4
 set VS=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools

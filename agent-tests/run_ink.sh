@@ -6,7 +6,7 @@
 #     chain   (default) run_chain.sh;  long: run_long.sh (300-400k-token reading task);  task: the big autonomous task (harness\task-prompt.md) in a fresh clone of _seed
 # The engine answers to the model id of the profile (inkling-balanced / inkling-max / inkling-speed), so oh-my-pi uses
 # that profile's context window and compaction threshold (harness\omp-home\models.yml, config.yml).
-ROOT=/c/distrib/strata-tuning/inkling; A=$ROOT/agent-tests
+ROOT=/c/WORKDIR/inkling; A=$ROOT/agent-tests
 CONFIG="$1"; RUN="$2"; WHAT="${3:-chain}"
 BP="BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1 BASALT_INK_DECODE_KEEP_MIB=256 BASALT_INK_ADAPT_INTERVAL=32 BASALT_INK_ADAPT_SWAPS=96"
 cd "$ROOT" || exit 1
@@ -36,11 +36,11 @@ bash wait_ready.sh 8081 $PROC 420 || { echo "engine did not start: $(tail -3 log
 sleep 3
 echo "$(date +%T) $CONFIG ready, model inkling/$ID, $WHAT $RUN"
 if [ "$WHAT" = task ]; then
-  W="C:/distrib/strata-tuning/agent-work"
+  W="C:/WORKDIR/agent-work"
   [ -e "$W/$RUN" ] && { echo "work copy $W/$RUN exists"; exit 1; }
   git clone -q "$A/repos/_seed" "$W/$RUN" || exit 1
   git -C "$W/$RUN" checkout -q -b work 1974882 || exit 1      # the state before Qwen's run1/run2
-  OMP_MAXTIME=90m bash "$A/run_step.sh" "$RUN" task "inkling/$ID" "C:/distrib/strata-tuning/harness/task-prompt.md"
+  OMP_MAXTIME=90m bash "$A/run_step.sh" "$RUN" task "inkling/$ID" "C:/WORKDIR/harness/task-prompt.md"
   mkdir -p "$A/done"
   for i in 1 2 3 4 5 6 7 8 9 10 11 12; do mv "$W/$RUN" "$A/done/$RUN" 2>/dev/null && break; ping -n 6 127.0.0.1 >/dev/null; done
   [ -d "$A/done/$RUN" ] || cp -a "$W/$RUN" "$A/done/$RUN"

@@ -3,7 +3,7 @@
 #   run_chain.sh RUN MODEL        e.g. run_chain.sh qwen-a strata/iq3_s ; run_chain.sh ink-a inkling/inkling
 # step1 analysis (read-only) -> step2 bug fixing (same session, -c) -> step3 memory questions (same session, -c).
 # The working copy is moved to done/RUN afterwards so the next model cannot see it.
-A="C:/distrib/strata-tuning/inkling/agent-tests"; W="C:/distrib/strata-tuning/agent-work"
+A="C:/WORKDIR/inkling/agent-tests"; W="C:/WORKDIR/agent-work"
 RUN="$1"; MODEL="$2"
 [ -e "$W/$RUN" ] && { echo "work copy $W/$RUN exists"; exit 1; }
 git clone -q "$A/repos/_bugseed" "$W/$RUN" || exit 1

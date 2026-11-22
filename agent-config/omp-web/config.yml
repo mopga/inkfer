@@ -46,7 +46,7 @@ tools:
   # restrictedFolders в oh-my-pi 18.10.4 (внутри omp-web) не реализован и ничего не делает; оставлен на случай обновления
   restrictedFolders:
     - 'D:\path\to\protect'
-    - 'D:\AI\models'
+    - 'D:\MODELS'
     - 'C:\Users\USER\AppData\Local\Strata'
     - 'C:\Users\USER\.strata'
 bash:

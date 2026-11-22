@@ -4,29 +4,29 @@
 -- basalt: models inkling2
 -- Configuring done (3.1s)
 -- Generating done (0.1s)
--- Build files have been written to: C:/distrib/strata-tuning/inkling/src/basalt/build-ink
+-- Build files have been written to: C:/WORKDIR/inkling/src/basalt/build-ink
 [1/6] Refreshing the commit stamp
 [2/6] Building CXX object CMakeFiles\serve_shared.dir\src\program\serve\protocol.cpp.obj
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(185): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(186): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(187): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(188): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(191): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(200): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(215): warning C4324: basalt::kernels::cpu::ExpertPool::FusedExpert: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\src\program\serve\protocol.cpp(334): warning C4127: условное выражение является константой
-C:\distrib\strata-tuning\inkling\src\basalt\src\program\serve\protocol.cpp(334): note: Попробуйте использовать инструкцию "if constexpr"
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(185): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(186): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(187): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(188): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(191): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(200): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(215): warning C4324: basalt::kernels::cpu::ExpertPool::FusedExpert: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\src\program\serve\protocol.cpp(334): warning C4127: условное выражение является константой
+C:\WORKDIR\inkling\src\basalt\src\program\serve\protocol.cpp(334): note: Попробуйте использовать инструкцию "if constexpr"
 [3/6] Linking CXX static library serve_shared.lib
-[4/6] Linking CXX executable C:\distrib\strata-tuning\inkling\src\basalt\bin\basalt.exe
+[4/6] Linking CXX executable C:\WORKDIR\inkling\src\basalt\bin\basalt.exe
 [5/6] Building CXX object CMakeFiles\basalt-bench.dir\src\program\bench_main.cpp.obj
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(185): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(186): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(187): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(188): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(191): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(200): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(215): warning C4324: basalt::kernels::cpu::ExpertPool::FusedExpert: структура была дополнена нулями из-за описателя выравнивания
-C:\distrib\strata-tuning\inkling\src\basalt\src\program\bench_main.cpp(506): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\distrib\strata-tuning\inkling\src\basalt\src\program\bench_main.cpp(1319): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-[6/6] Linking CXX executable C:\distrib\strata-tuning\inkling\src\basalt\bin\basalt-bench.exe
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(185): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(186): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(187): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(188): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(191): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(200): warning C4324: basalt::kernels::cpu::ExpertPool: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\include\basalt/kernels/cpu/pool.hpp(215): warning C4324: basalt::kernels::cpu::ExpertPool::FusedExpert: структура была дополнена нулями из-за описателя выравнивания
+C:\WORKDIR\inkling\src\basalt\src\program\bench_main.cpp(506): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\WORKDIR\inkling\src\basalt\src\program\bench_main.cpp(1319): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+[6/6] Linking CXX executable C:\WORKDIR\inkling\src\basalt\bin\basalt-bench.exe
 BUILD OK

@@ -2,7 +2,7 @@
 # Two conversations taking turns with a deliberately small host store (tools\alttest.py): the first one must keep
 # its cache while the second makes several requests in a row.
 #   alt_check.sh [LABEL] [HOST_CACHE_MIB] [alttest args...]      defaults: alttest 3072; NAPP picks the build
-ROOT=/c/distrib/strata-tuning/inkling
+ROOT=/c/WORKDIR/inkling
 LABEL="${1:-alttest}"; MIB="${2:-3072}"; shift 2 2>/dev/null
 cd "$ROOT" || exit 1
 bash stop_engine.sh basalt >/dev/null 2>&1; bash stop_engine.sh ninfer >/dev/null 2>&1

@@ -3,7 +3,7 @@
 #   bash package-ninfer-pr393.sh
 # Source: src/build-ninfer-pr393/portable.  Target: engines/ninfer-pr393/app.  The release folder is only read.
 set -eu
-ROOT=/c/distrib/strata-tuning/inkling
+ROOT=/c/WORKDIR/inkling
 BUILD=$ROOT/src/build-ninfer-pr393
 SRC=$ROOT/src/ninfer-all
 REL="$ROOT/engines/ninfer/app/ninfer-windows-x64-cuda13.4-sm75-80-86-89-120a-bd8195f42e87"
