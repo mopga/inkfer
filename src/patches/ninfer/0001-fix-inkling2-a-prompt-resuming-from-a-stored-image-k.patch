@@ -1,0 +1,82 @@
+From 8a37fdd34173fd5807434c4b5ace0db71d6fb298 Mon Sep 17 00:00:00 2001
+From: local-build <local-build@localhost>
+Date: Sun, 22 Nov 2026 01:05:35 +0300
+Subject: [PATCH 1/6] fix(inkling2): a prompt resuming from a stored image
+ keeps it while the sequence retires
+
+begin() stores what the sequence held (its turn-closure and endpoint images) before it
+loads the stored image the prompt resumes from. make_host_room dropped the least recently
+used image for those, which at long contexts (a budget of two images) is the very image
+about to load: the prefix hit was lost and the prompt prefilled from its start. The image
+is now held for the duration of retire(), so a hit needs room for two images, not three;
+the sequence's own images take what is left or are skipped.
+
+Local patch, not upstream. Compiled only; not run on a GPU by the author.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+---
+ src/runtime/engine/inkling2_core.cpp | 30 ++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/src/runtime/engine/inkling2_core.cpp b/src/runtime/engine/inkling2_core.cpp
+index d60d3ec..7fef61e 100644
+--- a/src/runtime/engine/inkling2_core.cpp
++++ b/src/runtime/engine/inkling2_core.cpp
+@@ -620,6 +620,8 @@ struct Inkling2Core::Impl {
+         std::vector<std::byte*> pages; // slices of host_pages
+         std::uint64_t bytes     = 0;
+         std::uint64_t last_used = 0;
++        // A prompt is about to resume from it: make_host_room leaves it, whatever its age.
++        bool held = false;
+     };
+     // The images live in pages of one buffer pinned at startup: pinning and unpinning each image
+     // would stall every sequence, and since nothing is freed, the copies need no host wait (the
+@@ -1077,14 +1079,16 @@ struct Inkling2Core::Impl {
+     }
+ 
+     // Frees pages for an image of `bytes`, dropping the least recently used images; false when
+-    // the budget cannot hold it at all.
++    // the budget cannot hold it at all, or only by dropping an image a prompt is resuming from.
+     bool make_host_room(std::uint64_t bytes) {
+         const std::size_t pages = static_cast<std::size_t>((bytes + kHostPageBytes - 1) / kHostPageBytes);
+         if (pages > host_budget / kHostPageBytes) { return false; }
+         while (free_pages.size() < pages) {
+-            const auto oldest = std::min_element(stored.begin(), stored.end(), [](const Stored& a, const Stored& b) {
+-                return a.last_used < b.last_used;
+-            });
++            auto oldest = stored.end();
++            for (auto image = stored.begin(); image != stored.end(); ++image) {
++                if (image->held) { continue; }
++                if (oldest == stored.end() || image->last_used < oldest->last_used) { oldest = image; }
++            }
+             if (oldest == stored.end()) { return false; }
+             free_pages.insert(free_pages.end(), oldest->pages.begin(), oldest->pages.end());
+             host_used -= oldest->pages.size() * kHostPageBytes;
+@@ -1251,8 +1255,22 @@ struct Inkling2Core::Impl {
+                 std::vector<TokenId> tokens  = stored[image].tokens;
+                 std::vector<MediaMark> media = stored[image].media;
+                 const PrefixReusePath path   = stored[image].path;
+-                retire(s);
+-                // Retiring may have dropped or moved the image: find it again.
++                // What the sequence held goes to the store before the image loads over it, and
++                // that must not cost the image itself: where the budget holds two images of this
++                // length, the oldest one is often the one this prompt resumes from. Held, it
++                // stays, and the sequence's own images take the room that is left.
++                stored[image].held = true;
++                const auto release = [this] {
++                    for (Stored& kept : stored) { kept.held = false; }
++                };
++                try {
++                    retire(s);
++                } catch (...) {
++                    release();
++                    throw;
++                }
++                release();
++                // Retiring may have moved the image: find it again.
+                 if (const auto index = stored_index(tokens, media)) {
+                     restore_stored(s, *index);
+                     slot.fed   = std::move(tokens);
+-- 
+2.55.0.windows.3
+

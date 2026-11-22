@@ -1,0 +1,5 @@
+basalt|bs4-256k-r512-spec8|--max-context 262144 --kv fp8 --vram-reserve-mib 512|--lean --fills 249000 --gen 600 --turn-tokens 500 --turns 3 --extra '{"reasoning_effort":"low"}' --note "256k fp8 reserve 512 spec 8"
+basalt|bs4-256k-r256-spec8|--max-context 262144 --kv fp8 --vram-reserve-mib 256|--lean --fills 249000 --gen 600 --turn-tokens 500 --turns 3 --extra '{"reasoning_effort":"low"}' --note "256k fp8 reserve 256 spec 8"
+basalt|bs4-256k-r512-spec1|--max-context 262144 --kv fp8 --vram-reserve-mib 512 --spec 1|--lean --fills 249000 --gen 600 --turn-tokens 500 --turns 3 --extra '{"reasoning_effort":"low"}' --note "256k fp8 reserve 512 spec 1"
+basalt|bs4-256k-r512-spec4|--max-context 262144 --kv fp8 --vram-reserve-mib 512 --spec 4|--lean --fills 249000 --gen 600 --turn-tokens 500 --turns 3 --extra '{"reasoning_effort":"low"}' --note "256k fp8 reserve 512 spec 4"
+basalt|bs4-256k-fp16-r512-spec8|--max-context 262144 --kv fp16 --vram-reserve-mib 512|--lean --fills 249000 --gen 600 --turn-tokens 500 --turns 3 --extra '{"reasoning_effort":"low"}' --note "256k fp16 reserve 512 spec 8"

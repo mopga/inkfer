@@ -1,0 +1,229 @@
+00:45:15 start bs4-256k-r512-spec8: --max-context 262144 --kv fp8 --vram-reserve-mib 512
+ready after 4s
+00:48:06 done bs4-256k-r512-spec8
+[bs4-256k-r512-spec8]  249000 cold   prompt=248899 cached=0 ttft=96.94s prefill=2573.1 gen=251 decode=35.5/35.1 vram=14983 rss=13.31 avail=39.68 disk=3 
+[bs4-256k-r512-spec8]  249000 turn1  prompt=248990 cached=248898 ttft=0.82s prefill=145.8 gen=600 decode=23.8/24.6 vram=13939 rss=13.31 avail=39.67 disk=0 
+[bs4-256k-r512-spec8]  249000 turn2  prompt=249323 cached=248989 ttft=0.84s prefill=516.5 gen=286 decode=28.3/30.8 vram=13935 rss=13.32 avail=39.67 disk=0 
+[bs4-256k-r512-spec8]  249000 turn3  prompt=249400 cached=249322 ttft=0.85s prefill=123.3 gen=403 decode=35.4/35.1 vram=13935 rss=13.32 avail=39.67 disk=0 
+00:48:08 start bs4-256k-r256-spec8: --max-context 262144 --kv fp8 --vram-reserve-mib 256
+ready after 4s
+00:51:02 done bs4-256k-r256-spec8
+[bs4-256k-r256-spec8]  249000 cold   prompt=248899 cached=0 ttft=96.84s prefill=2576.2 gen=251 decode=35.5/35.0 vram=14986 rss=13.31 avail=39.68 disk=0 
+[bs4-256k-r256-spec8]  249000 turn1  prompt=248990 cached=248898 ttft=0.84s prefill=145.3 gen=600 decode=23.8/24.7 vram=13935 rss=13.32 avail=39.71 disk=0 
+[bs4-256k-r256-spec8]  249000 turn2  prompt=249323 cached=248989 ttft=0.87s prefill=514.9 gen=287 decode=30.4/30.6 vram=13931 rss=13.32 avail=39.72 disk=0 
+[bs4-256k-r256-spec8]  249000 turn3  prompt=249401 cached=249322 ttft=0.86s prefill=125.3 gen=500 decode=33.3/35.1 vram=13931 rss=13.32 avail=39.73 disk=0 
+00:51:03 start bs4-256k-r512-spec1: --max-context 262144 --kv fp8 --vram-reserve-mib 512 --spec 1
+ready after 5s
+00:53:52 done bs4-256k-r512-spec1
+[bs4-256k-r512-spec1]  249000 cold   prompt=248899 cached=0 ttft=89.31s prefill=2793.7 gen=251 decode=25.9/25.7 vram=14967 rss=11.31 avail=41.74 disk=0 
+[bs4-256k-r512-spec1]  249000 turn1  prompt=248990 cached=248898 ttft=0.77s prefill=166.1 gen=600 decode=25.3/25.4 vram=13895 rss=11.31 avail=41.73 disk=0 
+[bs4-256k-r512-spec1]  249000 turn2  prompt=249323 cached=248989 ttft=0.8s prefill=586.5 gen=283 decode=24.8/25.0 vram=13888 rss=11.31 avail=41.74 disk=0 
+[bs4-256k-r512-spec1]  249000 turn3  prompt=249397 cached=249322 ttft=0.76s prefill=135.5 gen=363 decode=25.1/25.0 vram=13888 rss=11.31 avail=41.75 disk=0 
+00:53:54 start bs4-256k-r512-spec4: --max-context 262144 --kv fp8 --vram-reserve-mib 512 --spec 4
+ready after 5s
+00:56:41 done bs4-256k-r512-spec4
+[bs4-256k-r512-spec4]  249000 cold   prompt=248899 cached=0 ttft=96.8s prefill=2576.6 gen=251 decode=35.9/35.4 vram=14968 rss=13.27 avail=39.78 disk=0 
+[bs4-256k-r512-spec4]  249000 turn1  prompt=248990 cached=248898 ttft=0.82s prefill=145.6 gen=600 decode=25.1/25.2 vram=13919 rss=13.28 avail=39.76 disk=0 
+[bs4-256k-r512-spec4]  249000 turn2  prompt=249323 cached=248989 ttft=0.84s prefill=514.3 gen=283 decode=29.0/31.6 vram=13914 rss=13.28 avail=39.76 disk=0 
+[bs4-256k-r512-spec4]  249000 turn3  prompt=249397 cached=249322 ttft=0.85s prefill=119.1 gen=363 decode=36.7/36.4 vram=13916 rss=13.28 avail=39.75 disk=0 
+00:56:43 start bs4-256k-fp16-r512-spec8: --max-context 262144 --kv fp16 --vram-reserve-mib 512
+process basalt.exe is not running
+00:56:53 bs4-256k-fp16-r512-spec8: NOT STARTED: [server] error: inkling2: spill plan: even with every expert in RAM the card is 308 MiB short (--max-context 262144)
+00:56:54 sweep finished: plans/p1-basalt-256k-knobs.txt
+00:58:53 start ni2-128k-hc16: --max-context 131072 --expert-residency host --host-cache-mib 16384
+ready after 2s
+01:01:25 done ni2-128k-hc16
+[ni2-128k-hc16]  120000 cold   prompt=120901 cached=0 ttft=110.2s prefill=1098.0 gen=290 decode=74.9/74.0 vram=15153 rss=30.34 avail=22.5 disk=0 
+[ni2-128k-hc16]  120000 turn1  prompt=120992 cached=120900 ttft=1.01s prefill=98.4 gen=600 decode=63.4/63.1 vram=15149 rss=30.34 avail=22.61 disk=0 
+[ni2-128k-hc16]  120000 turn2  prompt=121130 cached=120991 ttft=1.03s prefill=145.8 gen=291 decode=59.8/59.3 vram=15149 rss=30.34 avail=22.61 disk=0 
+[ni2-128k-hc16]  120000 turn3  prompt=121204 cached=121129 ttft=0.93s prefill=85.7 gen=414 decode=65.9/65.4 vram=15149 rss=30.34 avail=22.22 disk=6 
+01:01:28 start ni3-256k-hc24: --max-context 262144 --expert-residency host --host-cache-mib 24576
+ready after 3s
+01:20:06 done ni3-256k-hc24
+[ni3-256k-hc24]   65536 cold   prompt=66009 cached=0 ttft=40.25s prefill=1642.4 gen=240 decode=101.5/100.1 vram=15128 rss=38.33 avail=14.04 disk=2 
+[ni3-256k-hc24]   65536 turn1  prompt=66100 cached=66008 ttft=0.67s prefill=151.1 gen=600 decode=86.3/85.9 vram=15114 rss=38.34 avail=14.24 disk=0 
+[ni3-256k-hc24]   65536 turn2  prompt=66293 cached=66099 ttft=0.76s prefill=278.0 gen=186 decode=86.0/84.4 vram=15114 rss=38.34 avail=14.27 disk=7 
+[ni3-256k-hc24]   65536 turn3  prompt=66371 cached=66292 ttft=0.63s prefill=131.2 gen=450 decode=90.7/90.2 vram=15114 rss=38.34 avail=14.23 disk=6 
+[ni3-256k-hc24]  131072 cold   prompt=131052 cached=0 ttft=127.19s prefill=1031.4 gen=396 decode=47.3/47.0 vram=15122 rss=38.35 avail=12.85 disk=3 
+[ni3-256k-hc24]  131072 turn1  prompt=131143 cached=131051 ttft=1.13s prefill=89.7 gen=600 decode=59.6/59.2 vram=15121 rss=38.35 avail=13.55 disk=2 
+[ni3-256k-hc24]  131072 turn2  prompt=131374 cached=131142 ttft=1.27s prefill=192.7 gen=330 decode=53.2/52.7 vram=15118 rss=38.35 avail=13.65 disk=3 
+[ni3-256k-hc24]  131072 turn3  prompt=131472 cached=131373 ttft=1.09s prefill=97.6 gen=386 decode=66.9/66.4 vram=15118 rss=38.35 avail=13.86 disk=1 
+[ni3-256k-hc24]  196608 cold   prompt=196914 cached=0 ttft=311.25s prefill=632.9 gen=500 decode=37.3/37.2 vram=15146 rss=38.37 avail=10.71 disk=2 
+[ni3-256k-hc24]  196608 turn1  prompt=196980 cached=196913 ttft=1.46s prefill=50.4 gen=600 decode=23.5/23.4 vram=15123 rss=38.37 avail=12.82 disk=0 
+[ni3-256k-hc24]  196608 turn2  prompt=197255 cached=196979 ttft=2.03s prefill=148.4 gen=318 decode=23.3/23.0 vram=15118 rss=38.37 avail=12.79 disk=0 
+[ni3-256k-hc24]  196608 turn3  prompt=197353 cached=197254 ttft=1.58s prefill=68.2 gen=435 decode=27.9/27.7 vram=15118 rss=38.37 avail=12.86 disk=0 
+[ni3-256k-hc24]  249000 cold   prompt=250779 cached=0 ttft=422.93s prefill=593.2 gen=249 decode=32.7/32.5 vram=15360 rss=38.38 avail=12.27 disk=0 
+[ni3-256k-hc24]  249000 turn1  prompt=250870 cached=250778 ttft=1.8s prefill=53.1 gen=600 decode=24.5/24.4 vram=15365 rss=38.38 avail=12.25 disk=0 
+[ni3-256k-hc24]  249000 turn2  prompt=251229 cached=250869 ttft=2.7s prefill=140.4 gen=426 decode=22.3/22.2 vram=15381 rss=38.38 avail=12.09 disk=0 
+[ni3-256k-hc24]  249000 turn3  prompt=251321 cached=251228 ttft=1.85s prefill=53.0 gen=500 decode=27.0/26.9 vram=15379 rss=38.38 avail=12.25 disk=0 
+01:20:09 sweep finished: plans/p2-ninfer-release.txt
+01:49:15 start bm0-256k: --max-context 262144 --kv fp8 
+ready after 7s
+01:52:46 done bm0-256k
+[bm0-256k]  249000 cold   prompt=248899 cached=0 ttft=99.26s prefill=2513.7 gen=251 decode=33.3/32.9 vram=15048 rss=13.43 avail=35.86 disk=1 
+[bm0-256k]  249000 turn1  prompt=248990 cached=248898 ttft=0.91s prefill=145.2 gen=600 decode=22.2/23.0 vram=14017 rss=13.44 avail=36.33 disk=1 
+[bm0-256k]  249000 turn2  prompt=249323 cached=248989 ttft=0.91s prefill=510.2 gen=286 decode=27.6/30.2 vram=14012 rss=13.44 avail=36.31 disk=0 
+[bm0-256k]  249000 turn3  prompt=249400 cached=249322 ttft=0.89s prefill=123.4 gen=403 decode=33.1/32.9 vram=14012 rss=13.44 avail=37.08 disk=0 
+01:52:48 start bp0-256k-off: --max-context 262144 --kv fp8 
+ready after 5s
+01:56:12 done bp0-256k-off
+[bp0-256k-off]  249000 cold   prompt=248899 cached=0 ttft=99.15s prefill=2517.3 gen=251 decode=33.2/32.8 vram=15036 rss=13.43 avail=37.04 disk=0 
+[bp0-256k-off]  249000 turn1  prompt=248990 cached=248898 ttft=0.88s prefill=145.5 gen=600 decode=23.1/23.2 vram=14008 rss=13.44 avail=36.96 disk=0 
+[bp0-256k-off]  249000 turn2  prompt=249323 cached=248989 ttft=0.93s prefill=507.4 gen=283 decode=30.7/31.2 vram=14005 rss=13.44 avail=37.61 disk=0 
+[bp0-256k-off]  249000 turn3  prompt=249397 cached=249322 ttft=0.85s prefill=118.7 gen=363 decode=35.0/34.7 vram=14003 rss=13.44 avail=37.7 disk=0 
+01:56:14 start bp1-256k-adapt-stg: --max-context 262144 --kv fp8 BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1
+ready after 5s
+01:59:29 done bp1-256k-adapt-stg
+[bp1-256k-adapt-stg]  249000 cold   prompt=248899 cached=0 ttft=99.24s prefill=2515.4 gen=251 decode=38.6/38.0 vram=15035 rss=13.43 avail=36.75 disk=0 
+[bp1-256k-adapt-stg]  249000 turn1  prompt=248990 cached=248898 ttft=0.9s prefill=145.1 gen=600 decode=26.9/28.0 vram=14005 rss=13.44 avail=36.75 disk=0 
+[bp1-256k-adapt-stg]  249000 turn2  prompt=249323 cached=248989 ttft=0.92s prefill=511.4 gen=286 decode=31.3/34.7 vram=14003 rss=13.44 avail=37.15 disk=0 
+[bp1-256k-adapt-stg]  249000 turn3  prompt=249400 cached=249322 ttft=0.87s prefill=124.1 gen=403 decode=37.3/36.9 vram=14008 rss=13.44 avail=37.08 disk=0 
+01:59:31 start bp2-256k-keep1024: --max-context 262144 --kv fp8 BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1 BASALT_INK_DECODE_KEEP_MIB=1024
+ready after 5s
+02:02:43 done bp2-256k-keep1024
+[bp2-256k-keep1024]  249000 cold   prompt=248899 cached=0 ttft=99.11s prefill=2517.6 gen=251 decode=41.1/40.4 vram=15033 rss=13.42 avail=36.1 disk=0 
+[bp2-256k-keep1024]  249000 turn1  prompt=248990 cached=248898 ttft=0.9s prefill=143.9 gen=600 decode=29.4/30.7 vram=14527 rss=13.44 avail=37.21 disk=0 
+[bp2-256k-keep1024]  249000 turn2  prompt=249323 cached=248989 ttft=0.93s prefill=505.0 gen=286 decode=34.2/38.2 vram=14512 rss=13.44 avail=37.13 disk=1 
+[bp2-256k-keep1024]  249000 turn3  prompt=249400 cached=249322 ttft=0.92s prefill=121.8 gen=403 decode=39.0/38.6 vram=14512 rss=13.44 avail=37.14 disk=0 
+02:02:46 start bp3-256k-keep512: --max-context 262144 --kv fp8 BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1 BASALT_INK_DECODE_KEEP_MIB=512
+ready after 7s
+02:05:57 done bp3-256k-keep512
+[bp3-256k-keep512]  249000 cold   prompt=248899 cached=0 ttft=99.26s prefill=2514.7 gen=251 decode=42.3/41.5 vram=15040 rss=13.43 avail=36.5 disk=6 
+[bp3-256k-keep512]  249000 turn1  prompt=248990 cached=248898 ttft=0.87s prefill=142.5 gen=600 decode=31.4/32.8 vram=15025 rss=13.44 avail=37.88 disk=0 
+[bp3-256k-keep512]  249000 turn2  prompt=249323 cached=248989 ttft=0.89s prefill=504.5 gen=286 decode=37.8/42.0 vram=15017 rss=13.44 avail=38.65 disk=74 
+[bp3-256k-keep512]  249000 turn3  prompt=249400 cached=249322 ttft=0.9s prefill=122.2 gen=403 decode=41.3/40.8 vram=15019 rss=13.44 avail=34.15 disk=2 
+02:05:59 sweep finished: plans/p3-basalt-patched-256k.txt
+02:06:16 start bp4-256k-keep256: --max-context 262144 --kv fp8 BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1 BASALT_INK_DECODE_KEEP_MIB=256
+ready after 5s
+02:09:22 done bp4-256k-keep256
+[bp4-256k-keep256]  249000 cold   prompt=248899 cached=0 ttft=98.51s prefill=2533.5 gen=251 decode=46.3/45.4 vram=15279 rss=13.42 avail=38.71 disk=0 
+[bp4-256k-keep256]  249000 turn1  prompt=248990 cached=248898 ttft=0.91s prefill=141.0 gen=600 decode=32.5/34.1 vram=15279 rss=13.44 avail=38.71 disk=0 
+[bp4-256k-keep256]  249000 turn2  prompt=249323 cached=248989 ttft=0.9s prefill=498.3 gen=286 decode=38.3/42.8 vram=15277 rss=13.44 avail=38.72 disk=0 
+[bp4-256k-keep256]  249000 turn3  prompt=249400 cached=249322 ttft=0.95s prefill=121.4 gen=403 decode=42.3/41.7 vram=15273 rss=13.44 avail=38.71 disk=0 
+02:09:24 start bp5-256k-keep128: --max-context 262144 --kv fp8 BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1 BASALT_INK_DECODE_KEEP_MIB=128
+ready after 4s
+02:12:32 done bp5-256k-keep128
+[bp5-256k-keep128]  249000 cold   prompt=248899 cached=0 ttft=98.53s prefill=2532.3 gen=251 decode=45.5/44.7 vram=15409 rss=13.42 avail=38.73 disk=0 
+[bp5-256k-keep128]  249000 turn1  prompt=248990 cached=248898 ttft=0.88s prefill=141.4 gen=600 decode=32.5/34.0 vram=15409 rss=13.43 avail=38.71 disk=0 
+[bp5-256k-keep128]  249000 turn2  prompt=249323 cached=248989 ttft=0.93s prefill=497.4 gen=287 decode=43.7/44.0 vram=15405 rss=13.44 avail=38.71 disk=0 
+[bp5-256k-keep128]  249000 turn3  prompt=249401 cached=249322 ttft=0.93s prefill=121.3 gen=500 decode=38.3/40.7 vram=15406 rss=13.44 avail=38.7 disk=0 
+02:12:34 start bp6-256k-spare512-keep256: --max-context 262144 --kv fp8 BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1 BASALT_INK_DECODE_KEEP_MIB=256 BASALT_INK_CARD_SPARE_MIB=512
+ready after 5s
+02:15:40 done bp6-256k-spare512-keep256
+[bp6-256k-spare512-keep256]  249000 cold   prompt=248899 cached=0 ttft=96.83s prefill=2576.5 gen=251 decode=44.2/43.4 vram=15297 rss=12.92 avail=39.25 disk=0 
+[bp6-256k-spare512-keep256]  249000 turn1  prompt=248990 cached=248898 ttft=0.87s prefill=150.0 gen=600 decode=32.9/34.4 vram=15297 rss=12.93 avail=39.23 disk=0 
+[bp6-256k-spare512-keep256]  249000 turn2  prompt=249323 cached=248989 ttft=0.9s prefill=525.3 gen=287 decode=42.5/42.8 vram=15279 rss=12.93 avail=39.23 disk=0 
+[bp6-256k-spare512-keep256]  249000 turn3  prompt=249401 cached=249322 ttft=0.88s prefill=128.7 gen=500 decode=39.1/41.5 vram=15279 rss=12.93 avail=39.22 disk=0 
+02:15:42 start bp7-256k-keep256-fast: --max-context 262144 --kv fp8 BASALT_INK_ADAPT=1 BASALT_INK_STAGING=1 BASALT_INK_ADAPT_LOG=1 BASALT_INK_DECODE_KEEP_MIB=256 BASALT_INK_ADAPT_INTERVAL=32 BASALT_INK_ADAPT_SWAPS=96
+ready after 5s
+02:18:44 done bp7-256k-keep256-fast
+[bp7-256k-keep256-fast]  249000 cold   prompt=248899 cached=0 ttft=98.49s prefill=2533.7 gen=251 decode=43.7/42.9 vram=15281 rss=13.43 avail=38.75 disk=0 
+[bp7-256k-keep256-fast]  249000 turn1  prompt=248990 cached=248898 ttft=0.88s prefill=141.5 gen=600 decode=35.4/35.5 vram=15281 rss=13.44 avail=38.72 disk=0 
+[bp7-256k-keep256-fast]  249000 turn2  prompt=249323 cached=248989 ttft=0.95s prefill=496.4 gen=283 decode=39.8/44.5 vram=15279 rss=13.44 avail=38.73 disk=0 
+[bp7-256k-keep256-fast]  249000 turn3  prompt=249397 cached=249322 ttft=0.9s prefill=116.0 gen=363 decode=44.0/43.3 vram=15273 rss=13.44 avail=38.73 disk=0 
+02:18:46 sweep finished: plans/p4-basalt-keep.txt
+02:18:55 start n393-256k-rk8v4: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk8v4 
+ready after 2s
+02:35:26 done n393-256k-rk8v4
+[n393-256k-rk8v4]   65536 cold   prompt=66009 cached=0 ttft=39.27s prefill=1684.0 gen=240 decode=102.8/101.4 vram=15182 rss=30.34 avail=21.76 disk=0 
+[n393-256k-rk8v4]   65536 turn1  prompt=66100 cached=66008 ttft=0.57s prefill=175.9 gen=600 decode=87.3/86.9 vram=15182 rss=30.34 avail=21.8 disk=0 
+[n393-256k-rk8v4]   65536 turn2  prompt=66217 cached=66099 ttft=0.6s prefill=219.9 gen=328 decode=83.9/83.2 vram=15185 rss=30.34 avail=21.8 disk=0 
+[n393-256k-rk8v4]   65536 turn3  prompt=66289 cached=66216 ttft=0.55s prefill=143.7 gen=406 decode=98.5/97.9 vram=15185 rss=30.35 avail=21.81 disk=0 
+[n393-256k-rk8v4]  131072 cold   prompt=131052 cached=0 ttft=125.31s prefill=1046.6 gen=243 decode=75.8/75.0 vram=15182 rss=30.36 avail=21.8 disk=0 
+[n393-256k-rk8v4]  131072 turn1  prompt=131143 cached=131051 ttft=0.92s prefill=111.1 gen=600 decode=57.6/57.3 vram=15174 rss=30.36 avail=21.81 disk=0 
+[n393-256k-rk8v4]  131072 turn2  prompt=131380 cached=131142 ttft=1.01s prefill=253.5 gen=277 decode=59.5/58.9 vram=15174 rss=30.36 avail=21.81 disk=0 
+[n393-256k-rk8v4]  131072 turn3  prompt=131499 cached=131379 ttft=0.92s prefill=142.8 gen=429 decode=71.7/71.3 vram=15174 rss=30.36 avail=21.81 disk=0 
+[n393-256k-rk8v4]  196608 cold   prompt=196914 cached=0 ttft=261.41s prefill=753.7 gen=240 decode=60.1/59.5 vram=15182 rss=30.37 avail=21.66 disk=0 
+[n393-256k-rk8v4]  196608 turn1  prompt=197005 cached=196913 ttft=1.21s prefill=81.4 gen=600 decode=41.5/41.4 vram=15180 rss=30.38 avail=21.81 disk=0 
+[n393-256k-rk8v4]  196608 turn2  prompt=197483 cached=197004 ttft=1.94s prefill=257.0 gen=326 decode=49.7/49.3 vram=15178 rss=30.38 avail=21.8 disk=0 
+[n393-256k-rk8v4]  196608 turn3  prompt=197564 cached=197482 ttft=1.21s prefill=72.2 gen=364 decode=62.5/62.0 vram=15178 rss=30.38 avail=21.8 disk=0 
+[n393-256k-rk8v4]  249000 cold   prompt=250779 cached=0 ttft=409.56s prefill=612.6 gen=246 decode=48.4/47.9 vram=15187 rss=30.39 avail=21.7 disk=0 
+[n393-256k-rk8v4]  249000 turn1  prompt=250870 cached=250778 ttft=1.45s prefill=66.6 gen=600 decode=39.9/39.8 vram=15178 rss=30.39 avail=21.76 disk=0 
+[n393-256k-rk8v4]  249000 turn2  prompt=251232 cached=250869 ttft=2.15s prefill=175.8 gen=404 decode=43.8/43.5 vram=15178 rss=30.39 avail=21.76 disk=0 
+[n393-256k-rk8v4]  249000 turn3  prompt=251328 cached=251231 ttft=1.5s prefill=69.3 gen=491 decode=48.5/48.2 vram=15180 rss=30.39 avail=21.76 disk=0 
+02:35:30 start n393-256k-rk4v4: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 
+ready after 2s
+02:51:58 done n393-256k-rk4v4
+[n393-256k-rk4v4]   65536 cold   prompt=66009 cached=0 ttft=39.37s prefill=1678.8 gen=240 decode=105.7/104.3 vram=15153 rss=30.34 avail=21.75 disk=0 
+[n393-256k-rk4v4]   65536 turn1  prompt=66100 cached=66008 ttft=0.55s prefill=183.4 gen=600 decode=79.8/79.5 vram=15151 rss=30.34 avail=21.76 disk=0 
+[n393-256k-rk4v4]   65536 turn2  prompt=66327 cached=66099 ttft=0.62s prefill=401.4 gen=241 decode=80.4/79.7 vram=15151 rss=30.35 avail=21.76 disk=0 
+[n393-256k-rk4v4]   65536 turn3  prompt=66398 cached=66326 ttft=0.53s prefill=148.5 gen=386 decode=97.5/96.9 vram=15151 rss=30.35 avail=21.77 disk=0 
+[n393-256k-rk4v4]  131072 cold   prompt=131052 cached=0 ttft=125.02s prefill=1049.0 gen=297 decode=76.5/75.8 vram=15155 rss=30.36 avail=21.73 disk=0 
+[n393-256k-rk4v4]  131072 turn1  prompt=131143 cached=131051 ttft=0.85s prefill=117.4 gen=600 decode=55.3/55.1 vram=15154 rss=30.36 avail=21.74 disk=0 
+[n393-256k-rk4v4]  131072 turn2  prompt=131597 cached=131142 ttft=1.36s prefill=357.7 gen=251 decode=61.8/61.1 vram=15154 rss=30.36 avail=21.75 disk=0 
+[n393-256k-rk4v4]  131072 turn3  prompt=131675 cached=131596 ttft=0.8s prefill=106.7 gen=410 decode=77.2/76.8 vram=15151 rss=30.36 avail=21.76 disk=0 
+[n393-256k-rk4v4]  196608 cold   prompt=196914 cached=0 ttft=260.95s prefill=755.0 gen=240 decode=63.2/62.4 vram=15153 rss=30.38 avail=21.73 disk=0 
+[n393-256k-rk4v4]  196608 turn1  prompt=197005 cached=196913 ttft=1.14s prefill=86.5 gen=600 decode=41.7/41.6 vram=15148 rss=30.38 avail=21.76 disk=0 
+[n393-256k-rk4v4]  196608 turn2  prompt=197459 cached=197004 ttft=1.85s prefill=255.4 gen=380 decode=53.3/53.0 vram=15151 rss=30.38 avail=21.77 disk=0 
+[n393-256k-rk4v4]  196608 turn3  prompt=197558 cached=197458 ttft=1.16s prefill=93.4 gen=414 decode=58.4/57.9 vram=15151 rss=30.38 avail=21.76 disk=0 
+[n393-256k-rk4v4]  249000 cold   prompt=250779 cached=0 ttft=409.38s prefill=612.8 gen=239 decode=51.3/50.8 vram=15153 rss=30.39 avail=21.72 disk=0 
+[n393-256k-rk4v4]  249000 turn1  prompt=250870 cached=250778 ttft=1.37s prefill=71.1 gen=600 decode=44.3/44.2 vram=15145 rss=30.39 avail=21.75 disk=0 
+[n393-256k-rk4v4]  249000 turn2  prompt=251029 cached=250869 ttft=1.41s prefill=121.5 gen=466 decode=44.9/44.7 vram=15142 rss=30.39 avail=21.76 disk=0 
+[n393-256k-rk4v4]  249000 turn3  prompt=251131 cached=251028 ttft=1.39s prefill=79.0 gen=439 decode=49.0/48.7 vram=15142 rss=30.39 avail=21.76 disk=0 
+02:52:01 start n393-512k-rk4v4: --max-context 524288 --expert-residency host --host-cache-mib 20480 --kv-dtype rk4v4 
+ready after 3s
+03:46:09 done n393-512k-rk4v4
+[n393-512k-rk4v4]  131072 cold   prompt=132476 cached=0 ttft=127.51s prefill=1039.7 gen=293 decode=77.0/76.2 vram=15131 rss=34.35 avail=17.58 disk=0 
+[n393-512k-rk4v4]  131072 turn1  prompt=132567 cached=132475 ttft=0.88s prefill=115.0 gen=600 decode=59.4/59.1 vram=15113 rss=34.35 avail=17.7 disk=0 
+[n393-512k-rk4v4]  131072 turn2  prompt=132826 cached=132566 ttft=1.12s prefill=248.4 gen=401 decode=61.7/61.4 vram=15109 rss=34.35 avail=17.71 disk=0 
+[n393-512k-rk4v4]  131072 turn3  prompt=132935 cached=132825 ttft=0.88s prefill=136.3 gen=504 decode=73.3/72.9 vram=15109 rss=34.35 avail=17.71 disk=0 
+[n393-512k-rk4v4]  262144 cold   prompt=260274 cached=0 ttft=438.93s prefill=593.2 gen=292 decode=47.9/47.5 vram=15128 rss=34.37 avail=17.68 disk=0 
+[n393-512k-rk4v4]  262144 turn1  prompt=260365 cached=260273 ttft=1.4s prefill=69.3 gen=600 decode=42.9/42.8 vram=15123 rss=34.38 avail=17.68 disk=0 
+[n393-512k-rk4v4]  262144 turn2  prompt=260746 cached=260364 ttft=2.17s prefill=184.0 gen=255 decode=39.1/38.7 vram=15123 rss=34.38 avail=17.68 disk=0 
+[n393-512k-rk4v4]  262144 turn3  prompt=260823 cached=260745 ttft=1.36s prefill=62.4 gen=463 decode=48.8/48.5 vram=15122 rss=34.38 avail=17.69 disk=0 
+[n393-512k-rk4v4]  393216 cold   prompt=391315 cached=0 ttft=948.4s prefill=412.7 gen=287 decode=37.0/36.8 vram=15130 rss=34.4 avail=17.6 disk=0 
+[n393-512k-rk4v4]  393216 turn1  prompt=391406 cached=391314 ttft=2.03s prefill=48.5 gen=600 decode=30.1/30.0 vram=15124 rss=34.4 avail=17.65 disk=0 
+[n393-512k-rk4v4]  393216 turn2  prompt=391551 cached=391405 ttft=2.07s prefill=75.8 gen=456 decode=32.2/32.0 vram=15121 rss=34.4 avail=17.66 disk=0 
+[n393-512k-rk4v4]  393216 turn3  prompt=391654 cached=391550 ttft=2.06s prefill=54.2 gen=543 decode=34.6/34.4 vram=15123 rss=34.4 avail=17.67 disk=0 
+[n393-512k-rk4v4]  498000 cold   prompt=495925 cached=0 ttft=1494.32s prefill=331.9 gen=279 decode=28.7/28.5 vram=15133 rss=34.42 avail=17.49 disk=0 
+[n393-512k-rk4v4]  498000 turn1  prompt=496016 cached=495924 ttft=2.51s prefill=39.1 gen=600 decode=20.7/20.6 vram=15133 rss=34.42 avail=17.81 disk=0 
+[n393-512k-rk4v4]  498000 turn2  prompt=496496 cached=496015 ttft=4.33s prefill=115.1 gen=316 decode=23.8/23.7 vram=15133 rss=34.42 avail=17.82 disk=0 
+[n393-512k-rk4v4]  498000 turn3  prompt=496603 cached=496495 ttft=2.52s prefill=45.7 gen=410 decode=30.8/30.6 vram=15133 rss=34.42 avail=17.82 disk=0 
+03:46:12 sweep finished: plans/p5-ninfer393.txt
+04:40:37 start n393-d5: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 --draft-tokens 5 
+process ninfer-serve.exe is not running
+04:40:44 n393-d5: NOT STARTED:                                 or high as auto instead of refusing the request
+  --log-level L                 trace, debug, info (default), warning, error,
+04:40:45 start n393-d7a: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 --draft-tokens 7 --adaptive-mtp 
+process ninfer-serve.exe is not running
+04:40:52 n393-d7a: NOT STARTED:                                 or high as auto instead of refusing the request
+  --log-level L                 trace, debug, info (default), warning, error,
+04:40:53 start n393-c03: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 --draft-tokens 5 --draft-confidence 0.3 --draft-min-p 0.3 
+process ninfer-serve.exe is not running
+04:41:00 n393-c03: NOT STARTED:                                 or high as auto instead of refusing the request
+  --log-level L                 trace, debug, info (default), warning, error,
+04:41:01 start n393-nospec: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 --spec none 
+ready after 2s
+04:44:15 done n393-nospec
+[n393-nospec]  131072 cold   prompt=132476 cached=0 ttft=127.03s prefill=1043.7 gen=293 decode=53.7/53.3 vram=15101 rss=30.29 avail=21.74 disk=0 
+[n393-nospec]  131072 turn1  prompt=132567 cached=132475 ttft=0.79s prefill=127.9 gen=600 decode=54.9/54.7 vram=15099 rss=30.29 avail=21.83 disk=0 
+[n393-nospec]  131072 turn2  prompt=132826 cached=132566 ttft=1.03s prefill=267.9 gen=401 decode=55.2/54.9 vram=15099 rss=30.3 avail=21.81 disk=0 
+[n393-nospec]  131072 turn3  prompt=132935 cached=132825 ttft=0.8s prefill=149.5 gen=504 decode=52.5/52.3 vram=15099 rss=30.3 avail=21.82 disk=0 
+04:44:18 sweep finished: plans/p7-ninfer-drafts.txt
+04:47:12 start n393-d5: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 --spec dspark --draft-tokens 5 
+ready after 3s
+04:50:34 done n393-d5
+[n393-d5]  131072 cold   prompt=132476 cached=0 ttft=127.06s prefill=1043.4 gen=293 decode=63.3/62.6 vram=15092 rss=30.32 avail=20.7 disk=0 
+[n393-d5]  131072 turn1  prompt=132567 cached=132475 ttft=0.87s prefill=116.2 gen=600 decode=38.2/38.0 vram=15088 rss=30.32 avail=21.75 disk=0 
+[n393-d5]  131072 turn2  prompt=132826 cached=132566 ttft=1.13s prefill=249.6 gen=401 decode=43.0/42.7 vram=15096 rss=30.34 avail=21.73 disk=0 
+[n393-d5]  131072 turn3  prompt=132935 cached=132825 ttft=0.87s prefill=137.3 gen=504 decode=56.2/55.8 vram=15096 rss=30.34 avail=21.73 disk=0 
+04:50:37 start n393-d7a: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 --spec dspark --draft-tokens 7 --adaptive-mtp 
+ready after 3s
+04:53:45 done n393-d7a
+[n393-d7a]  131072 cold   prompt=132476 cached=0 ttft=127.39s prefill=1040.6 gen=293 decode=69.8/69.2 vram=15100 rss=30.38 avail=21.78 disk=0 
+[n393-d7a]  131072 turn1  prompt=132567 cached=132475 ttft=0.88s prefill=115.8 gen=600 decode=57.2/57.0 vram=15106 rss=30.4 avail=21.76 disk=0 
+[n393-d7a]  131072 turn2  prompt=132826 cached=132566 ttft=1.13s prefill=248.8 gen=401 decode=61.7/61.4 vram=15106 rss=30.41 avail=21.75 disk=0 
+[n393-d7a]  131072 turn3  prompt=132935 cached=132825 ttft=0.86s prefill=137.0 gen=504 decode=69.6/69.3 vram=15110 rss=30.42 avail=21.73 disk=0 
+04:53:48 start n393-c03: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 --spec dspark --draft-tokens 5 --draft-confidence 0.3 --draft-min-p 0.3 
+process ninfer-serve.exe is not running
+04:53:55 n393-c03: NOT STARTED: 2026-11-22 04:53:48.829  ERROR startup failed | starting engine | 108 ms
+2026-11-22 04:53:48.829  ERROR Inkling 2 has no --draft-confidence, n-gram copy proposals or archive, --mtp-attention-window or proposal head, --adaptive-mtp only with --spec dspark and --draft-min-p only with --spec dspine or dspark
+04:53:56 sweep finished: plans/p7b-ninfer-drafts.txt
+04:53:58 start n393-def: --max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4 
+ready after 3s
+04:57:05 done n393-def
+[n393-def]  131072 cold   prompt=132476 cached=0 ttft=127.52s prefill=1039.6 gen=293 decode=77.8/77.0 vram=15085 rss=30.35 avail=21.78 disk=0 
+[n393-def]  131072 turn1  prompt=132567 cached=132475 ttft=0.88s prefill=115.9 gen=600 decode=59.7/59.5 vram=15085 rss=30.35 avail=21.85 disk=0 
+[n393-def]  131072 turn2  prompt=132826 cached=132566 ttft=1.11s prefill=249.1 gen=401 decode=63.7/63.3 vram=15085 rss=30.35 avail=21.84 disk=0 
+[n393-def]  131072 turn3  prompt=132935 cached=132825 ttft=0.86s prefill=137.3 gen=504 decode=73.8/73.4 vram=15085 rss=30.35 avail=21.84 disk=0 
+04:57:08 sweep finished: plans/p7c-ninfer-default.txt

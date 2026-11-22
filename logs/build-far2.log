@@ -1,0 +1,10 @@
+[1/4] Stamping NINFER build id from git (build-time)
+-- NINFER build id will be marked dirty -- product sources differ from HEAD:
+ M src/models/inkling2/executor.cpp
+ M src/models/inkling2/kernels.cu
+ M src/models/inkling2/kernels.h
+[2/4] Building CUDA object src\models\CMakeFiles\ninfer_model_runtime.dir\inkling2\kernels.cu.obj
+kernels.cu
+[3/4] Linking CXX static library src\models\ninfer_model_runtime.lib
+[4/4] Linking CXX shared library portable\backends\cuda13\ninfer-runtime.dll
+build_exit=0

@@ -1,0 +1,28 @@
+== 1024
+decode 1 row(s): scalar 0.018 ms per visit (x8 0.14 ms, 64 GB/s); far route 0.042 ms (x8 0.34 ms, 27 GB/s), 0.42x
+decode 4 row(s): scalar 0.024 ms per visit (x8 0.19 ms, 48 GB/s); far route 0.073 ms (x8 0.58 ms, 16 GB/s), 0.33x
+decode 8 row(s): scalar 0.034 ms per visit (x8 0.27 ms, 34 GB/s); far route 0.110 ms (x8 0.88 ms, 10 GB/s), 0.31x
+== 2048
+decode 1 row(s): scalar 0.024 ms per visit (x8 0.19 ms, 96 GB/s); far route 0.046 ms (x8 0.37 ms, 49 GB/s), 0.52x
+decode 4 row(s): scalar 0.034 ms per visit (x8 0.27 ms, 67 GB/s); far route 0.075 ms (x8 0.60 ms, 31 GB/s), 0.46x
+decode 8 row(s): scalar 0.053 ms per visit (x8 0.43 ms, 43 GB/s); far route 0.111 ms (x8 0.89 ms, 21 GB/s), 0.48x
+== 3072
+decode 1 row(s): scalar 0.034 ms per visit (x8 0.27 ms, 100 GB/s); far route 0.048 ms (x8 0.38 ms, 72 GB/s), 0.72x
+decode 4 row(s): scalar 0.046 ms per visit (x8 0.37 ms, 74 GB/s); far route 0.077 ms (x8 0.61 ms, 45 GB/s), 0.61x
+decode 8 row(s): scalar 0.075 ms per visit (x8 0.60 ms, 46 GB/s); far route 0.115 ms (x8 0.92 ms, 30 GB/s), 0.65x
+== 4096
+decode 1 row(s): scalar 0.036 ms per visit (x8 0.29 ms, 126 GB/s); far route 0.048 ms (x8 0.39 ms, 95 GB/s), 0.75x
+decode 4 row(s): scalar 0.059 ms per visit (x8 0.47 ms, 78 GB/s); far route 0.081 ms (x8 0.65 ms, 57 GB/s), 0.73x
+decode 8 row(s): scalar 0.096 ms per visit (x8 0.76 ms, 48 GB/s); far route 0.120 ms (x8 0.96 ms, 38 GB/s), 0.80x
+== 6144
+decode 1 row(s): scalar 0.050 ms per visit (x8 0.40 ms, 137 GB/s); far route 0.049 ms (x8 0.39 ms, 141 GB/s), 1.03x
+decode 4 row(s): scalar 0.081 ms per visit (x8 0.65 ms, 85 GB/s); far route 0.086 ms (x8 0.69 ms, 80 GB/s), 0.95x
+decode 8 row(s): scalar 0.141 ms per visit (x8 1.13 ms, 49 GB/s); far route 0.127 ms (x8 1.02 ms, 54 GB/s), 1.11x
+== 8192
+decode 1 row(s): scalar 0.063 ms per visit (x8 0.50 ms, 146 GB/s); far route 0.050 ms (x8 0.40 ms, 182 GB/s), 1.25x
+decode 4 row(s): scalar 0.104 ms per visit (x8 0.83 ms, 88 GB/s); far route 0.087 ms (x8 0.70 ms, 105 GB/s), 1.19x
+decode 8 row(s): scalar 0.183 ms per visit (x8 1.46 ms, 50 GB/s); far route 0.132 ms (x8 1.05 ms, 70 GB/s), 1.39x
+== 16384
+decode 1 row(s): scalar 0.112 ms per visit (x8 0.89 ms, 164 GB/s); far route 0.059 ms (x8 0.47 ms, 313 GB/s), 1.90x
+decode 4 row(s): scalar 0.192 ms per visit (x8 1.54 ms, 96 GB/s); far route 0.102 ms (x8 0.81 ms, 181 GB/s), 1.89x
+decode 8 row(s): scalar 0.345 ms per visit (x8 2.76 ms, 53 GB/s); far route 0.147 ms (x8 1.18 ms, 125 GB/s), 2.34x

@@ -1,0 +1,5 @@
+[bs4-256k-r512-spec8]       0 warmup prompt=22 cached=0 ttft=0.98s prefill=25.9 gen=39 decode=36.5/56.6 vram=14983 rss=13.24 avail=39.77 disk=2 
+[bs4-256k-r512-spec8]  249000 cold   prompt=248899 cached=0 ttft=96.94s prefill=2573.1 gen=251 decode=35.5/35.1 vram=14983 rss=13.31 avail=39.68 disk=3 
+[bs4-256k-r512-spec8]  249000 turn1  prompt=248990 cached=248898 ttft=0.82s prefill=145.8 gen=600 decode=23.8/24.6 vram=13939 rss=13.31 avail=39.67 disk=0 
+[bs4-256k-r512-spec8]  249000 turn2  prompt=249323 cached=248989 ttft=0.84s prefill=516.5 gen=286 decode=28.3/30.8 vram=13935 rss=13.32 avail=39.67 disk=0 
+[bs4-256k-r512-spec8]  249000 turn3  prompt=249400 cached=249322 ttft=0.85s prefill=123.3 gen=403 decode=35.4/35.1 vram=13935 rss=13.32 avail=39.67 disk=0 

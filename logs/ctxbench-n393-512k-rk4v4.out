@@ -1,0 +1,17 @@
+[n393-512k-rk4v4]       0 warmup prompt=22 cached=0 ttft=0.29s prefill=85.4 gen=60 decode=122.9/118.3 vram=15121 rss=34.33 avail=17.74 disk=0 
+[n393-512k-rk4v4]  131072 cold   prompt=132476 cached=0 ttft=127.51s prefill=1039.7 gen=293 decode=77.0/76.2 vram=15131 rss=34.35 avail=17.58 disk=0 
+[n393-512k-rk4v4]  131072 turn1  prompt=132567 cached=132475 ttft=0.88s prefill=115.0 gen=600 decode=59.4/59.1 vram=15113 rss=34.35 avail=17.7 disk=0 
+[n393-512k-rk4v4]  131072 turn2  prompt=132826 cached=132566 ttft=1.12s prefill=248.4 gen=401 decode=61.7/61.4 vram=15109 rss=34.35 avail=17.71 disk=0 
+[n393-512k-rk4v4]  131072 turn3  prompt=132935 cached=132825 ttft=0.88s prefill=136.3 gen=504 decode=73.3/72.9 vram=15109 rss=34.35 avail=17.71 disk=0 
+[n393-512k-rk4v4]  262144 cold   prompt=260274 cached=0 ttft=438.93s prefill=593.2 gen=292 decode=47.9/47.5 vram=15128 rss=34.37 avail=17.68 disk=0 
+[n393-512k-rk4v4]  262144 turn1  prompt=260365 cached=260273 ttft=1.4s prefill=69.3 gen=600 decode=42.9/42.8 vram=15123 rss=34.38 avail=17.68 disk=0 
+[n393-512k-rk4v4]  262144 turn2  prompt=260746 cached=260364 ttft=2.17s prefill=184.0 gen=255 decode=39.1/38.7 vram=15123 rss=34.38 avail=17.68 disk=0 
+[n393-512k-rk4v4]  262144 turn3  prompt=260823 cached=260745 ttft=1.36s prefill=62.4 gen=463 decode=48.8/48.5 vram=15122 rss=34.38 avail=17.69 disk=0 
+[n393-512k-rk4v4]  393216 cold   prompt=391315 cached=0 ttft=948.4s prefill=412.7 gen=287 decode=37.0/36.8 vram=15130 rss=34.4 avail=17.6 disk=0 
+[n393-512k-rk4v4]  393216 turn1  prompt=391406 cached=391314 ttft=2.03s prefill=48.5 gen=600 decode=30.1/30.0 vram=15124 rss=34.4 avail=17.65 disk=0 
+[n393-512k-rk4v4]  393216 turn2  prompt=391551 cached=391405 ttft=2.07s prefill=75.8 gen=456 decode=32.2/32.0 vram=15121 rss=34.4 avail=17.66 disk=0 
+[n393-512k-rk4v4]  393216 turn3  prompt=391654 cached=391550 ttft=2.06s prefill=54.2 gen=543 decode=34.6/34.4 vram=15123 rss=34.4 avail=17.67 disk=0 
+[n393-512k-rk4v4]  498000 cold   prompt=495925 cached=0 ttft=1494.32s prefill=331.9 gen=279 decode=28.7/28.5 vram=15133 rss=34.42 avail=17.49 disk=0 
+[n393-512k-rk4v4]  498000 turn1  prompt=496016 cached=495924 ttft=2.51s prefill=39.1 gen=600 decode=20.7/20.6 vram=15133 rss=34.42 avail=17.81 disk=0 
+[n393-512k-rk4v4]  498000 turn2  prompt=496496 cached=496015 ttft=4.33s prefill=115.1 gen=316 decode=23.8/23.7 vram=15133 rss=34.42 avail=17.82 disk=0 
+[n393-512k-rk4v4]  498000 turn3  prompt=496603 cached=496495 ttft=2.52s prefill=45.7 gen=410 decode=30.8/30.6 vram=15133 rss=34.42 avail=17.82 disk=0 

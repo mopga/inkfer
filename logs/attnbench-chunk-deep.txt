@@ -1,0 +1,18 @@
+== 262144 cfar 1
+prompt chunk 2048 rows after 260096 keys: scalar 743.88 ms per visit, x8 visits 5951.1 ms = 344 tok/s attention only, 8.8 TFLOPS
+prompt chunk far route (1 + 1 slots): 133.89 ms per visit, x8 visits 1071.1 ms = 1912 tok/s attention only, 49.1 TFLOPS, 5.56x
+== 262144 cfar 2
+prompt chunk 2048 rows after 260096 keys: scalar 746.43 ms per visit, x8 visits 5971.4 ms = 343 tok/s attention only, 8.8 TFLOPS
+prompt chunk far route (1 + 2 slots): 131.24 ms per visit, x8 visits 1049.9 ms = 1951 tok/s attention only, 50.1 TFLOPS, 5.69x
+== 262144 cfar 4
+prompt chunk 2048 rows after 260096 keys: scalar 743.55 ms per visit, x8 visits 5948.4 ms = 344 tok/s attention only, 8.8 TFLOPS
+prompt chunk far route (1 + 4 slots): 132.41 ms per visit, x8 visits 1059.2 ms = 1933 tok/s attention only, 49.6 TFLOPS, 5.62x
+== 507904 cfar 1
+prompt chunk 2048 rows after 505856 keys: scalar 1444.81 ms per visit, x8 visits 11558.5 ms = 177 tok/s attention only, 8.8 TFLOPS
+prompt chunk far route (1 + 1 slots): 256.49 ms per visit, x8 visits 2051.9 ms = 998 tok/s attention only, 49.7 TFLOPS, 5.63x
+== 507904 cfar 2
+prompt chunk 2048 rows after 505856 keys: scalar 1441.37 ms per visit, x8 visits 11531.0 ms = 178 tok/s attention only, 8.8 TFLOPS
+prompt chunk far route (1 + 2 slots): 251.74 ms per visit, x8 visits 2013.9 ms = 1017 tok/s attention only, 50.7 TFLOPS, 5.73x
+== 507904 cfar 4
+prompt chunk 2048 rows after 505856 keys: scalar 1450.74 ms per visit, x8 visits 11605.9 ms = 176 tok/s attention only, 8.8 TFLOPS
+prompt chunk far route (1 + 4 slots): 254.69 ms per visit, x8 visits 2037.5 ms = 1005 tok/s attention only, 50.1 TFLOPS, 5.70x

@@ -1,0 +1,161 @@
+# omp-web 0.5.1 (внутри oh-my-pi 18.10.4) -> Strata. Копия harness/omp-home/config.yml от 12.11.2026; своя папка, чтобы не трогать базу терминального oh-my-pi 18.18.8.
+modelRoles:
+  default: inkling/inkling-balanced
+  vision: inkling/inkling-balanced   # описывает картинки для модели без зрения; лаунчеры Inkling/Qwen ставят сюда загруженную модель (обе видят сами)
+defaultThinkingLevel: medium
+
+# Начало промпта не трогаем, побочных запросов к модели не делаем
+provider:
+  appendOnlyContext: "on"
+providers:
+  cacheWarming: "off"
+recap:
+  enabled: false
+compaction:
+  enabled: true
+  thresholdTokens: 180000   # под кэш разговоров движка 8192 МиБ (REPORT.md, раздел 8); при кэше 5120 МиБ вернуть 135000
+  keepRecentTokens: 20000   # умолчание oh-my-pi; 4000 из `strata connect omp` рассчитано на окно 32K
+  methodOrder: [soft]
+  asyncEnabled: false
+  idleEnabled: false
+  # Inkling: порог сжатия истории под окно профиля (f = фиксированное число токенов); Qwen остаётся на thresholdTokens
+  modelThresholds:
+    inkling/inkling: "f100000"
+    inkling/inkling-speed: "f100000"
+    inkling/inkling-balanced: "f200000"
+    inkling/inkling-max: "f430000"
+
+# Субагенты: движок Strata выполняет один запрос за раз, параллельные субагенты только чередуют диалоги
+task:
+  maxConcurrency: 1
+  maxRecursionDepth: 1      # субагент не порождает своих субагентов: чередуются максимум два диалога
+
+# Без обращений наружу
+startup:
+  checkUpdate: false
+  setupWizard: false
+telemetry:
+  otlpExportEnabled: false
+
+# Права (с 12.11.2026): всё без вопросов (yolo), кроме команд из стоп-листа bash.patterns ниже - на них окно
+# подтверждения остаётся. Вернуть вопросы на все команды: approvalMode: write (копия: config.yml.bak-20261112-write).
+# Стоп-лист ловит только команды оболочки: скрипт, который модель сама написала и запустила, он не разбирает.
+# Шаблоны: только '*', регистр учитывается; срабатывают на всю команду или на любую её часть между ; && || |.
+tools:
+  approvalMode: yolo
+  # restrictedFolders в oh-my-pi 18.10.4 (внутри omp-web) не реализован и ничего не делает; оставлен на случай обновления
+  restrictedFolders:
+    - 'D:\path\to\protect'
+    - 'D:\AI\models'
+    - 'C:\Users\USER\AppData\Local\Strata'
+    - 'C:\Users\USER\.strata'
+bash:
+  patterns:
+    # --- удаление файлов и папок
+    - {match: '*rm -r*', approval: prompt}
+    - {match: '*rm -R*', approval: prompt}
+    - {match: '*rm -fr*', approval: prompt}
+    - {match: '*rm -fR*', approval: prompt}
+    - {match: '*rm -f -r*', approval: prompt}
+    - {match: '*rm --recursive*', approval: prompt}
+    - {match: '*rmdir*', approval: prompt}
+    - {match: '*find * -delete*', approval: prompt}
+    - {match: '*find * -exec rm*', approval: prompt}
+    - {match: '*xargs*rm *', approval: prompt}
+    - {match: '*shred *', approval: prompt}
+    - {match: '*Remove-Item*', approval: prompt}
+    - {match: '*remove-item*', approval: prompt}
+    - {match: '*rm -Recurse*', approval: prompt}
+    - {match: '*del -Recurse*', approval: prompt}
+    - {match: '*Clear-Content*', approval: prompt}
+    - {match: '*cmd*/c*del *', approval: prompt}
+    - {match: '*cmd*/c*erase *', approval: prompt}
+    - {match: '*cmd*/c*rd *', approval: prompt}
+    - {match: '*cmd*/C*del *', approval: prompt}
+    - {match: '*cmd*/C*rd *', approval: prompt}
+    - {match: 'del *', approval: prompt}
+    - {match: 'rd *', approval: prompt}
+    - {match: '*robocopy*MIR*', approval: prompt}
+    - {match: '*robocopy*mir*', approval: prompt}
+    - {match: '*robocopy*PURGE*', approval: prompt}
+    - {match: '*robocopy*purge*', approval: prompt}
+    - {match: '*rsync*--delete*', approval: prompt}
+    # --- диски и система
+    - {match: 'format *', approval: prompt}
+    - {match: '*cmd*/c*format *', approval: prompt}
+    - {match: '*Format-Volume*', approval: prompt}
+    - {match: '*Clear-Disk*', approval: prompt}
+    - {match: '*Remove-Partition*', approval: prompt}
+    - {match: '*diskpart*', approval: prompt}
+    - {match: '*bcdedit*', approval: prompt}
+    - {match: '*reg delete*', approval: prompt}
+    - {match: '*reg add*', approval: prompt}
+    - {match: '*Remove-ItemProperty*', approval: prompt}
+    - {match: '*takeown*', approval: prompt}
+    - {match: '*icacls*', approval: prompt}
+    - {match: 'shutdown*', approval: prompt}
+    - {match: '*shutdown.exe*', approval: prompt}
+    - {match: '*shutdown /*', approval: prompt}
+    - {match: '*shutdown -*', approval: prompt}
+    - {match: '*Stop-Computer*', approval: prompt}
+    - {match: '*Restart-Computer*', approval: prompt}
+    # --- процессы и службы (рядом работают посторонние серверы: java, mysqld)
+    - {match: 'kill *', approval: prompt}
+    - {match: 'pkill *', approval: prompt}
+    - {match: 'killall *', approval: prompt}
+    - {match: '* kill -*', approval: prompt}
+    - {match: '* pkill *', approval: prompt}
+    - {match: '*taskkill*', approval: prompt}
+    - {match: '*TASKKILL*', approval: prompt}
+    - {match: '*Stop-Process*', approval: prompt}
+    - {match: '*stop-process*', approval: prompt}
+    - {match: '*Stop-Service*', approval: prompt}
+    - {match: '*net stop*', approval: prompt}
+    - {match: '*sc stop*', approval: prompt}
+    - {match: '*sc delete*', approval: prompt}
+    - {match: '*sc config*', approval: prompt}
+    - {match: '*wmic*delete*', approval: prompt}
+    - {match: '*wmic*terminate*', approval: prompt}
+    - {match: '*wsl --shutdown*', approval: prompt}
+    - {match: '*wsl --terminate*', approval: prompt}
+    - {match: '*wsl -t *', approval: prompt}
+    - {match: '*wsl --unregister*', approval: prompt}
+    # --- база данных
+    - {match: '*DROP TABLE*', approval: prompt}
+    - {match: '*DROP DATABASE*', approval: prompt}
+    - {match: '*DROP SCHEMA*', approval: prompt}
+    - {match: '*DROP COLUMN*', approval: prompt}
+    - {match: '*DROP USER*', approval: prompt}
+    - {match: '*drop table*', approval: prompt}
+    - {match: '*drop database*', approval: prompt}
+    - {match: '*drop schema*', approval: prompt}
+    - {match: '*drop column*', approval: prompt}
+    - {match: '*drop user*', approval: prompt}
+    - {match: '*Drop Table*', approval: prompt}
+    - {match: '*Drop Database*', approval: prompt}
+    - {match: '*TRUNCATE*', approval: prompt}
+    - {match: '*truncate *', approval: prompt}
+    - {match: '*Truncate *', approval: prompt}
+    - {match: '*DELETE FROM*', approval: prompt}
+    - {match: '*delete from*', approval: prompt}
+    - {match: '*Delete From*', approval: prompt}
+    - {match: '*mysqladmin*', approval: prompt}
+    # --- git: потеря работы
+    - {match: '*git reset --hard*', approval: prompt}
+    - {match: '*git clean*', approval: prompt}
+    - {match: '*git push*--force*', approval: prompt}
+    - {match: '*git push -f*', approval: prompt}
+    - {match: '*git push * -f*', approval: prompt}
+    - {match: '*git branch -D*', approval: prompt}
+    - {match: '*git checkout -- *', approval: prompt}
+    - {match: '*git restore *', approval: prompt}
+    - {match: '*git stash drop*', approval: prompt}
+    - {match: '*git stash clear*', approval: prompt}
+    # --- на случай возврата approvalMode: write - чтение истории git без вопросов
+    - {match: 'git status', approval: allow}
+    - {match: 'git status *', approval: allow}
+    - {match: 'git diff', approval: allow}
+    - {match: 'git diff *', approval: allow}
+    - {match: 'git log', approval: allow}
+    - {match: 'git log *', approval: allow}
+setupVersion: 2

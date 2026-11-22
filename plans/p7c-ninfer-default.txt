@@ -1,0 +1,1 @@
+ninfer393|n393-def|--max-context 262144 --expert-residency host --host-cache-mib 16384 --kv-dtype rk4v4|--lean --gen 600 --turn-tokens 800 --turns 3 --extra '{"reasoning_effort":"low"}' --fills 131072 --det --note "NInfer393 rk4v4: default drafts, same bench args as p7"

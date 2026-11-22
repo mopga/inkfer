@@ -1,0 +1,223 @@
+From 907603ae35c49cff0f76d6f2be01307dde85a8d6 Mon Sep 17 00:00:00 2001
+From: basalt-ink-experiments <noreply@localhost>
+Date: Sun, 22 Nov 2026 01:19:07 +0300
+Subject: [PATCH 1/4] inkling2: the card spare and the elastic keep from the
+ environment (BASALT_INK_*_MIB)
+
+BASALT_INK_CARD_SPARE_MIB (1024), BASALT_INK_ELASTIC_KEEP_MIB (512), BASALT_INK_SESSION_FIXED_MIB (768) and
+BASALT_INK_SPILL_MARGIN_MIB (128) override the reserves of the context plan and of the elastic spill, so a run can
+try using more of the card's free memory during decode. Unset: the same values as before. A start line names the
+values when any is set.
+
+Experimental, local work branch.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+---
+ CMakeLists.txt                  |  2 +-
+ src/models/inkling2/ink.cpp     | 50 +++++++++++++++++++++++++++++++++
+ src/models/inkling2/ink.hpp     | 33 ++++++++++++++++++++++
+ src/models/inkling2/model.cpp   | 20 ++++++++-----
+ src/models/inkling2/session.cpp |  4 ++-
+ 5 files changed, 100 insertions(+), 9 deletions(-)
+ create mode 100644 src/models/inkling2/ink.cpp
+ create mode 100644 src/models/inkling2/ink.hpp
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9f05a8..e358078 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -260,7 +260,7 @@ target_link_libraries(inkling2_kernels PUBLIC ${_gpu_runtime_target})
+ add_library(model_inkling2 STATIC src/models/inkling2/adapter.cpp src/models/inkling2/pretok_inkling2.cpp
+   src/models/inkling2/pack.cpp src/models/inkling2/model.cpp src/models/inkling2/session.cpp src/models/inkling2/walk.cpp
+   src/models/inkling2/prompt.cpp src/models/inkling2/vision.cpp src/models/inkling2/vision_encoder.cpp
+-  src/models/inkling2/dspark.cpp src/models/inkling2/spill.cpp)
++  src/models/inkling2/dspark.cpp src/models/inkling2/spill.cpp src/models/inkling2/ink.cpp)
+ target_include_directories(model_inkling2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src PRIVATE ${_gpu_include_directories} ${CMAKE_CURRENT_SOURCE_DIR}/src/program/tokenizer)
+ target_link_libraries(model_inkling2 PUBLIC model tokenizer inkling2_kernels tiers kernels window_gemm mmq prefill_fp4 core vision_cuda ${_gpu_runtime_target})
+ if(BUILD_TESTING)
+diff --git a/src/models/inkling2/ink.cpp b/src/models/inkling2/ink.cpp
+new file mode 100644
+index 0000000..8b806f9
+--- /dev/null
++++ b/src/models/inkling2/ink.cpp
+@@ -0,0 +1,50 @@
++// src/models/inkling2/ink.cpp - the BASALT_INK_* experiments' settings. Read the header first.
++#include "models/inkling2/ink.hpp"
++
++#include <algorithm>
++#include <cstdlib>
++
++namespace basalt::models::inkling2::ink {
++
++long long env_int(const char* name, long long def, long long lo, long long hi) {
++    const char* s = std::getenv(name);
++    if (!s || !*s) return def;
++    char* end = nullptr;
++    const long long v = std::strtoll(s, &end, 10);
++    if (end == s) return def;
++    return std::clamp(v, lo, hi);
++}
++
++double env_real(const char* name, double def, double lo, double hi) {
++    const char* s = std::getenv(name);
++    if (!s || !*s) return def;
++    char* end = nullptr;
++    const double v = std::strtod(s, &end);
++    if (end == s || !(v == v)) return def;
++    return std::clamp(v, lo, hi);
++}
++
++std::string env_text(const char* name) {
++    const char* s = std::getenv(name);
++    return s ? std::string(s) : std::string();
++}
++
++const Reserves& reserves() {
++    static const Reserves r = [] {
++        Reserves v;
++        const auto mib = [&](const char* name, uint64_t& bytes) {
++            const long long def = (long long) (bytes >> 20);
++            const long long got = env_int(name, def, 0, 65536);
++            if (got != def) v.custom = true;
++            bytes = (uint64_t) got << 20;
++        };
++        mib("BASALT_INK_CARD_SPARE_MIB", v.card_spare);
++        mib("BASALT_INK_ELASTIC_KEEP_MIB", v.elastic_keep);
++        mib("BASALT_INK_SESSION_FIXED_MIB", v.session_fixed);
++        mib("BASALT_INK_SPILL_MARGIN_MIB", v.spill_margin);
++        return v;
++    }();
++    return r;
++}
++
++}  // namespace basalt::models::inkling2::ink
+diff --git a/src/models/inkling2/ink.hpp b/src/models/inkling2/ink.hpp
+new file mode 100644
+index 0000000..993f846
+--- /dev/null
++++ b/src/models/inkling2/ink.hpp
+@@ -0,0 +1,33 @@
++// src/models/inkling2/ink.hpp - experiments on the on-card expert set of Inkling 2, each switched by an environment
++// variable (BASALT_INK_*) read once at first use. With none set the engine behaves as it does without this file.
++//
++//   BASALT_INK_CARD_SPARE_MIB     the card's spare the context plan keeps free and the elastic spill's first copy-back
++//                                 leaves (default 1024)
++//   BASALT_INK_ELASTIC_KEEP_MIB   free bytes an elastic KV grow leaves, and a restart's copy-back (default 512)
++//   BASALT_INK_SESSION_FIXED_MIB  what the plan counts for a session beside its caches (default 768)
++//   BASALT_INK_SPILL_MARGIN_MIB   the plan's margin when experts leave the card (default 128)
++#pragma once
++
++#include <cstdint>
++#include <string>
++
++namespace basalt::models::inkling2::ink {
++
++/// The integer in `name`, clamped to lo..hi; `def` when it is unset, empty or not a number.
++long long env_int(const char* name, long long def, long long lo, long long hi);
++/// The same for a real number.
++double env_real(const char* name, double def, double lo, double hi);
++/// The text in `name` (empty: unset).
++std::string env_text(const char* name);
++
++/// The memory reserves of the context plan and the elastic spill, in bytes.
++struct Reserves {
++    uint64_t card_spare = 1024ull << 20;
++    uint64_t elastic_keep = 512ull << 20;
++    uint64_t session_fixed = 768ull << 20;
++    uint64_t spill_margin = 128ull << 20;
++    bool custom = false;   ///< any of them was set by the environment
++};
++const Reserves& reserves();
++
++}  // namespace basalt::models::inkling2::ink
+diff --git a/src/models/inkling2/model.cpp b/src/models/inkling2/model.cpp
+index ca52697..ac65ff8 100644
+--- a/src/models/inkling2/model.cpp
++++ b/src/models/inkling2/model.cpp
+@@ -10,6 +10,7 @@
+ #include "basalt/models/inkling2/kernels.hpp"
+ #include "basalt/platform/file.hpp"
+ #include "basalt/prefill/moe_mmq.hpp"
++#include "models/inkling2/ink.hpp"
+ #include "models/inkling2/prompt.hpp"
+ 
+ #include <cuda_runtime.h>
+@@ -27,9 +28,9 @@ constexpr int kTypeBF16 = 30;
+ constexpr int kTypeNvfp4 = 40;
+ constexpr uint64_t kQ8Row = (uint64_t) kWidth / 32 * 34;   // bytes of a Q8_0 row of the hidden width
+ // what a session needs beside its caches (its row buffers, the expert scratch, the head's logits) and what the card keeps
+-// free for the kernels' modules and the driver
+-constexpr uint64_t kSessionFixed = 768 * kMiB;
+-constexpr uint64_t kCardSpare = 1024 * kMiB;
++// free for the kernels' modules and the driver: 768 MiB and 1024 MiB, unless the environment says otherwise (ink.hpp)
++uint64_t session_fixed() { return ink::reserves().session_fixed; }
++uint64_t card_spare() { return ink::reserves().card_spare; }
+ 
+ // The fused projection rows of a layer: tensor suffix, first row, rows, needed on a full layer only.
+ struct ProjPart {
+@@ -64,7 +65,7 @@ uint64_t session_bytes(const Geometry& g, int64_t context, bool fp8) {
+     const uint64_t elem = fp8 ? 1 : 2;
+     const uint64_t per_pos = 2ull * kKvHeads * kHeadDim * elem;
+     const uint64_t ring = (uint64_t) g.window + kDecodeRows;
+-    return (uint64_t) global * per_pos * (uint64_t) context + (uint64_t) swa * per_pos * ring + kSessionFixed +
++    return (uint64_t) global * per_pos * (uint64_t) context + (uint64_t) swa * per_pos * ring + session_fixed() +
+            prompt_bytes(g);   // PROMPT HOOK
+ }
+ 
+@@ -300,7 +301,12 @@ model::Result InklingModel::plan(const model::LoadRequest& req, core::LoadPlan&
+         const int64_t want = req.max_context > 0 ? req.max_context : kDefaultContext;
+         if (want < 1024 || (g.context_length > 0 && want > g.context_length))
+             return fail("--max-context " + std::to_string(want) + " is outside 1,024 .. " + std::to_string(g.context_length));
+-        const uint64_t spare = kCardSpare + vision_room;   // [vision]
++        const uint64_t spare = card_spare() + vision_room;   // [vision]
++        if (const ink::Reserves& rs = ink::reserves(); rs.custom)
++            basalt::log::info("basalt inkling2", "ink: reserves from the environment: card spare %llu MiB (1024), elastic keep %llu MiB (512), "
++                              "session fixed %llu MiB (768), spill margin %llu MiB (128)",
++                              (unsigned long long) (rs.card_spare >> 20), (unsigned long long) (rs.elastic_keep >> 20),
++                              (unsigned long long) (rs.session_fixed >> 20), (unsigned long long) (rs.spill_margin >> 20));
+         const uint64_t n_sess = (uint64_t) std::max(req.sessions, 1);
+         const auto bytes_at = [&](int64_t c) {   // DSPARK HOOK: a session's drafter beside its caches
+             return session_bytes(g, c, fp8_) + (dspark_ ? dspark_session_bytes(pack_, c, std::max(kDecodeRows, kPromptChunk)) : 0);
+@@ -316,7 +322,7 @@ model::Result InklingModel::plan(const model::LoadRequest& req, core::LoadPlan&
+             for (uint64_t st : stride) full += st * (uint64_t) g.n_expert;
+             const uint64_t want_b = full + bytes_at(want) * n_sess + spare;
+             // when some must go: a margin for the tables and maps allocated after the plan and the driver's own rounding
+-            const uint64_t short_b = want_b > free_b ? want_b - free_b + 128 * kMiB : 0;
++            const uint64_t short_b = want_b > free_b ? want_b - free_b + ink::reserves().spill_margin : 0;
+             const int64_t keep = req.expert_cache > 0 ? req.expert_cache : -1;
+             if (short_b > 0 || keep >= 0) {
+                 if (!core::vmm::supported()) return fail("the experts do not fit beside the context and this card has no virtual memory management");
+@@ -507,7 +513,7 @@ model::Result InklingModel::attach(const model::LoadRequest&, std::vector<std::u
+     for (auto& s : sessions)
+         if (model::Result r = s->prepare(); !r.ok()) return r;
+     if (elastic_) {   // the caches back only their base yet: the RAM experts come back while the card has room
+-        const uint64_t moved = promote(kCardSpare);
++        const uint64_t moved = promote(card_spare());
+         basalt::log::info("basalt inkling2", "elastic spill: %lld of %lld RAM experts copied back to the card (%.2f GiB); they go back "
+                           "to RAM, the least routed first, as a conversation's caches grow",
+                           (long long) n_copy_, (long long) spill_.spilled, (double) moved / (double) kGiB);
+diff --git a/src/models/inkling2/session.cpp b/src/models/inkling2/session.cpp
+index b5fbdc9..cf5a4c6 100644
+--- a/src/models/inkling2/session.cpp
++++ b/src/models/inkling2/session.cpp
+@@ -26,6 +26,7 @@
+ #include "models/inkling2/caches.hpp"
+ #include "models/inkling2/dspark.hpp"   // DSPARK HOOK
+ #include "models/inkling2/expert_map.hpp"
++#include "models/inkling2/ink.hpp"
+ #include "models/inkling2/model.hpp"
+ #include "models/inkling2/prompt.hpp"
+ #include "models/inkling2/walk.hpp"
+@@ -322,7 +323,8 @@ public:
+     // and when the card has no room the RAM experts' card copies go back to RAM first, the least routed first. False when
+     // even without any copy there is no room.
+     static constexpr int64_t kElasticKvStep = 8192;
+-    static constexpr uint64_t kElasticKeep = 512ull << 20;   // free bytes a grow leaves (the driver, the graphs)
++    // free bytes a grow leaves (the driver, the graphs): 512 MiB unless the environment says otherwise (ink.hpp)
++    const uint64_t kElasticKeep = ink::reserves().elastic_keep;
+     bool ensure_positions(int64_t positions, std::string& err) {
+         if (elastic_.empty() || positions <= backed_) return true;
+         const int64_t target = std::min<int64_t>(m_.context(), (positions + kElasticKvStep - 1) / kElasticKvStep * kElasticKvStep);
+-- 
+2.55.0.windows.3
+

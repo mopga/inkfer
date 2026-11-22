@@ -1,0 +1,142 @@
+{
+ "run": "long-ink1",
+ "L1": {
+  "requests": 83,
+  "input": 370804,
+  "output": 39937,
+  "cache_read": 21650734,
+  "max_prompt": 409563,
+  "gen_s": 549.1874765999996,
+  "ttft_s": 554.6619326000002,
+  "tools": {
+   "bash": 11,
+   "glob": 2,
+   "read": 51,
+   "task": 1,
+   "grep": 12,
+   "write": 4,
+   "edit": 7
+  },
+  "tool_errors": 9,
+  "denied": 9,
+  "bad_stops": 0,
+  "compactions": 0,
+  "final_text": "Готово. Итог по частям:\n\n**1. Чтение** — прочитаны все пять файлов целиком: `serve/server.py` (10 479 строк), `frontend.py` (2 097), `responses.py` (698), `mcp.py` (731), `telemetry.py` (677).\n\n**2. docs/ENV.md** — таблица всех читаемых `STRATA_*`-переменных (имя; файл и строка; по умолчанию и пределы; что меняет). Вспомогательные функции с именем переменной параметром отмечены с вызовами (`_timeout_env` — 5 вызовов; `restore_point_settings`; `engine_nice`; `allowed_hosts_of`; `sh_stream_warning`; `engine_binary`). `telemetry.py` и `responses.py` не читают ни одной `STRATA_*`. В отдельный блок вынесены переменные, записываемые в env дочернего процесса (`STRATA_BATCH_TELEMETRY`, `STRATA_DS4_SLOT_*`, `STRATA_OFFLINE`); переменные, упомянутые только в комментариях, отмечены как не читаемые этими файлами.\n\n**3. docs/ROUTES.md** — 19 GET-маршрутов и 15 POST-маршрутов с условиями (ключ, своя страница, флаги, алиасы) и строками; отдельно `_post()` (резерв пропускной способности, маппинг исключений).\n\n**4. Код** — в JSON ответа `GET /status` добавлено `uptime_s`: `int(time.time() - svc.started_at)` — тот же источник и формат, что в `/v1/status` (строка 5722). Остальные поля не тронуты. Тест `test_status_reports_uptime_seconds_since_start` добавлен в `serve/test_parallel.py`.\n\n**5. Субагент** — `Test4xx` (11 мин) проанализировал `serve/test_server.py`, но у него нет инструмента записи файлов; я записал `docs/TESTS-4XX.md` сам на основе его текста: 31 тест с прямым асертом 4xx + 3 косвенных (ValueError → 400).\n\n**Прогон тестов (последняя команда):** `Ran 75 tests in 62.865s — OK` (`serve.test_parallel` + `serve.test_security`).\n\n**Файлы:** `docs/ENV.md`, `docs/ROUTES.md`, `docs/TESTS-4XX.md`, `RESULT.md` (новые), `serve/server.py`, `serve/test_parallel.py` (изменены).\n\nОсталось: ничего не осталось. Субагент мог бы сам записать TESTS-4XX.md, но был read-only — документ составлен мной по его отчёту, текст сверён с исходниками.",
+  "wall_s": 1228,
+  "tool_calls": 88,
+  "cache_pct": 98.3,
+  "decode_tps": 72.7
+ },
+ "L2": {
+  "requests": 1,
+  "input": 456,
+  "output": 2318,
+  "cache_read": 410658,
+  "max_prompt": 411114,
+  "gen_s": 39.1966218,
+  "ttft_s": 1.1990434,
+  "tools": {},
+  "tool_errors": 0,
+  "denied": 0,
+  "bad_stops": 0,
+  "compactions": 0,
+  "final_text": "1. `STRATA_COALESCE_TOKENS`: по умолчанию `16384`, нижний предел `256` (`max(256, int(...))`).\n2. `STRATA_HTTP_BACKLOG`: по умолчанию `256`, нижний предел `5` (`max(5, int(...))`); задаёт `Server.request_queue_size` (размер listen-backlog сервера).\n3. `STRATA_KEEP_EMPTY_TURNS` — если `\"1\"`, пустые реплики рендерятся как раньше. Без неё пустая assistant-реплика сохраняется, если это последнее сообщение в истории (`i == len(messages) - 1`) — остальные пустые (без текста, без картинки, без tool_calls) отбрасываются.\n4. `{\"value\": \"unloaded\"}` — как у llama-server's router (\"listed, loads on use\"); только когда модель не загружена и есть `idle_unload_s` или `engine.unloaded` (тогда модель перечисляется, иначе данных в списке нет).\n5. Issue #55.\n6. Значение по умолчанию `\"text\"`; важнее конфиг — если режим назван в конфиге (`undisclosed_tool_calls`), окружение игнорируется.\n7. `BadBody` (issue #893); статус из исключения — 400 для испорченного chunked-тела, 413 для слишком большого; `do_POST` ловит его и отвечает `{\"error\": {\"type\": \"invalid_request_error\", \"message\": str(e)}}`.\n8. `STRATA_STREAM_WRITE_TIMEOUT_S` — `\"60\"` (0 = без лимита); `STRATA_START_RETRIES` — `\"3\"` (0 — никогда).\n9. В `serve/telemetry.py` nvml.dll ищут через `os.environ.get(\"ProgramFiles\", r\"C:\\Program Files\")` — переменную `ProgramFiles` (на Windows), значение по умолчанию `C:\\Program Files`.\n10. До правки `/v1/status` уже отдавал поле `\"uptime_s\"` — целое число секунд, считаемое как `int(time.time() - self.started_at)` от `Service.started_at` (`time.time()` при создании сервиса). (Также там было `\"started\": int(self.started_at)`.)",
+  "wall_s": 41,
+  "tool_calls": 0,
+  "cache_pct": 99.9,
+  "decode_tps": 59.1
+ },
+ "coverage": {
+  "serve/server.py": {
+   "seen": 10479,
+   "total": 10479,
+   "pct": 100.0
+  },
+  "serve/frontend.py": {
+   "seen": 2097,
+   "total": 2097,
+   "pct": 100.0
+  },
+  "serve/responses.py": {
+   "seen": 698,
+   "total": 698,
+   "pct": 100.0
+  },
+  "serve/mcp.py": {
+   "seen": 731,
+   "total": 731,
+   "pct": 100.0
+  },
+  "serve/telemetry.py": {
+   "seen": 677,
+   "total": 677,
+   "pct": 100.0
+  }
+ },
+ "env": {
+  "found": 48,
+  "of": 48,
+  "missing": [],
+  "invented": [],
+  "line_refs": 46,
+  "line_refs_ok": 45
+ },
+ "routes": {
+  "found": 35,
+  "of": 35,
+  "missing": []
+ },
+ "code": {
+  "changed": [
+   "serve/server.py",
+   "serve/test_parallel.py",
+   "RESULT.md",
+   "docs/ENV.md",
+   "docs/ROUTES.md",
+   "docs/TESTS-4XX.md"
+  ],
+  "uptime_added": true,
+  "uses_started_at": true,
+  "int_like_v1": true,
+  "v1_status_untouched": true,
+  "new_tests": [
+   "test_status_reports_uptime_seconds_since_start",
+   "test_admission_cap_uses_effective_slots_and_rejects_before_stream"
+  ],
+  "suite": {
+   "ran": 75,
+   "ok": true,
+   "fail": ""
+  },
+  "suite_mods": [
+   "serve.test_parallel",
+   "serve.test_security"
+  ]
+ },
+ "tests4xx": {
+  "exists": true,
+  "named": 39,
+  "real": 38,
+  "invented": [
+   "test_server"
+  ]
+ },
+ "result_md": true,
+ "recall": {
+  "score": 10,
+  "of": 10,
+  "checks": {
+   "1 COALESCE_TOKENS 16384 / 256": true,
+   "2 HTTP_BACKLOG 256 / 5 / request_queue_size": true,
+   "3 KEEP_EMPTY_TURNS; последняя реплика": true,
+   "4 unloaded, llama-server": true,
+   "5 issue #55": true,
+   "6 text; конфиг важнее": true,
+   "7 BadBody, 400/413, #893": true,
+   "8 60 и 3": true,
+   "9 ProgramFiles, C:\\Program Files": true,
+   "10 uptime_s int от started_at": true
+  },
+  "tool_calls": 0
+ }
+}

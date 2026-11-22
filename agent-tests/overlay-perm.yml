@@ -1,0 +1,43 @@
+# Права для агентных прогонов сравнения Inkling/Qwen: как harness\omp-restricted-task.yml (правка файлов без вопросов,
+# из команд оболочки — только тесты и git, субагенты разрешены) плюс закрыты папки с результатами других прогонов.
+tools:
+  approvalMode: write
+  approval:
+    bash: prompt
+    task: allow
+    eval: deny
+    python: deny
+    browser: deny
+    computer: deny
+    web_search: deny
+    fetch: deny
+    notebook: deny
+  restrictedFolders:
+    - 'D:\'
+    - 'C:\Users'
+    - 'C:\Windows'
+    - 'C:\Program Files'
+    - 'C:\Program Files (x86)'
+    - 'C:\ProgramData'
+    - 'C:\distrib\strata-tuning\cfg'
+    - 'C:\distrib\strata-tuning\profiles'
+    - 'C:\distrib\strata-tuning\runs'
+    - 'C:\distrib\strata-tuning\tools'
+    - 'C:\distrib\strata-tuning\tune-work'
+    - 'C:\distrib\strata-tuning\vocab'
+    - 'C:\distrib\strata-tuning\inkling'
+    - 'C:\distrib\strata-tuning\harness'
+bash:
+  patterns:
+    - match: 'C:/distrib/strata-tuning/harness/task-python/python.exe -m unittest *'
+      approval: allow
+    - match: 'git status'
+      approval: allow
+    - match: 'git status *'
+      approval: allow
+    - match: 'git diff'
+      approval: allow
+    - match: 'git diff *'
+      approval: allow
+    - match: 'git log *'
+      approval: allow

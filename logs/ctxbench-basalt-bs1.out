@@ -1,0 +1,17 @@
+[basalt-bs1-128k-fp8-spec8]       0 warmup prompt=22 cached=0 ttft=0.65s prefill=39.0 gen=41 decode=47.7/68.3 vram=15004 rss=10.64 avail=42.38 disk=0 
+[basalt-bs1-128k-fp8-spec8]    8000 cold   prompt=8152 cached=0 ttft=1.61s prefill=5483.3 gen=400 decode=53.1/55.3 vram=15027 rss=10.71 avail=39.78 disk=6 
+[basalt-bs1-128k-fp8-spec8]    8000 warm   prompt=8140 cached=0 ttft=1.59s prefill=5446.3 gen=400 decode=74.8/74.4 vram=15027 rss=10.71 avail=41.39 disk=2 
+[basalt-bs1-128k-fp8-spec8]    8000 turn1  prompt=8131 cached=0 ttft=1.59s prefill=5441.0 gen=171 decode=57.8/64.6 vram=15032 rss=10.72 avail=41.16 disk=2 
+[basalt-bs1-128k-fp8-spec8]    8000 turn2  prompt=8183 cached=8130 ttft=0.38s prefill=179.2 gen=188 decode=58.4/65.2 vram=15032 rss=10.72 avail=41.1 disk=8 
+[basalt-bs1-128k-fp8-spec8]   32000 cold   prompt=32218 cached=0 ttft=6.53s prefill=5011.3 gen=400 decode=49.7/52.1 vram=15060 rss=10.77 avail=40.93 disk=2 
+[basalt-bs1-128k-fp8-spec8]   32000 warm   prompt=32206 cached=0 ttft=6.49s prefill=5042.7 gen=400 decode=70.9/70.6 vram=15046 rss=10.77 avail=41.31 disk=1 
+[basalt-bs1-128k-fp8-spec8]   32000 turn1  prompt=32197 cached=0 ttft=6.49s prefill=5030.7 gen=164 decode=54.1/61.7 vram=15044 rss=10.77 avail=41.66 disk=0 
+[basalt-bs1-128k-fp8-spec8]   32000 turn2  prompt=32242 cached=32196 ttft=0.39s prefill=146.8 gen=189 decode=60.2/59.9 vram=15046 rss=10.78 avail=41.87 disk=1 
+[basalt-bs1-128k-fp8-spec8]   64000 cold   prompt=64558 cached=0 ttft=14.6s prefill=4451.3 gen=400 decode=37.8/39.3 vram=15046 rss=10.83 avail=41.94 disk=0 
+[basalt-bs1-128k-fp8-spec8]   64000 warm   prompt=64546 cached=0 ttft=14.6s prefill=4447.6 gen=400 decode=57.3/60.8 vram=14963 rss=10.83 avail=42.05 disk=0 
+[basalt-bs1-128k-fp8-spec8]   64000 turn1  prompt=64537 cached=0 ttft=14.66s prefill=4435.8 gen=182 decode=50.7/57.6 vram=14980 rss=10.83 avail=42.16 disk=0 
+[basalt-bs1-128k-fp8-spec8]   64000 turn2  prompt=64600 cached=64536 ttft=0.44s prefill=182.6 gen=184 decode=55.2/62.4 vram=14973 rss=10.85 avail=42.19 disk=0 
+[basalt-bs1-128k-fp8-spec8]  120000 cold   prompt=119788 cached=0 ttft=30.89s prefill=3896.2 gen=400 decode=32.8/34.1 vram=14963 rss=10.9 avail=42.0 disk=0 
+[basalt-bs1-128k-fp8-spec8]  120000 warm   prompt=119776 cached=0 ttft=30.79s prefill=3907.2 gen=400 decode=48.8/51.6 vram=14972 rss=10.9 avail=42.03 disk=1 
+[basalt-bs1-128k-fp8-spec8]  120000 turn1  prompt=119767 cached=0 ttft=30.75s prefill=3912.2 gen=170 decode=44.7/51.3 vram=14968 rss=10.9 avail=42.04 disk=2 
+[basalt-bs1-128k-fp8-spec8]  120000 turn2  prompt=119818 cached=119766 ttft=0.51s prefill=130.3 gen=180 decode=44.0/49.8 vram=14967 rss=10.9 avail=42.13 disk=0 

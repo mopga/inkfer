@@ -1,0 +1,1307 @@
+diff --git a/apps/cli/main.cpp b/apps/cli/main.cpp
+index 54010e1..4d5ba11 100644
+--- a/apps/cli/main.cpp
++++ b/apps/cli/main.cpp
+@@ -411,6 +411,7 @@ int main(int argc, char** argv) {
+         engine_options.enable_vision            = cli.enable_vision;
+         engine_options.vision_residency         = cli.vision_residency;
+         engine_options.vision_max_merged_tokens = cli.vision_max_merged_tokens;
++        engine_options.vision_upscale           = cli.vision_upscale;
+         engine_options.use_cuda_graph           = cli.use_cuda_graph;
+         engine_options.gpu_clock_floor_mhz      = cli.gpu_clock_floor_mhz;
+         engine_options.lm_head_q4               = cli.lm_head_q4;
+diff --git a/apps/cli/options.cpp b/apps/cli/options.cpp
+index 5a99b32..751c651 100644
+--- a/apps/cli/options.cpp
++++ b/apps/cli/options.cpp
+@@ -395,6 +395,8 @@ std::string usage_text(const char* argv0) {
+            "  --vision-cpu                  --vision with --vision-residency cpu\n"
+            "  --vision-max-merged N         merged tokens of one media item (default 16384);\n"
+            "                                larger media is downscaled\n"
++           "  --vision-upscale F            Inkling 2: enlarge each image side by F, 1..4,\n"
++           "                                before that budget bounds it (default 1)\n"
+            "\n"
+            "LOGGING\n"
+            "  --log-level L                 trace, debug, info (default), warning, error,\n"
+@@ -659,6 +661,8 @@ Options parse_arguments(const std::vector<std::string>& arguments,
+             if (options.vision_max_merged_tokens < 64 || options.vision_max_merged_tokens > 16384) {
+                 throw std::invalid_argument("--vision-max-merged must be in [64, 16384]");
+             }
++        } else if (arg == "--vision-upscale") {
++            options.vision_upscale = parse_float(value(arg), "vision-upscale", 1.0F, 4.0F);
+         } else if (product::switch_option(arg, "cuda-graph",
+                                           [&](bool on) { options.use_cuda_graph = on; })) {
+         } else if (arg == "--gpu-clock-floor") {
+diff --git a/apps/cli/options.h b/apps/cli/options.h
+index 01edc5d..1bc8112 100644
+--- a/apps/cli/options.h
++++ b/apps/cli/options.h
+@@ -58,6 +58,7 @@ struct Options {
+     bool enable_vision  = false;
+     VisionResidency vision_residency       = VisionResidency::Resident;
+     std::uint32_t vision_max_merged_tokens = 16384;
++    float vision_upscale                   = 1.0f;
+     bool use_cuda_graph = true;
+     std::uint32_t gpu_clock_floor_mhz = 0;
+     bool lm_head_q4     = false;
+diff --git a/docs/cli.md b/docs/cli.md
+index 5ae9578..b5a93d9 100644
+--- a/docs/cli.md
++++ b/docs/cli.md
+@@ -396,6 +396,7 @@ The table lists executable defaults. The examples above select INT8 KV and MTP3.
+ | `--vision-residency resident\|overlay\|cpu` | `overlay` keeps the Vision tower host-pinned and borrows device memory per image from the evictable text weight tail (no resident Vision cost; needs CUDA VMM); for Gemma 4 the tower's blocks stay pinned and stream through a two-block device window. `--vision-offload on\|off` is accepted as an alias for `overlay\|resident`. `cpu` encodes on CPU threads from host FP32 weights, with no device Vision memory and `--vision-max-merged` capped at 256 unless given. Qwen3.8-Flash-Next keeps its tower resident; DeepSeek-V4.1 keeps it resident or, with `overlay`, streams its blocks from pinned memory through a two-block device window, and refuses `cpu` ([DeepSeek-V4.1](deepseek-v41.md#images)) | `resident` |
+ | `--vision-cpu` | `--vision` with `--vision-residency cpu` | off |
+ | `--vision-max-merged N` | merged-token budget of one media item; larger media downscales at preprocessing. Gemma 4: the most soft tokens an image or video frame may take, rounded down to its budgets 70, 140, 280, 560, 1120 (an image takes 280, 70 with `detail: low` and this bound with `detail: high`; a video frame 70). DeepSeek-V4.1: the most prompt positions an image's span takes, at most the release's 1024 (a quarter with `detail: low`) | 16384 |
++| `--vision-upscale F` | Inkling 2: each image side enlarged by F, `[1, 4]`, PIL bicubic to whole cells, before the merged-token budget bounds it; helps small screen text ([Inkling 2](inkling2.md)) | 1 |
+ | `--no-cuda-graph` | disable CUDA Graph decode | graphs on |
+ | `--gpu-clock-floor MHZ` | hold the graphics clock of the model's GPUs at MHZ or more while requests run and for 2 s after the last one (NVML locked clocks; an idle card then returns to the driver's clocks and idle power), so the stages of a layer pipeline do not wait at idle clocks (four RTX 3060 under Windows idled at 210 MHz between stages; two RTX 4090 under Linux kept their boost clocks without it, and decode stayed within 0.6 %). Giving the clocks back resets the cards' locked clocks, including a lock set before the start; a killed process leaves them locked until `nvidia-smi -rgc`. Needs administrator rights on Windows and root on Linux (a container usually lacks them); without them the start reports it and keeps the driver's clocks | off |
+ | `--wddm-evictable-budget` | Windows builds: budget the KV cache against dedicated memory less the weights and a 512 MiB desktop floor, committing the device arenas at startup; another process taking memory can then slow generation | off |
+diff --git a/docs/inkling2.md b/docs/inkling2.md
+index 52fe134..4e77db0 100644
+--- a/docs/inkling2.md
++++ b/docs/inkling2.md
+@@ -88,7 +88,12 @@ tokenization, the chat template, output parsing and the serving protocols.
+   `--vision-max-merged`). Its matrices are BF16 or, from a Q8_0 mmproj, the GGUF's blocks, which
+   the tower decodes to BF16 rows before each product; cuBLAS multiplies BF16 inputs into FP32
+   results either way. They stay on the GPU or, with `--vision-residency overlay`, in pinned host
+-  memory through two device slots.
++  memory through two device slots. An image enters at its own resolution, padded to whole 40-pixel
++  cells, and is downscaled only past that budget; `--vision-upscale F` (1 to 4, default 1) first
++  enlarges each side by F (PIL bicubic, whole cells), so screen text whose glyphs are smaller than a
++  20-pixel patch reaches the tower readably. On a local probe (screenshots of dense UI text and
++  code, RTX 5080), 1.5 read all of their lines where 1.0 missed some; a 1920 x 1080 screenshot
++  then takes 3,013 positions instead of 1,357, and an image already at the budget is unchanged.
+ - **Expert residency.** The routed experts stay on the GPU, in pinned host memory or in the
+   artifact's files, with a device cache and a CPU share of decode misses
+   ([below](#expert-residency)). Several GPUs divide the routed experts on the devices (`--devices
+@@ -101,6 +106,20 @@ the context cache the shared paged KV pool, the disk tier and session slots. The
+ `--kv-dtype rk8v4` and `rk4v4` quantize the eight full-attention visits' planes (the windowed
+ visits' rings, the convolution histories and a DSpark drafter's caches stay F16); the other
+ quantized formats (`int8`, `fp8`, `nvfp4`, `k8v4`, `rk4v4-e8`, `rk2v4-e8`, `bf16p`) are not built.
++
++On sm_80 and newer, a quantized full visit reads the keys beyond every row's relative-bias extent
++(the far keys, which all rows of a group of eight see without bias) on the tensor cores: a prompt
++chunk in one slot per row group beside its scalar near keys, and a decode or verification call in
++107 slots beside 21 scalar near splits once its deepest row has 6,144 keys (below that the scalar
++route alone is faster). Both are qualified against the FP64 oracle of the whole attention
++([`tools/attn_bench.cu`](../tools/attn_bench.cu) `--check 1`, rk4v4 and rk8v4); a context within
++the extent computes exactly as the scalar route. RTX 5080, rk4v4, per visit: a 2,048-row chunk
++after 260k cached keys 744 -> 134 ms (5.6x; 1.2x after 1k keys, 4.5x after 32k), one decode row at
++508k keys 4.10 -> 0.71 ms, at 16k 0.112 -> 0.059 ms; end to end, a 524,288-token context with
++504k filled reads its prompt at 1,278 tok/s instead of 332 and decodes at 44-58 tok/s instead of
++21-31. Cards below sm_80 and F16 planes keep the scalar route.
++`NINFER_INKLING2_FAR_SPLITS=near,far[,chunk]` overrides the slot counts for A/B measurements
++(`N,0` restores the scalar route everywhere).
+ DSpark drafts for one request at a
+ time; with several requests decoding, each decodes a token a step.
+ 
+diff --git a/docs/serving.md b/docs/serving.md
+index 566ace3..48b01f0 100644
+--- a/docs/serving.md
++++ b/docs/serving.md
+@@ -2520,6 +2520,7 @@ The table lists executable defaults. The startup example selects a long-context
+ | `--vision-residency resident\|overlay\|cpu` | `overlay` keeps the Vision tower in pinned host memory and encodes each image inside a window borrowed from the evict-ranked text weight tail, so `--vision` no longer reserves device memory and `--kv-capacity auto` resolves the no-vision capacity; requires `--vision` and CUDA virtual memory management; Gemma 4 keeps its tower's blocks pinned and streams them through a two-block device window instead. `--vision-offload on\|off` is accepted as an alias for `overlay\|resident`. `cpu` decodes the tower to host FP32 and encodes on CPU threads with no device Vision memory (see [Vision residency](#vision-residency)); it caps `--vision-max-merged` at 256 unless given. Qwen3.8-Flash-Next keeps its tower resident | `resident` |
+ | `--vision-cpu` | `--vision` with `--vision-residency cpu` | off |
+ | `--vision-max-merged N` | merged-token budget of one media item, `[64, 16384]`; larger images and video frame pairs are downscaled at preprocessing instead of being rejected, and the overlay window is sized for it. Gemma 4 (at least 70): the most soft tokens an image or video frame takes, rounded down to its budgets 70, 140, 280, 560, 1120; an image takes 280 (70 at `detail: low`, this bound at `detail: high`), a video frame 70 | 16384 |
++| `--vision-upscale F` | Inkling 2: each image side enlarged by F, `[1, 4]`, PIL bicubic to whole cells, before the merged-token budget bounds it; helps small screen text ([Inkling 2](inkling2.md)) | 1 |
+ | `--no-cuda-graph` | disable CUDA Graph decode | graphs on |
+ | `--gpu-clock-floor MHZ` | hold the graphics clock of the model's GPUs at MHZ or more while requests run and for 2 s after the last one (NVML locked clocks; an idle card then returns to the driver's clocks and idle power), so the stages of a layer pipeline do not wait at idle clocks (four RTX 3060 under Windows idled at 210 MHz between stages; two RTX 4090 under Linux kept their boost clocks without it, and decode stayed within 0.6 %). Giving the clocks back resets the cards' locked clocks, including a lock set before the start; a killed process leaves them locked until `nvidia-smi -rgc`. Needs administrator rights on Windows and root on Linux (a container usually lacks them); without them the start reports it and keeps the driver's clocks | off |
+ | `--cuda-graph-allowance-mib N` | total CUDA Graph driver-state allowance in MiB, subtracted from the KV sizing budget | computed |
+diff --git a/include/ninfer/engine_options.h b/include/ninfer/engine_options.h
+index 6623350..77900a1 100644
+--- a/include/ninfer/engine_options.h
++++ b/include/ninfer/engine_options.h
+@@ -698,6 +698,8 @@ struct EngineOptions {
+     // Largest merged-token count one media item may occupy; larger media is downscaled at
+     // preprocessing. Also bounds the overlay window.
+     std::uint32_t vision_max_merged_tokens = 16384;
++    // Inkling 2: each image side enlarged by this factor before that budget bounds it (1: none).
++    float vision_upscale                   = 1.0f;
+     bool use_cuda_graph                    = true;
+     // Explicit total CUDA Graph driver-state allowance in bytes; zero keeps the
+     // computed per-profile allowance.
+diff --git a/src/models/inkling2/executor.cpp b/src/models/inkling2/executor.cpp
+index 6d27024..d6fb22f 100644
+--- a/src/models/inkling2/executor.cpp
++++ b/src/models/inkling2/executor.cpp
+@@ -28,6 +28,8 @@
+ #include <array>
+ #include <atomic>
+ #include <cmath>
++#include <cstdio>
++#include <cstdlib>
+ #include <cstring>
+ #include <limits>
+ #include <map>
+@@ -282,6 +284,18 @@ struct Executor::Impl {
+     std::size_t workspace_bytes = 0;
+     std::uint64_t kv_bytes      = 0;
+     int decode_splits_full = 1, decode_splits_sliding = 1;
++    // A quantized full visit's decode: the near keys' splits and the far keys' tensor-core
++    // splits (0: no far path, every key in decode_splits_full ranges).
++    int decode_near_splits = 1, decode_far_splits = 0;
++    // The far path's decode calls start where the deepest row has this many keys: below it the
++    // far kernel and the wider combine cost more than they save (tools/attnbench on the RTX 5080:
++    // 0.42-0.8x at 1-4k keys, 0.95-1.10x at 6k, 1.06-1.25x at 7k, 1.9-2.3x at 16k). The round's
++    // graph is keyed by the route, so each batch width has a scalar and a far-path graph.
++    static constexpr std::uint32_t kDecodeFarMinKeys = 6144;
++    static constexpr std::uint32_t kFarGraphKey      = 0x100;
++    bool decode_far_active = false;
++    // A quantized full visit's prompt chunk: tensor-core slots over the cache's far keys (0: none).
++    int chunk_far_splits = 0;
+     std::map<std::uint32_t, GraphEntry> graphs;
+     std::vector<std::uint32_t> verify_widths;
+     std::unique_ptr<dspine::Runtime> spine;
+@@ -475,6 +489,34 @@ struct Executor::Impl {
+         const int sms = device.multiprocessor_count();
+         decode_splits_full    = std::clamp(2 * sms / std::max(1, kv_heads), 1, 128);
+         decode_splits_sliding = 16;
++        // A quantized full visit reads its far keys once per row group on the tensor cores; the
++        // nearer ~extent keys of each row keep the scalar route's splits, so a context within the
++        // relative-bias extent decodes exactly as without the far path. The far keys fill the
++        // remaining slots of the 128-slot combine: on the RTX 5080 (21 + 107) this measured
++        // 8-22% faster per visit than 8 + 120 at 8k keys, 3-10% at 64k and 1-2% slower at 508k
++        // (tools/attnbench, 1-8 rows).
++        decode_near_splits = decode_splits_full;
++        decode_far_splits  = 0;
++        if (kvfmt.quantized() &&
++            kernels::attention_far_supported(device.compute_capability(), kvfmt.key.coding,
++                                             kvfmt.value.coding, query_heads / std::max(1, kv_heads))) {
++            decode_near_splits = std::min(decode_splits_full, 64);
++            decode_far_splits  = 128 - decode_near_splits;
++            // A chunk's row groups already fill the device (256 groups x KV heads for 2048 rows):
++            // one far slot each, merged with the near keys' by the combine kernel.
++            chunk_far_splits = 1;
++        }
++        if (const char* env = std::getenv("NINFER_INKLING2_FAR_SPLITS")) {
++            // "near,far[,chunk far]" for A/B measurements; "N,0" restores the scalar route everywhere.
++            int near_splits = 0, far_splits = 0, chunk_far = -1;
++            const int n = std::sscanf(env, "%d,%d,%d", &near_splits, &far_splits, &chunk_far);
++            if (n >= 2 && near_splits >= 1 && far_splits >= 0 && near_splits + far_splits <= 128 &&
++                (far_splits == 0 || decode_far_splits > 0) && chunk_far <= 127) {
++                decode_near_splits = far_splits == 0 ? decode_splits_full : near_splits;
++                decode_far_splits  = far_splits;
++                chunk_far_splits   = far_splits == 0 ? 0 : n == 3 ? std::max(0, chunk_far) : chunk_far_splits;
++            }
++        }
+         const std::size_t rows = std::max<std::size_t>(options.prefill_chunk, sequences);
+         d_tokens    = DeviceBuffer(rows * 4);
+         d_positions = DeviceBuffer(rows * 4);
+@@ -1464,6 +1506,9 @@ struct Executor::Impl {
+         add(t * q_floats * 2);            // attention out BF16
+         add(t * h * 4);                   // output product
+         if (kvfmt.quantized()) { add(t * 2 * kvd * 2); } // a quantized visit's F16 staging (kv_store reads it)
++        if (chunk_far_splits > 0) {       // a full visit's chunk partials: the near keys', then the far slots'
++            add(kernels::attention_workspace_floats(int(t), query_heads, 1 + chunk_far_splits) * 4);
++        }
+         // Controllers of three inputs: [rms x; rms m], the rank's hidden state, forget and gain.
+         add(3 * t * 2 * h * 4);
+         add(3 * t * rank * 4);
+@@ -1488,7 +1533,8 @@ struct Executor::Impl {
+             }
+         }
+         const std::size_t decode = kernels::attention_workspace_floats(
+-            decode_rows(), query_heads, std::max(decode_splits_full, decode_splits_sliding)) * 4;
++            decode_rows(), query_heads,
++            std::max({decode_splits_full, decode_splits_sliding, decode_near_splits + decode_far_splits})) * 4;
+         return bytes + moe + round_up(decode, kAlign) + gguf_scratch + (16u << 20);
+     }
+ 
+@@ -2319,10 +2365,18 @@ struct Executor::Impl {
+             aa.query_heads = query_heads;
+             aa.kv_heads    = kv_heads;
+             aa.scale       = 1.0f / std::sqrt(float(kD));
+-            aa.splits      = c.chunk ? 1 : (lp.full ? decode_splits_full : decode_splits_sliding);
+-            if (!c.chunk && aa.splits > 1) {
++            const bool far_decode = quantized && decode_far_active && decode_far_splits > 0;
++            aa.splits      = c.chunk ? 1
++                             : !lp.full ? decode_splits_sliding
++                             : far_decode ? decode_near_splits
++                                          : decode_splits_full;
++            aa.far_splits  = !lp.full || !quantized ? 0
++                             : c.chunk               ? chunk_far_splits
++                             : far_decode            ? decode_far_splits
++                                                     : 0;
++            if (aa.splits + aa.far_splits > 1) {
+                 aa.partial = static_cast<float*>(workspace->alloc_bytes(
+-                    kernels::attention_workspace_floats(t, query_heads, aa.splits) * 4).data);
++                    kernels::attention_workspace_floats(t, query_heads, aa.splits + aa.far_splits) * 4).data);
+             }
+             aa.gate        = qgr + q_floats;
+             aa.gate_stride = lp.query_rows;
+@@ -2791,7 +2845,8 @@ struct Executor::Impl {
+         }
+         for (int i = 0; i < b; ++i) { back(sequences[i], positions[sequences[i]] + 1); }
+         stage(tokens, pos, seq);
+-        run_graph(std::uint32_t(b), [&] { decode_body(b, true); });
++        decode_far_active = *std::max_element(pos.begin(), pos.end()) + 1 >= std::int32_t(kDecodeFarMinKeys);
++        run_graph(std::uint32_t(b) | (decode_far_active ? kFarGraphKey : 0u), [&] { decode_body(b, true); });
+         for (int i = 0; i < b; ++i) { positions[sequences[i]] += 1; }
+     }
+ 
+@@ -2834,7 +2889,9 @@ struct Executor::Impl {
+         }
+         for (int j = 0; j < n; ++j) { back(sequences[j], positions[sequences[j]] + row_widths[j]); }
+         stage(tokens, pos, seq);
+-        run_graph(16 + std::uint32_t(rows), [&] { decode_body(rows, false); });
++        decode_far_active = *std::max_element(pos.begin(), pos.end()) + 1 >= std::int32_t(kDecodeFarMinKeys);
++        run_graph((16 + std::uint32_t(rows)) | (decode_far_active ? kFarGraphKey : 0u),
++                  [&] { decode_body(rows, false); });
+         verify_widths = std::move(row_widths);
+     }
+ 
+diff --git a/src/models/inkling2/kernels.cu b/src/models/inkling2/kernels.cu
+index e853c4b..6a32214 100644
+--- a/src/models/inkling2/kernels.cu
++++ b/src/models/inkling2/kernels.cu
+@@ -757,6 +757,26 @@ __device__ __forceinline__ void key_range(const AttentionArgs& a, int t0, int t1
+     }
+ }
+ 
++// Far-key attention (a.far_splits > 0): rows in groups of kFarRows. A group's far keys [0, floor)
++// are those every row of it sees at a distance of at least the bias table's extent, whole tiles;
++// none when the group's rows belong to different sequences. A prompt chunk's floor also stays below
++// its first row (r.first): earlier keys are the cache's, at their logical positions and seen by
++// every row of the chunk, while the chunk's own keys keep their masks. The near kernel starts its
++// rows at the floor and the far kernel covers the rest.
++constexpr int kFarRows = 8;
++
++__device__ __forceinline__ int far_floor(const AttentionArgs& a, int t) {
++    if (a.far_splits == 0) { return 0; }
++    const int r0 = t / kFarRows * kFarRows, r1 = min(a.rows.tokens, r0 + kFarRows);
++    const int sequence = row_sequence(a.rows, r0);
++    int f = a.rows.chunk ? a.rows.first : INT_MAX;
++    for (int r = r0; r < r1; ++r) {
++        if (row_sequence(a.rows, r) != sequence) { return 0; }
++        f = min(f, a.rows.positions[r] - max(a.extent, 1) + 1);
++    }
++    return max(0, f) / kTile * kTile;
++}
++
+ template <int kRows>
+ __global__ void __launch_bounds__(kRows == 1 ? 128 : 256) attention_kernel(AttentionArgs a) {
+     constexpr int kWarps = kRows == 1 ? 4 : 8;
+@@ -771,6 +791,7 @@ __global__ void __launch_bounds__(kRows == 1 ? 128 : 256) attention_kernel(Atten
+     const int head0   = kv_head * group + (kRows == 1 ? warp : 0);
+     int lo = 0, hi = 0;
+     key_range(a, t0, t1, lo, hi);
++    lo = max(lo, far_floor(a, t0)); // kFarRows-row groups: a prompt block's rows share one floor
+     const int keys   = hi + 1 - lo;
+     const int active = kRows == 1 || a.uniform ? active_splits(keys, a.splits) : 1;
+     const int split  = int(blockIdx.z);
+@@ -897,10 +918,12 @@ __global__ void __launch_bounds__(kRows == 1 ? 128 : 256) attention_kernel(Atten
+     for (int h = 0; h < kMaxGroup; ++h) {
+         if (h >= heads) { continue; }
+         const int head = head0 + h;
+-        if (a.splits > 1) {
+-            // Partials: [B][Hq][splits] rows of D, then [B][Hq][splits] (m, l) pairs.
+-            const std::int64_t rows = std::int64_t(a.rows.tokens) * a.query_heads * a.splits;
+-            const std::int64_t row  = (std::int64_t(t) * a.query_heads + head) * a.splits + split;
++        const int slots = a.splits + a.far_splits;
++        if (slots > 1) {
++            // Partials: [B][Hq][slots] rows of D, then [B][Hq][slots] (m, l) pairs; the far
++            // kernel's slots follow the splits.
++            const std::int64_t rows = std::int64_t(a.rows.tokens) * a.query_heads * slots;
++            const std::int64_t row  = (std::int64_t(t) * a.query_heads + head) * slots + split;
+             *reinterpret_cast<float4*>(a.partial + row * kD + 4 * lane) =
+                 make_float4(acc[h][0], acc[h][1], acc[h][2], acc[h][3]);
+             if (lane == 0) {
+@@ -938,14 +961,17 @@ constexpr int kCombineThreads = kD; // at least the largest split count
+ __global__ void attention_combine_kernel(AttentionArgs a) {
+     const int head = blockIdx.x, t = blockIdx.y;
+     const int d    = threadIdx.x;
+-    const std::int64_t rows  = std::int64_t(a.rows.tokens) * a.query_heads * a.splits;
+-    const std::int64_t first = (std::int64_t(t) * a.query_heads + head) * a.splits;
++    const int slots = a.splits + a.far_splits;
++    const std::int64_t rows  = std::int64_t(a.rows.tokens) * a.query_heads * slots;
++    const std::int64_t first = (std::int64_t(t) * a.query_heads + head) * slots;
+     int lo = 0, hi = 0;
+     key_range(a, t, t + 1, lo, hi);
++    if (!a.uniform) { lo = max(lo, far_floor(a, t)); }
+     const int active = active_splits(hi + 1 - lo, a.splits);
+     __shared__ float weight[kCombineThreads];
+     __shared__ float max_s, inv_l;
+-    const float ms = d < active ? a.partial[rows * kD + 2 * (first + d)] : -INFINITY;
++    const bool live = d < active || (d >= a.splits && d < slots);
++    const float ms  = live ? a.partial[rows * kD + 2 * (first + d)] : -INFINITY;
+     const float m  = warp_max(ms);
+     if ((threadIdx.x & 31) == 0) { weight[threadIdx.x >> 5] = m; }
+     __syncthreads();
+@@ -964,7 +990,7 @@ __global__ void attention_combine_kernel(AttentionArgs a) {
+     if (threadIdx.x == 0) { inv_l = 1.0f / (l + expf(sink - max_s)); }
+     __syncthreads();
+     float o = 0.0f;
+-    for (int s = 0; s < active; ++s) {
++    for (int s = 0; s < slots; ++s) {
+         const float w = weight[s];
+         if (w != 0.0f) { o += a.partial[(first + s) * kD + d] * w; }
+     }
+@@ -993,6 +1019,377 @@ __global__ void attention_combine_kernel(AttentionArgs a) {
+     }
+ }
+ 
++// ---- Far-key attention on the tensor cores --------------------------------------------------------
++// The far keys [0, far_floor) of a decode call's row group (see far_floor) carry no bias and no
++// mask, and every (row, head) pair of a KV head reads the same ones. Block (far split, kv head, row
++// group) streams a contiguous share of them for up to eight rows (24 pairs), so each key's codes
++// cross the bus once per group instead of once per row; its four warps take the share's 16-key
++// tiles in turn, each through a three-stage cp.async pipeline of its own. Per warp and tile, with
++// the scores transposed (keys are the mma's M, pairs its N):
++//   S^T[16 keys][8 pairs] = K[16][128] Q^T        (K halves as chunk_word decodes them, Q * scale
++//                                                   in FP32 as hi + lo FP16 halves)
++//   O^T[128 dims][8 pairs] += V^T[128][16] P^T    (P in FP32 as hi + lo FP16 halves)
++// accumulated in FP32. A dimension permutation lets each thread read whole bytes of its rows: QK
++// step j gives thread c dimensions 32 c + 4 j .. + 3, PV tile mt gives thread g dimensions
++// 16 g + 2 mt, + 1. Each warp keeps its own online softmax; the block merges its warps in a fixed
++// order and writes one partial (acc, m, l) per pair, in slot splits + blockIdx.x.
++constexpr int kFarWarps  = 4;
++constexpr int kFarStages = 3;
++constexpr int kFarMinTiles = 16; // a block's least share: shorter far ranges take fewer blocks
++
++__device__ __forceinline__ unsigned far_h2u(__half2 h) { return *reinterpret_cast<unsigned*>(&h); }
++__device__ __forceinline__ __half2 far_u2h(unsigned u) { return *reinterpret_cast<__half2*>(&u); }
++
++#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 800
++__device__ __forceinline__ void far_cp16(void* smem, const void* global) {
++    const unsigned s = static_cast<unsigned>(__cvta_generic_to_shared(smem));
++    asm volatile("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(s), "l"(global));
++}
++__device__ __forceinline__ void far_commit() { asm volatile("cp.async.commit_group;\n" ::); }
++template <int N>
++__device__ __forceinline__ void far_wait() { asm volatile("cp.async.wait_group %0;\n" ::"n"(N)); }
++
++// The 8x8 b16 transpose across the warp: P's accumulator fragment as the B operand.
++__device__ __forceinline__ unsigned far_trans(unsigned x) {
++    unsigned y;
++    asm volatile("movmatrix.sync.aligned.m8n8.trans.b16 %0, %1;\n" : "=r"(y) : "r"(x));
++    return y;
++}
++
++__device__ __forceinline__ void far_mma(float (&d)[4], unsigned a0, unsigned a1, unsigned a2,
++                                        unsigned a3, unsigned b0, unsigned b1) {
++    asm volatile("mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32 "
++                 "{%0,%1,%2,%3}, {%4,%5,%6,%7}, {%8,%9}, {%0,%1,%2,%3};\n"
++                 : "+f"(d[0]), "+f"(d[1]), "+f"(d[2]), "+f"(d[3])
++                 : "r"(a0), "r"(a1), "r"(a2), "r"(a3), "r"(b0), "r"(b1));
++}
++#endif
++
++// Signed bytes of `flipped` (each ^ 0x80; prmt selector `sel` puts two of them in bytes 0 and 2)
++// as a half2: 0x6400 | (b ^ 0x80) is the half 1152 + b, exact.
++__device__ __forceinline__ __half2 far_i8x2(unsigned flipped, unsigned sel) {
++    const unsigned h = __byte_perm(flipped, 0x64646464u, sel);
++    return __hsub2(far_u2h(h), __half2half2(__ushort_as_half(0x6480))); // 1152
++}
++
++// One 16-key stage: K codes, K scales (two halves per key), V codes, V scales (four per key).
++template <KvCoding KC>
++struct FarLayout {
++    static constexpr int kKCode   = KC == KvCoding::Lloyd4 ? 64 : 128;
++    static constexpr int kKScale  = 4, kVCode = 64, kVScale = 8;
++    static constexpr int kKCodeAt = 0;
++    static constexpr int kKScaleAt = kKCodeAt + kTile * kKCode;
++    static constexpr int kVCodeAt  = kKScaleAt + kTile * kKScale;
++    static constexpr int kVScaleAt = kVCodeAt + kTile * kVCode;
++    static constexpr int kStage    = kVScaleAt + kTile * kVScale;
++    static constexpr int kChunks   = kStage / 16;
++};
++
++template <KvCoding KC, int NT>
++constexpr int far_smem_bytes() {
++    const int stages = kFarWarps * kFarStages * FarLayout<KC>::kStage;
++    const int q      = NT * 8 * 32 * 16;
++    const int merge  = NT * 8 * kD * 4 + 2 * kFarWarps * NT * 8 * 4;
++    return q + (stages > merge ? stages : merge);
++}
++
++template <KvCoding KC, int NT>
++__global__ void __launch_bounds__(kFarWarps * 32) far_attention_kernel(AttentionArgs a) {
++#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 800
++    using L = FarLayout<KC>;
++    extern __shared__ __align__(16) std::uint8_t far_smem[];
++    uint4* q_s           = reinterpret_cast<uint4*>(far_smem); // [NT][8][32]
++    std::uint8_t* stages = far_smem + NT * 8 * 32 * 16;
++    const int warp = threadIdx.x >> 5, lane = threadIdx.x & 31;
++    const int g = lane >> 2, c = lane & 3;
++    const int kv_head = blockIdx.y;
++    const int group   = a.query_heads / a.kv_heads;
++    const int r0      = blockIdx.z * kFarRows;
++    const int pairs   = min(kFarRows, a.rows.tokens - r0) * group;
++    const int slots   = a.splits + a.far_splits;
++
++    // Q fragments, hi and lo: entry (nt, j, lane) = pair 8 nt + g, dimensions 32 c + 4 j .. + 3.
++    for (int e = threadIdx.x; e < NT * 8 * 32; e += blockDim.x) {
++        const int nt = e / 256, j = (e / 32) % 8, el = e % 32;
++        const int pair = 8 * nt + (el >> 2), ec = el & 3;
++        uint4 w = make_uint4(0, 0, 0, 0);
++        if (pair < pairs) {
++            const int row  = r0 + pair / group;
++            const int head = kv_head * group + pair % group;
++            float4 v = reinterpret_cast<const float4*>(
++                a.q + (std::int64_t(row) * a.query_heads + head) * kD + 32 * ec)[j];
++            v.x *= a.scale;
++            v.y *= a.scale;
++            v.z *= a.scale;
++            v.w *= a.scale;
++            const __half2 h0 = __floats2half2_rn(v.x, v.y), h1 = __floats2half2_rn(v.z, v.w);
++            const float2 f0 = __half22float2(h0), f1 = __half22float2(h1);
++            const __half2 l0 = __floats2half2_rn(v.x - f0.x, v.y - f0.y);
++            const __half2 l1 = __floats2half2_rn(v.z - f1.x, v.w - f1.y);
++            w = make_uint4(far_h2u(h0), far_h2u(h1), far_h2u(l0), far_h2u(l1));
++        }
++        q_s[e] = w;
++    }
++    __syncthreads();
++    const int tiles = far_floor(a, r0) / kTile;
++    const int per   = max(kFarMinTiles, (tiles + a.far_splits - 1) / a.far_splits);
++    const int tb    = blockIdx.x * per, te = min(tiles, tb + per);
++    const int sequence    = row_sequence(a.rows, r0);
++    const KvPlaneView& kp = a.k_plane;
++    const KvPlaneView& vp = a.v_plane;
++    const std::uint8_t* k_codes =
++        kp.codes + std::int64_t(sequence) * kp.code_seq + std::int64_t(kv_head) * kp.code_head;
++    const std::uint8_t* k_scales =
++        kp.scales + std::int64_t(sequence) * kp.scale_seq + std::int64_t(kv_head) * kp.scale_head;
++    const std::uint8_t* v_codes =
++        vp.codes + std::int64_t(sequence) * vp.code_seq + std::int64_t(kv_head) * vp.code_head;
++    const std::uint8_t* v_scales =
++        vp.scales + std::int64_t(sequence) * vp.scale_seq + std::int64_t(kv_head) * vp.scale_head;
++    std::uint8_t* mine = stages + warp * kFarStages * L::kStage;
++
++    const auto load = [&](int tile, int buffer) {
++        std::uint8_t* st       = mine + buffer * L::kStage;
++        const std::int64_t key = std::int64_t(tile) * kTile;
++        for (int ch = lane; ch < L::kChunks; ch += 32) {
++            const int at = ch * 16;
++            const std::uint8_t* src;
++            if (at < L::kKScaleAt) {
++                src = k_codes + key * L::kKCode + at;
++            } else if (at < L::kVCodeAt) {
++                src = k_scales + key * L::kKScale + (at - L::kKScaleAt);
++            } else if (at < L::kVScaleAt) {
++                src = v_codes + key * L::kVCode + (at - L::kVCodeAt);
++            } else {
++                src = v_scales + key * L::kVScale + (at - L::kVScaleAt);
++            }
++            far_cp16(st + at, src);
++        }
++    };
++
++    float o[8][NT][4], m[NT][2], l[NT][2];
++#pragma unroll
++    for (int nt = 0; nt < NT; ++nt) {
++        m[nt][0] = m[nt][1] = -INFINITY;
++        l[nt][0] = l[nt][1] = 0.0f;
++#pragma unroll
++        for (int mt = 0; mt < 8; ++mt) {
++#pragma unroll
++            for (int i = 0; i < 4; ++i) { o[mt][nt][i] = 0.0f; }
++        }
++    }
++    const int first = tb + warp;
++    const int count = first < te ? (te - first + kFarWarps - 1) / kFarWarps : 0;
++#pragma unroll
++    for (int s = 0; s < kFarStages - 1; ++s) {
++        if (s < count) { load(first + s * kFarWarps, s); }
++        far_commit();
++    }
++    for (int k = 0; k < count; ++k) {
++        const int ahead = k + kFarStages - 1;
++        if (ahead < count) { load(first + ahead * kFarWarps, ahead % kFarStages); }
++        far_commit();
++        far_wait<kFarStages - 1>();
++        __syncwarp();
++        const std::uint8_t* st = mine + (k % kFarStages) * L::kStage;
++
++        // ---- S^T = K Q^T
++        float s[NT][4];
++#pragma unroll
++        for (int nt = 0; nt < NT; ++nt) { s[nt][0] = s[nt][1] = s[nt][2] = s[nt][3] = 0.0f; }
++        const __half* ks = reinterpret_cast<const __half*>(st + L::kKScaleAt);
++        // Scale group of dimensions 32 c .. 32 c + 31: c / 2 (both codings' groups are 64 wide).
++        const __half2 sg  = __half2half2(ks[g * 2 + (c >> 1)]);
++        const __half2 sg8 = __half2half2(ks[(g + 8) * 2 + (c >> 1)]);
++        unsigned wg[8], wg8[8]; // the thread's code bytes of keys g and g + 8
++        if constexpr (KC == KvCoding::Lloyd4) {
++            const uint4 kg  = *reinterpret_cast<const uint4*>(st + L::kKCodeAt + g * 64 + 16 * c);
++            const uint4 kg8 = *reinterpret_cast<const uint4*>(st + L::kKCodeAt + (g + 8) * 64 + 16 * c);
++            const unsigned x[4] = {kg.x, kg.y, kg.z, kg.w}, y[4] = {kg8.x, kg8.y, kg8.z, kg8.w};
++#pragma unroll
++            for (int j = 0; j < 8; ++j) {
++                wg[j]  = ops::kv_cache_lloyd4_expand4(x[j >> 1] >> (16 * (j & 1))) ^ 0x80808080u;
++                wg8[j] = ops::kv_cache_lloyd4_expand4(y[j >> 1] >> (16 * (j & 1))) ^ 0x80808080u;
++            }
++        } else {
++            const uint4* kg  = reinterpret_cast<const uint4*>(st + L::kKCodeAt + g * 128 + 32 * c);
++            const uint4* kg8 = reinterpret_cast<const uint4*>(st + L::kKCodeAt + (g + 8) * 128 + 32 * c);
++            const uint4 x0 = kg[0], x1 = kg[1], y0 = kg8[0], y1 = kg8[1];
++            const unsigned x[8] = {x0.x, x0.y, x0.z, x0.w, x1.x, x1.y, x1.z, x1.w};
++            const unsigned y[8] = {y0.x, y0.y, y0.z, y0.w, y1.x, y1.y, y1.z, y1.w};
++#pragma unroll
++            for (int j = 0; j < 8; ++j) {
++                wg[j]  = x[j] ^ 0x80808080u;
++                wg8[j] = y[j] ^ 0x80808080u;
++            }
++        }
++#pragma unroll
++        for (int j = 0; j < 8; ++j) {
++            const unsigned a0 = far_h2u(__hmul2(far_i8x2(wg[j], 0x7170), sg));
++            const unsigned a2 = far_h2u(__hmul2(far_i8x2(wg[j], 0x7372), sg));
++            const unsigned a1 = far_h2u(__hmul2(far_i8x2(wg8[j], 0x7170), sg8));
++            const unsigned a3 = far_h2u(__hmul2(far_i8x2(wg8[j], 0x7372), sg8));
++#pragma unroll
++            for (int nt = 0; nt < NT; ++nt) {
++                const uint4 q = q_s[(nt * 8 + j) * 32 + lane];
++                far_mma(s[nt], a0, a1, a2, a3, q.x, q.y);
++                far_mma(s[nt], a0, a1, a2, a3, q.z, q.w);
++            }
++        }
++
++        // ---- online softmax per pair (columns 2c, 2c + 1 of each n-tile); P^T fragments
++        unsigned pb[NT][2][2]; // [nt][hi, lo][b0, b1]
++        float rescale[NT][2];
++#pragma unroll
++        for (int nt = 0; nt < NT; ++nt) {
++            float mx0 = fmaxf(s[nt][0], s[nt][2]), mx1 = fmaxf(s[nt][1], s[nt][3]);
++#pragma unroll
++            for (int off = 4; off < 32; off <<= 1) {
++                mx0 = fmaxf(mx0, __shfl_xor_sync(0xFFFFFFFFu, mx0, off));
++                mx1 = fmaxf(mx1, __shfl_xor_sync(0xFFFFFFFFu, mx1, off));
++            }
++            const float n0 = fmaxf(m[nt][0], mx0), n1 = fmaxf(m[nt][1], mx1);
++            rescale[nt][0] = expf(m[nt][0] - n0);
++            rescale[nt][1] = expf(m[nt][1] - n1);
++            m[nt][0]       = n0;
++            m[nt][1]       = n1;
++            const float p0 = expf(s[nt][0] - n0), p1 = expf(s[nt][1] - n1);
++            const float p2 = expf(s[nt][2] - n0), p3 = expf(s[nt][3] - n1);
++            l[nt][0] = l[nt][0] * rescale[nt][0] + (p0 + p2);
++            l[nt][1] = l[nt][1] * rescale[nt][1] + (p1 + p3);
++            const __half2 h01 = __floats2half2_rn(p0, p1), h23 = __floats2half2_rn(p2, p3);
++            const float2 f01 = __half22float2(h01), f23 = __half22float2(h23);
++            pb[nt][0][0] = far_trans(far_h2u(h01));
++            pb[nt][0][1] = far_trans(far_h2u(h23));
++            pb[nt][1][0] = far_trans(far_h2u(__floats2half2_rn(p0 - f01.x, p1 - f01.y)));
++            pb[nt][1][1] = far_trans(far_h2u(__floats2half2_rn(p2 - f23.x, p3 - f23.y)));
++        }
++
++        // ---- O^T += V^T P^T: thread g's dimensions 16 g .. 16 g + 15 of keys 2c, 2c+1, 2c+8, 2c+9
++        const std::uint8_t* vc = st + L::kVCodeAt;
++        const __half* vs       = reinterpret_cast<const __half*>(st + L::kVScaleAt);
++        const uint2 va  = *reinterpret_cast<const uint2*>(vc + (2 * c) * 64 + 8 * g);
++        const uint2 vb  = *reinterpret_cast<const uint2*>(vc + (2 * c + 1) * 64 + 8 * g);
++        const uint2 vc8 = *reinterpret_cast<const uint2*>(vc + (2 * c + 8) * 64 + 8 * g);
++        const uint2 vd  = *reinterpret_cast<const uint2*>(vc + (2 * c + 9) * 64 + 8 * g);
++        const __half2 sab = __halves2half2(vs[(2 * c) * 4 + (g >> 1)], vs[(2 * c + 1) * 4 + (g >> 1)]);
++        const __half2 scd = __halves2half2(vs[(2 * c + 8) * 4 + (g >> 1)], vs[(2 * c + 9) * 4 + (g >> 1)]);
++        const unsigned A[2] = {va.x ^ 0x88888888u, va.y ^ 0x88888888u};
++        const unsigned B[2] = {vb.x ^ 0x88888888u, vb.y ^ 0x88888888u};
++        const unsigned C[2] = {vc8.x ^ 0x88888888u, vc8.y ^ 0x88888888u};
++        const unsigned D[2] = {vd.x ^ 0x88888888u, vd.y ^ 0x88888888u};
++        const __half2 bias = __half2half2(__ushort_as_half(0x6408)); // (1024 + (n ^ 8)) - 1032 = (n ^ 8) - 8
++#pragma unroll
++        for (int mt = 0; mt < 8; ++mt) {
++            // byte mt of each key's eight: dimensions 16 g + 2 mt (low nibble) and + 1 (high).
++            const unsigned b   = mt & 3;
++            const unsigned sel = b | (b << 4) | ((4 + b) << 8) | ((4 + b) << 12);
++            const unsigned abw = __byte_perm(A[mt >> 2], B[mt >> 2], sel); // A_b, A_b, B_b, B_b
++            const unsigned cdw = __byte_perm(C[mt >> 2], D[mt >> 2], sel);
++            const unsigned a0 = far_h2u(__hmul2(__hsub2(far_u2h((abw & 0x000F000Fu) | 0x64006400u), bias), sab));
++            const unsigned a1 = far_h2u(__hmul2(__hsub2(far_u2h(((abw >> 4) & 0x000F000Fu) | 0x64006400u), bias), sab));
++            const unsigned a2 = far_h2u(__hmul2(__hsub2(far_u2h((cdw & 0x000F000Fu) | 0x64006400u), bias), scd));
++            const unsigned a3 = far_h2u(__hmul2(__hsub2(far_u2h(((cdw >> 4) & 0x000F000Fu) | 0x64006400u), bias), scd));
++#pragma unroll
++            for (int nt = 0; nt < NT; ++nt) {
++                o[mt][nt][0] *= rescale[nt][0];
++                o[mt][nt][1] *= rescale[nt][1];
++                o[mt][nt][2] *= rescale[nt][0];
++                o[mt][nt][3] *= rescale[nt][1];
++                far_mma(o[mt][nt], a0, a1, a2, a3, pb[nt][0][0], pb[nt][0][1]);
++                far_mma(o[mt][nt], a0, a1, a2, a3, pb[nt][1][0], pb[nt][1][1]);
++            }
++        }
++        __syncwarp();
++    }
++    far_wait<0>();
++
++    // ---- merge the warps: l over the warp's key rows, then the block's warps in a fixed order
++#pragma unroll
++    for (int nt = 0; nt < NT; ++nt) {
++#pragma unroll
++        for (int off = 4; off < 32; off <<= 1) {
++            l[nt][0] += __shfl_xor_sync(0xFFFFFFFFu, l[nt][0], off);
++            l[nt][1] += __shfl_xor_sync(0xFFFFFFFFu, l[nt][1], off);
++        }
++    }
++    __syncthreads(); // the stages are free
++    float* o_s = reinterpret_cast<float*>(stages); // [NT * 8][128]
++    float* m_s = o_s + NT * 8 * kD;                 // [warps][NT * 8]
++    float* l_s = m_s + kFarWarps * NT * 8;
++    if (g == 0) {
++#pragma unroll
++        for (int nt = 0; nt < NT; ++nt) {
++            m_s[warp * NT * 8 + 8 * nt + 2 * c]     = m[nt][0];
++            m_s[warp * NT * 8 + 8 * nt + 2 * c + 1] = m[nt][1];
++            l_s[warp * NT * 8 + 8 * nt + 2 * c]     = l[nt][0];
++            l_s[warp * NT * 8 + 8 * nt + 2 * c + 1] = l[nt][1];
++        }
++    }
++    for (int i = threadIdx.x; i < NT * 8 * kD; i += blockDim.x) { o_s[i] = 0.0f; }
++    __syncthreads();
++    float wt[NT][2];
++#pragma unroll
++    for (int nt = 0; nt < NT; ++nt) {
++#pragma unroll
++        for (int h = 0; h < 2; ++h) {
++            const int pair = 8 * nt + 2 * c + h;
++            float top      = -INFINITY;
++            for (int w = 0; w < kFarWarps; ++w) { top = fmaxf(top, m_s[w * NT * 8 + pair]); }
++            wt[nt][h] = m[nt][h] == -INFINITY ? 0.0f : expf(m[nt][h] - top);
++        }
++    }
++    for (int w = 0; w < kFarWarps; ++w) {
++        if (warp == w) {
++#pragma unroll
++            for (int mt = 0; mt < 8; ++mt) {
++#pragma unroll
++                for (int nt = 0; nt < NT; ++nt) {
++                    const int p0 = 8 * nt + 2 * c, d0 = 16 * g + 2 * mt;
++                    o_s[p0 * kD + d0]           += o[mt][nt][0] * wt[nt][0];
++                    o_s[(p0 + 1) * kD + d0]     += o[mt][nt][1] * wt[nt][1];
++                    o_s[p0 * kD + d0 + 1]       += o[mt][nt][2] * wt[nt][0];
++                    o_s[(p0 + 1) * kD + d0 + 1] += o[mt][nt][3] * wt[nt][1];
++                }
++            }
++        }
++        __syncthreads();
++    }
++    // ---- one partial per pair, in slot splits + blockIdx.x (an empty share: m -inf, l 0)
++    const std::int64_t rows_all = std::int64_t(a.rows.tokens) * a.query_heads * slots;
++    for (int pair = 0; pair < pairs; ++pair) {
++        const int row  = r0 + pair / group;
++        const int head = kv_head * group + pair % group;
++        const std::int64_t prow =
++            (std::int64_t(row) * a.query_heads + head) * slots + a.splits + blockIdx.x;
++        float top = -INFINITY;
++        for (int w = 0; w < kFarWarps; ++w) { top = fmaxf(top, m_s[w * NT * 8 + pair]); }
++        // the combine kernel reads no values of a slot whose m is -inf
++        if (top != -INFINITY) { a.partial[prow * kD + threadIdx.x] = o_s[pair * kD + threadIdx.x]; }
++        if (threadIdx.x == 0) {
++            float sum = 0.0f;
++            for (int w = 0; w < kFarWarps; ++w) {
++                const float mw = m_s[w * NT * 8 + pair];
++                if (mw != -INFINITY) { sum += l_s[w * NT * 8 + pair] * expf(mw - top); }
++            }
++            a.partial[rows_all * kD + 2 * prow]     = top;
++            a.partial[rows_all * kD + 2 * prow + 1] = sum;
++        }
++    }
++#else
++    __trap(); // attention_far_supported() admits sm_80 and newer only
++#endif
++}
++
++template <KvCoding KC, int NT>
++void launch_far_attention(const AttentionArgs& a, cudaStream_t stream) {
++    const auto kernel = far_attention_kernel<KC, NT>;
++    constexpr int smem = far_smem_bytes<KC, NT>();
++    if (smem > 48 * 1024) { raise_dynamic_shared_memory(kernel, smem); }
++    kernel<<<dim3(a.far_splits, a.kv_heads, blocks_for(a.rows.tokens, kFarRows)), kFarWarps * 32, smem,
++             stream>>>(a);
++    check_launch("far_attention");
++}
++
+ // ---- Residual updates ---------------------------------------------------------------------------
+ 
+ // The four values of the product at row s, channels 4i..4i+3.
+@@ -1800,6 +2197,27 @@ void attention(const AttentionArgs& args, cudaStream_t stream) {
+     }
+     const int t = args.rows.tokens;
+     if (t <= 0) { return; }
++    const int slots = args.splits + args.far_splits;
++    if (args.far_splits > 0) {
++        const auto aligned = [](const void* p, std::int64_t a, std::int64_t b) {
++            return reinterpret_cast<std::uintptr_t>(p) % 16 == 0 && a % 16 == 0 && b % 16 == 0;
++        };
++        const KvPlaneView& k = args.k_plane;
++        const KvPlaneView& v = args.v_plane;
++        if (args.uniform || (args.rows.chunk && args.splits != 1) || args.window != 0 ||
++            args.ring != 0 || slots > kCombineThreads || args.partial == nullptr || group > 3 ||
++            (k.coding != KvCoding::Lloyd4 && k.coding != KvCoding::Int8G64) ||
++            v.coding != KvCoding::Int4G32 ||
++            !aligned(k.codes, k.code_seq, k.code_head) || !aligned(k.scales, k.scale_seq, k.scale_head) ||
++            !aligned(v.codes, v.code_seq, v.code_head) || !aligned(v.scales, v.scale_seq, v.scale_head)) {
++            throw std::invalid_argument("inkling2 attention: far keys need a full-attention decode "
++                                        "or prompt-chunk call (one near split) over aligned Lloyd4 / "
++                                        "Int8G64 key and Int4G32 value planes, 1..3 query heads per "
++                                        "key head and at most 128 slots");
++        }
++    } else if (args.far_splits < 0) {
++        throw std::invalid_argument("inkling2 attention: negative far splits");
++    }
+     if (args.uniform) {
+         if (args.rows.chunk || t > 8 || (args.splits > 1 && args.partial == nullptr)) {
+             throw std::invalid_argument("inkling2 attention: a uniform block of 1..8 decode rows");
+@@ -1814,18 +2232,42 @@ void attention(const AttentionArgs& args, cudaStream_t stream) {
+     }
+     if (args.rows.chunk) {
+         if (args.splits != 1) { throw std::invalid_argument("inkling2 attention: chunk splits"); }
++        static_assert(kFarRows == 8, "a prompt block's eight rows are one far row group");
+         attention_kernel<8><<<dim3(blocks_for(t, 8), args.kv_heads, 1), 256, 0, stream>>>(args);
+         check_launch("attention");
+-        return;
++    } else {
++        if (slots > 1 && args.partial == nullptr) {
++            throw std::invalid_argument("inkling2 attention: split decode without partials");
++        }
++        attention_kernel<1><<<dim3(t, args.kv_heads, args.splits), 128, 0, stream>>>(args);
++        check_launch("attention");
+     }
+-    attention_kernel<1><<<dim3(t, args.kv_heads, args.splits), 128, 0, stream>>>(args);
+-    check_launch("attention");
+-    if (args.splits > 1) {
++    if (args.far_splits > 0) {
++        // n-tiles of eight (row, head) pairs: a row group's pairs, at most 24
++        const int nt = (std::min(t, kFarRows) * group + 7) / 8;
++        const bool lloyd = args.k_plane.coding == KvCoding::Lloyd4;
++        if (nt == 1) {
++            lloyd ? launch_far_attention<KvCoding::Lloyd4, 1>(args, stream)
++                  : launch_far_attention<KvCoding::Int8G64, 1>(args, stream);
++        } else if (nt == 2) {
++            lloyd ? launch_far_attention<KvCoding::Lloyd4, 2>(args, stream)
++                  : launch_far_attention<KvCoding::Int8G64, 2>(args, stream);
++        } else {
++            lloyd ? launch_far_attention<KvCoding::Lloyd4, 3>(args, stream)
++                  : launch_far_attention<KvCoding::Int8G64, 3>(args, stream);
++        }
++    }
++    if (slots > 1) {
+         attention_combine_kernel<<<dim3(args.query_heads, t, 1), kCombineThreads, 0, stream>>>(args);
+         check_launch("attention_combine");
+     }
+ }
+ 
++bool attention_far_supported(int compute_capability, KvCoding key, KvCoding value, int group) {
++    return compute_capability >= 80 && (key == KvCoding::Lloyd4 || key == KvCoding::Int8G64) &&
++           value == KvCoding::Int4G32 && group >= 1 && group <= 3;
++}
++
+ void residual(const ResidualArgs& args, cudaStream_t stream) {
+     if (args.rows.tokens <= 0) { return; }
+     if (args.mix.query_count > 0) {
+diff --git a/src/models/inkling2/kernels.h b/src/models/inkling2/kernels.h
+index f9effe7..1956b1c 100644
+--- a/src/models/inkling2/kernels.h
++++ b/src/models/inkling2/kernels.h
+@@ -236,14 +236,25 @@ struct AttentionArgs {
+     int query_heads = 0, kv_heads = 0;
+     float scale = 1.0f;
+     int splits  = 1;
++    // A decode call or a prompt chunk (uniform false; a chunk with one split) of a full-attention
++    // visit (window and ring 0) over quantized planes that attention_far_supported() accepts:
++    // each group of eight rows of one sequence reads the keys every row of it sees past its
++    // relative-bias table (no bias, no mask; a chunk's only below its first row) on the tensor
++    // cores, in `far_splits` more partial slots after the `splits` ranges of the nearer keys.
++    // 0: every key in the `splits` ranges.
++    int far_splits = 0;
+     bool uniform = false;
+-    float* partial = nullptr; // decode: attention_workspace_floats
++    float* partial = nullptr; // decode: attention_workspace_floats(rows, heads, splits + far_splits)
+     const float* gate = nullptr;
+     std::int64_t gate_stride = 0;
+     __nv_bfloat16* out = nullptr;
+     Q8Rows out_q;
+ };
+ [[nodiscard]] std::size_t attention_workspace_floats(int rows, int query_heads, int splits);
++// Whether a device of `compute_capability` (major * 10 + minor) runs the far-key tensor-core
++// attention of planes `key` / `value` with `group` query heads per key head.
++[[nodiscard]] bool attention_far_supported(int compute_capability, KvCoding key, KvCoding value,
++                                           int group);
+ void attention(const AttentionArgs& args, cudaStream_t stream);
+ 
+ // The residual update of a product y (FP32 rows [T][hidden]; or a MoE's output, the 2^-32
+diff --git a/src/models/qwen3_5/frontend/frontend.cpp b/src/models/qwen3_5/frontend/frontend.cpp
+index 6ed83a3..629518d 100644
+--- a/src/models/qwen3_5/frontend/frontend.cpp
++++ b/src/models/qwen3_5/frontend/frontend.cpp
+@@ -1025,11 +1025,15 @@ public:
+         const bool deepseek_media =
+             options.architecture == Architecture::DeepSeekV41 && vision_enabled;
+         const bool inkling_media = options.architecture == Architecture::Inkling2 && vision_enabled;
++        if (options.vision_upscale != 1.0f && options.architecture != Architecture::Inkling2) {
++            throw std::invalid_argument("--vision-upscale applies to Inkling 2 images only");
++        }
+         if (inkling_media) {
+             fi::InklingMediaOptions& k = processor.inkling.emplace(inkling_media_options(resources));
+             if (options.vision_max_merged_tokens != 0) {
+                 k.max_tokens = std::min(k.max_tokens, options.vision_max_merged_tokens);
+             }
++            k.upscale = options.vision_upscale;
+         } else if (deepseek_media) {
+             fi::DeepSeekMediaOptions& d = processor.deepseek.emplace(deepseek_media_options(resources));
+             if (options.vision_max_merged_tokens != 0) {
+diff --git a/src/models/qwen3_5/frontend/frontend.h b/src/models/qwen3_5/frontend/frontend.h
+index ab4ea87..ad2d6d2 100644
+--- a/src/models/qwen3_5/frontend/frontend.h
++++ b/src/models/qwen3_5/frontend/frontend.h
+@@ -36,6 +36,8 @@ struct FrontendOptions {
+     // Largest merged-token count one media item may occupy; larger media is downscaled at
+     // preprocessing instead of being rejected. Zero leaves the artifact's pixel ceilings.
+     std::uint32_t vision_max_merged_tokens = 16384;
++    // Inkling 2: each image side enlarged by this factor before the budget bounds it (1: none).
++    float vision_upscale = 1.0f;
+     // End-of-thinking message injected when a request hits its thinking budget. Empty
+     // preserves the built-in canonical control suffix; a message lacking the canonical
+     // </think> close serialization gets it appended at startup.
+diff --git a/src/models/qwen3_5/frontend/processor.cpp b/src/models/qwen3_5/frontend/processor.cpp
+index df8d709..30bcac6 100644
+--- a/src/models/qwen3_5/frontend/processor.cpp
++++ b/src/models/qwen3_5/frontend/processor.cpp
+@@ -1431,23 +1431,26 @@ InklingImagePlan inkling_image_plan(int width, int height, const InklingMediaOpt
+         throw ProcessorError(ProcessorErrorKind::InvalidMedia, "Inkling 2 image plan");
+     }
+     const int m = options.merge, align = options.patch * m;
++    const bool upscaled = options.upscale > 1.0f;
+     InklingImagePlan plan{width, height, ceil_div(width, align) * m, ceil_div(height, align) * m};
+-    if (plan.cells(m) <= budget) { return plan; }
++    if (!upscaled && plan.cells(m) <= budget) { return plan; }
+     // llama.cpp's calc_size_preserved_ratio at this alignment and budget, in its FP32 arithmetic:
+     // the sides rounded to whole cells, and past the budget each scaled down by the same factor to
+-    // whole cells below it.
+-    const auto round_cells = [&](int side) {
+-        return std::max(align, int(std::round(float(side) / float(align))) * align);
++    // whole cells below it. An upscaled image enters it at its enlarged sides.
++    const float sw = upscaled ? float(width) * options.upscale : float(width);
++    const float sh = upscaled ? float(height) * options.upscale : float(height);
++    const auto round_cells = [&](float side) {
++        return std::max(align, int(std::round(side / float(align))) * align);
+     };
+     const auto floor_cells = [&](float side) {
+         return std::max(align, int(std::floor(side / float(align))) * align);
+     };
+     const std::int64_t max_pixels = std::int64_t(budget) * align * align;
+-    int w = round_cells(width), h = round_cells(height);
++    int w = round_cells(sw), h = round_cells(sh);
+     if (std::int64_t(w) * h > max_pixels) {
+-        const float beta = std::sqrt(float(height) * float(width) / float(max_pixels));
+-        h                = floor_cells(float(height) / beta);
+-        w                = floor_cells(float(width) / beta);
++        const float beta = std::sqrt(sh * sw / float(max_pixels));
++        h                = floor_cells(sh / beta);
++        w                = floor_cells(sw / beta);
+     }
+     plan = {w, h, w / options.patch, h / options.patch};
+     if (plan.cells(m) > budget) {
+diff --git a/src/models/qwen3_5/frontend/processor.h b/src/models/qwen3_5/frontend/processor.h
+index 65f6b51..da8b7ac 100644
+--- a/src/models/qwen3_5/frontend/processor.h
++++ b/src/models/qwen3_5/frontend/processor.h
+@@ -140,11 +140,14 @@ struct DeepSeekImagePlan {
+ // the raw value -1, values (x - 127.5) / 127.5. The release does not resize: an image of more than
+ // max_tokens cells (the release's bound, or --vision-max-merged below it) is first resized, PIL
+ // bicubic, to the aligned size llama.cpp bounds it to; a low-detail image takes at most a quarter
+-// of that. Images only.
++// of that. An `upscale` above 1 (--vision-upscale) first enlarges each side by that factor, PIL
++// bicubic to whole cells, and the same budget then bounds the enlarged image: small screen text
++// that a 20-pixel patch blurs reaches the tower at a readable size. Images only.
+ struct InklingMediaOptions {
+     int patch                = 20;
+     int merge                = 2;
+     std::uint32_t max_tokens = 4096;
++    float upscale            = 1.0f;
+ };
+ 
+ // An image's plan: its pixel size after any resize, and its patch grid (whole cells, the padding
+diff --git a/src/runtime/engine/inkling2_core.cpp b/src/runtime/engine/inkling2_core.cpp
+index 37d4e34..8c53b17 100644
+--- a/src/runtime/engine/inkling2_core.cpp
++++ b/src/runtime/engine/inkling2_core.cpp
+@@ -228,7 +228,8 @@ ConstructedInkling2 construct_inkling2(const EngineOptions& options, DeviceConte
+              .media_cache_bytes        = options.media_cache_bytes,
+              .media_live_bytes         = options.media_live_bytes,
+              .media_preprocess_threads = options.media_preprocess_threads,
+-             .vision_max_merged_tokens = options.vision_max_merged_tokens}),
++             .vision_max_merged_tokens = options.vision_max_merged_tokens,
++             .vision_upscale           = options.vision_upscale}),
+         .executor = nullptr,
+         .capacity = options.max_context});
+     frontend_phase.complete();
+diff --git a/src/serve/generation_service.cpp b/src/serve/generation_service.cpp
+index 54d0442..c94bb25 100644
+--- a/src/serve/generation_service.cpp
++++ b/src/serve/generation_service.cpp
+@@ -314,6 +314,7 @@ ninfer::EngineOptions make_engine_options(const ServeOptions& options) {
+     options.prompt_routes.apply(engine_options);
+     engine_options.vision_residency         = options.vision_residency;
+     engine_options.vision_max_merged_tokens = options.vision_max_merged_tokens;
++    engine_options.vision_upscale           = options.vision_upscale;
+     engine_options.use_cuda_graph           = options.use_cuda_graph;
+     engine_options.gpu_clock_floor_mhz      = options.gpu_clock_floor_mhz;
+     engine_options.lm_head_q4               = options.lm_head_q4;
+diff --git a/src/serve/serve_options.cpp b/src/serve/serve_options.cpp
+index 09dd77f..6517db9 100644
+--- a/src/serve/serve_options.cpp
++++ b/src/serve/serve_options.cpp
+@@ -568,6 +568,8 @@ std::string serve_usage_text(const char* argv0) {
+            "  --vision-cpu                  --vision with --vision-residency cpu\n"
+            "  --vision-max-merged N         merged tokens of one media item, 64..16384\n"
+            "                                (default 16384); larger media is downscaled\n"
++           "  --vision-upscale F            Inkling 2: enlarge each image side by F, 1..4,\n"
++           "                                before that budget bounds it (default 1)\n"
+            "  --media-cache-mib N           retained prepared media (default 1024; 0\n"
+            "                                disables)\n"
+            "  --media-urls SIZE             fetch the HTTP(S) image and video URLs of\n"
+@@ -1464,6 +1466,11 @@ ServeOptions parse_serve_arguments(bool artifact_given, const std::vector<std::s
+             vision_max_merged_explicit       = true;
+             continue;
+         }
++        if (arg == "--vision-upscale") {
++            options.vision_upscale =
++                parse_float_in(require_value("--vision-upscale"), "vision-upscale", 1.0f, 4.0f);
++            continue;
++        }
+         if (product::switch_option(arg, "cuda-graph", [&](bool on) { options.use_cuda_graph = on; })) {
+             continue;
+         }
+diff --git a/src/serve/serve_options.h b/src/serve/serve_options.h
+index cf7017b..2643f9e 100644
+--- a/src/serve/serve_options.h
++++ b/src/serve/serve_options.h
+@@ -102,6 +102,7 @@ struct ServeOptions {
+     bool enable_vision      = false;
+     VisionResidency vision_residency       = VisionResidency::Resident;
+     std::uint32_t vision_max_merged_tokens = 16384;
++    float vision_upscale                   = 1.0f;
+     bool use_cuda_graph     = true;
+     std::uint32_t gpu_clock_floor_mhz = 0;
+     bool lm_head_q4         = false;
+diff --git a/tools/README.md b/tools/README.md
+index 4a56280..19c59b2 100644
+--- a/tools/README.md
++++ b/tools/README.md
+@@ -18,6 +18,7 @@ Python tools are independent of CMake; there is no `NINFER_BUILD_TOOLS` option.
+ | Inspect artifact metadata and objects | [`artifact/inspect.py`](artifact/inspect.py) |
+ | Count the bytes one decoded token reads (roofline denominator) | [`decode_byte_accounting.py`](decode_byte_accounting.py) |
+ | Measure the card's sustained memory bandwidth | [`hbm_bandwidth_probe.cu`](hbm_bandwidth_probe.cu) |
++| Time Inkling 2's full attention over quantized KV and check it against an FP64 oracle | [`attn_bench.cu`](attn_bench.cu); build command in its header |
+ | One-time upgrade of official v2 artifacts | [`upgrade_ninfer_v2_to_v3.py`](upgrade_ninfer_v2_to_v3.py), with positional `INPUT OUTPUT` paths |
+ | Run benchmark matrices | [`bench/`](bench/README.md) |
+ | Reference measurements against a running server (the suites behind the [reference tables](../docs/performance/reference-2026-09.md)) | [`bench/refbench.py`](bench/README.md#reference-measurements-refbenchpy) |
+diff --git a/tools/attn_bench.cu b/tools/attn_bench.cu
+new file mode 100644
+index 0000000..8b4d39b
+--- /dev/null
++++ b/tools/attn_bench.cu
+@@ -0,0 +1,312 @@
++// Inkling 2 full-attention kernel timing and qualification at real shapes (24 query heads, 8 KV
++// heads of 128, rk4v4 or rk8v4 planes), outside the engine: the engine's own kernels.cu compiled
++// into this program, called through kernels::attention() exactly as executor.cpp calls it.
++//
++//   attn_bench DEPTH [--kv rk4v4|rk8v4] [--chunk 2048] [--rows 1,2,4,8] [--splits N]
++//              [--near N] [--far N] [--cfar N] [--reps 5] [--check 1] [--qscale 0.6]
++//
++// Prints the time of one prompt chunk's attention (rows DEPTH-chunk .. DEPTH-1 after a cache of
++// DEPTH-chunk keys; scalar, and with --cfar tensor-core slots over the cache's far keys, default
++// 1, 0 none) and of decode / verification calls of 1..8 rows ending at depth DEPTH, per visit,
++// for the scalar route (--splits ranges over every key; default the executor's
++// decode_splits_full) and the far-key route (--near ranges over the nearer keys, --far tensor-core
++// slots over the rest; defaults the executor's min(splits, 64) + the rest of 128). With --check,
++// every output is compared with an FP64 oracle of the whole attention (relative bias, sink, gate,
++// the chunk's causal mask) computed from the planes' codes and stored scales, decoded
++// independently.
++// The model has 8 full-attention visits a token, so a call's attention cost is 8x the printed time.
++//
++// Build, from the repository root (the flags of the card's own build; 120a shown):
++//   nvcc -O3 -std=c++20 -DNINFER_SM120_FP8=1 -DNINFER_TIER_BLACKWELL=1 \
++//     "--generate-code=arch=compute_120a,code=[sm_120a]" -Iinclude -Isrc -isystem third_party \
++//     tools/attn_bench.cu -o build/attn_bench -lcublas
++// With MSVC add -DNOMINMAX -DWIN32_LEAN_AND_MEAN
++//   -Xcompiler="/EHsc /utf-8 /Zc:preprocessor /Zc:__cplusplus -MD".
++#include "models/inkling2/kernels.cu"
++
++#include <cmath>
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <string>
++#include <vector>
++
++namespace ninfer {
++void cuda_check(cudaError_t err, const char* expr, const char* file, int line) {
++    if (err != cudaSuccess) {
++        std::fprintf(stderr, "%s:%d %s: %s\n", file, line, expr, cudaGetErrorString(err));
++        std::exit(2);
++    }
++}
++void raise_dynamic_shared_memory(const void* kernel, int bytes) {
++    CUDA_CHECK(cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, bytes));
++}
++} // namespace ninfer
++
++using namespace ninfer::models::inkling2;
++namespace k = ninfer::models::inkling2::kernels;
++
++__global__ void fill_bytes(std::uint8_t* p, std::size_t n, unsigned seed) {
++    for (std::size_t i = blockIdx.x * std::size_t(blockDim.x) + threadIdx.x; i < n;
++         i += std::size_t(gridDim.x) * blockDim.x) {
++        unsigned x = unsigned(i) * 2654435761u ^ seed;
++        x ^= x >> 13; x *= 0x5bd1e995u; x ^= x >> 15;
++        p[i] = std::uint8_t(x);
++    }
++}
++__global__ void fill_half(__half* p, std::size_t n, float v) {
++    for (std::size_t i = blockIdx.x * std::size_t(blockDim.x) + threadIdx.x; i < n;
++         i += std::size_t(gridDim.x) * blockDim.x) {
++        p[i] = __float2half(v * (1.0f + 0.25f * float((i * 7) % 5) / 5.0f));
++    }
++}
++__global__ void fill_float(float* p, std::size_t n, float scale, unsigned seed) {
++    for (std::size_t i = blockIdx.x * std::size_t(blockDim.x) + threadIdx.x; i < n;
++         i += std::size_t(gridDim.x) * blockDim.x) {
++        unsigned x = unsigned(i) * 2246822519u ^ seed;
++        x ^= x >> 15; x *= 0x2c1b3c6du; x ^= x >> 12;
++        p[i] = scale * (float(x & 0xffff) / 32768.0f - 1.0f);
++    }
++}
++
++static void* dev(std::size_t bytes) {
++    void* p = nullptr;
++    CUDA_CHECK(cudaMalloc(&p, bytes));
++    return p;
++}
++
++template <class T>
++static std::vector<T> host(const void* p, std::size_t n) {
++    std::vector<T> h(n);
++    CUDA_CHECK(cudaMemcpy(h.data(), p, n * sizeof(T), cudaMemcpyDeviceToHost));
++    return h;
++}
++
++static int lloyd(int i) {
++    static const int codes[8] = {6, 18, 31, 44, 58, 75, 96, 127};
++    return (i & 8) ? -codes[i & 7] : codes[i & 7];
++}
++
++constexpr int kQH = 24, kKVH = 8, kExtent = 1024, kRel = 16;
++
++// FP64 decode attention of rows at positions pos[0..t) (sequence 0, every key 0..pos in the
++// planes): o[t][head][128] = sigmoid(gate) * sum_k e^{s_k} v_k / (sum_k e^{s_k} + e^{sink}),
++// s_k = scale q . k + (pos - k < extent ? r . table[pos - k] : 0).
++static std::vector<double> oracle(const KvPlaneView& kp, const KvPlaneView& vp, const k::AttentionArgs& a,
++                                  const std::vector<int>& pos) {
++    const int t = int(pos.size());
++    const int D = pos.back() + 1;
++    const auto kc = host<std::uint8_t>(kp.codes, std::size_t(kp.code_head) * kKVH);
++    const auto ks = host<__half>(kp.scales, std::size_t(kp.scale_head) * kKVH / 2);
++    const auto vc = host<std::uint8_t>(vp.codes, std::size_t(vp.code_head) * kKVH);
++    const auto vs = host<__half>(vp.scales, std::size_t(vp.scale_head) * kKVH / 2);
++    const auto q = host<float>(a.q, std::size_t(t) * kQH * 128);
++    const auto r = host<float>(a.r, std::size_t(t) * kQH * kRel);
++    const auto sinks = host<float>(a.sinks, std::size_t(t) * kQH);
++    const auto table = host<float>(a.table, std::size_t(kExtent) * kRel);
++    const auto gate = host<float>(a.gate, std::size_t(t) * a.gate_stride);
++    std::vector<double> out(std::size_t(t) * kQH * 128);
++    const int group = kQH / kKVH;
++    std::vector<double> K(std::size_t(D) * 128), V(std::size_t(D) * 128);
++    for (int head = 0; head < kKVH; ++head) {
++        for (int key = 0; key < D; ++key) {
++            const std::uint8_t* krow = kc.data() + std::size_t(head) * kp.code_head + std::size_t(key) * kp.code_row;
++            const __half* kscale = ks.data() + (std::size_t(head) * kp.scale_head + std::size_t(key) * kp.scale_row) / 2;
++            const std::uint8_t* vrow = vc.data() + std::size_t(head) * vp.code_head + std::size_t(key) * vp.code_row;
++            const __half* vscale = vs.data() + (std::size_t(head) * vp.scale_head + std::size_t(key) * vp.scale_row) / 2;
++            for (int d = 0; d < 128; ++d) {
++                const int code = kp.coding == KvCoding::Lloyd4 ? lloyd((krow[d / 2] >> (4 * (d & 1))) & 15)
++                                                               : int(std::int8_t(krow[d]));
++                K[std::size_t(key) * 128 + d] = double(code) * double(__half2float(kscale[d / 64]));
++                const int nib = (vrow[d / 2] >> (4 * (d & 1))) & 15;
++                V[std::size_t(key) * 128 + d] = double((nib ^ 8) - 8) * double(__half2float(vscale[d / 32]));
++            }
++        }
++        for (int row = 0; row < t; ++row) {
++            for (int h = 0; h < group; ++h) {
++                const int qh = head * group + h;
++                const float* qq = &q[(std::size_t(row) * kQH + qh) * 128];
++                const float* rr = &r[(std::size_t(row) * kQH + qh) * kRel];
++                std::vector<double> s(pos[row] + 1);
++                double m = sinks[std::size_t(row) * kQH + qh];
++                for (int key = 0; key <= pos[row]; ++key) {
++                    double dot = 0;
++                    for (int d = 0; d < 128; ++d) { dot += double(qq[d]) * double(a.scale) * K[std::size_t(key) * 128 + d]; }
++                    const int dist = pos[row] - key;
++                    if (dist < kExtent) {
++                        for (int c = 0; c < kRel; ++c) { dot += double(rr[c]) * double(table[std::size_t(dist) * kRel + c]); }
++                    }
++                    s[key] = dot;
++                    m = std::max(m, dot);
++                }
++                double l = std::exp(double(sinks[std::size_t(row) * kQH + qh]) - m), acc[128] = {};
++                for (int key = 0; key <= pos[row]; ++key) {
++                    const double w = std::exp(s[key] - m);
++                    l += w;
++                    for (int d = 0; d < 128; ++d) { acc[d] += w * V[std::size_t(key) * 128 + d]; }
++                }
++                for (int d = 0; d < 128; ++d) {
++                    const double gx = gate[std::size_t(row) * a.gate_stride + qh * 128 + d];
++                    out[(std::size_t(row) * kQH + qh) * 128 + d] = acc[d] / l / (1.0 + std::exp(-gx));
++                }
++            }
++        }
++    }
++    return out;
++}
++
++static void report(const char* name, const __nv_bfloat16* out_dev, const std::vector<double>& ref) {
++    const auto got = host<__nv_bfloat16>(out_dev, ref.size());
++    double max_abs = 0, max_ref = 0, sq = 0, rsq = 0;
++    for (std::size_t i = 0; i < ref.size(); ++i) {
++        const double e = std::fabs(double(__bfloat162float(got[i])) - ref[i]);
++        max_abs = std::max(max_abs, e);
++        max_ref = std::max(max_ref, std::fabs(ref[i]));
++        sq += e * e;
++        rsq += ref[i] * ref[i];
++    }
++    std::printf("   %s vs FP64 oracle: max abs %.3e (max |o| %.3e, rel %.3e), rms rel %.3e\n", name, max_abs, max_ref,
++                max_abs / max_ref, std::sqrt(sq / rsq));
++}
++
++int main(int argc, char** argv) {
++    if (argc < 2) {
++        std::fprintf(stderr, "attn_bench DEPTH [--kv rk4v4|rk8v4] [--chunk N] [--rows 1,2,4,8] [--splits N] "
++                             "[--near N] [--far N] [--reps N] [--check 1] [--qscale X]\n");
++        return 1;
++    }
++    const int depth = std::atoi(argv[1]);
++    std::string kv = "rk4v4";
++    int chunk = 2048, reps = 5, splits = 0, near_splits = 0, far_splits = 0, check = 0, chunk_far = 1;
++    float qscale = 0.6f;
++    std::vector<int> rows_list = {1, 2, 4, 6, 8};
++    for (int i = 2; i + 1 < argc; i += 2) {
++        if (!std::strcmp(argv[i], "--kv")) { kv = argv[i + 1]; }
++        else if (!std::strcmp(argv[i], "--chunk")) { chunk = std::atoi(argv[i + 1]); }
++        else if (!std::strcmp(argv[i], "--reps")) { reps = std::atoi(argv[i + 1]); }
++        else if (!std::strcmp(argv[i], "--splits")) { splits = std::atoi(argv[i + 1]); }
++        else if (!std::strcmp(argv[i], "--near")) { near_splits = std::atoi(argv[i + 1]); }
++        else if (!std::strcmp(argv[i], "--far")) { far_splits = std::atoi(argv[i + 1]); }
++        else if (!std::strcmp(argv[i], "--cfar")) { chunk_far = std::atoi(argv[i + 1]); }
++        else if (!std::strcmp(argv[i], "--check")) { check = std::atoi(argv[i + 1]); }
++        else if (!std::strcmp(argv[i], "--qscale")) { qscale = float(std::atof(argv[i + 1])); }
++        else if (!std::strcmp(argv[i], "--rows")) {
++            rows_list.clear();
++            for (char* s = argv[i + 1]; *s;) { rows_list.push_back(std::strtol(s, &s, 10)); if (*s == ',') { ++s; } }
++        }
++    }
++    int sms = 0;
++    CUDA_CHECK(cudaDeviceGetAttribute(&sms, cudaDevAttrMultiProcessorCount, 0));
++    if (splits == 0) { splits = std::clamp(2 * sms / kKVH, 1, 128); } // executor.cpp's decode_splits_full
++    if (near_splits == 0) { near_splits = std::min(splits, 64); }      // and its far-route defaults
++    if (far_splits == 0) { far_splits = 128 - near_splits; }
++    const KvCoding kc = kv == "rk8v4" ? KvCoding::Int8G64 : KvCoding::Lloyd4, vc = KvCoding::Int4G32;
++    const int slots = (depth + 16 + 15) / 16 * 16;
++
++    auto plane = [&](KvCoding c, unsigned seed) {
++        KvPlaneView p;
++        p.coding     = c;
++        p.code_row   = kv_code_bytes(c);
++        p.scale_row  = kv_scale_bytes(c);
++        p.code_head  = p.code_row * slots;
++        p.scale_head = p.scale_row * slots;
++        p.code_seq   = p.code_head * kKVH;
++        p.scale_seq  = p.scale_head * kKVH;
++        p.codes      = static_cast<std::uint8_t*>(dev(p.code_seq));
++        p.scales     = static_cast<std::uint8_t*>(dev(p.scale_seq));
++        fill_bytes<<<1024, 256>>>(p.codes, p.code_seq, seed);
++        fill_half<<<1024, 256>>>(reinterpret_cast<__half*>(p.scales), p.scale_seq / 2, c == KvCoding::Int4G32 ? 0.05f : 0.02f);
++        return p;
++    };
++    const KvPlaneView kp = plane(kc, 1), vp = plane(vc, 2);
++    const int tmax = std::max(chunk, 16);
++    float* q     = static_cast<float*>(dev(std::size_t(tmax) * kQH * 128 * 4));
++    float* r     = static_cast<float*>(dev(std::size_t(tmax) * kQH * kRel * 4));
++    float* sinks = static_cast<float*>(dev(std::size_t(tmax) * kQH * 4));
++    float* table = static_cast<float*>(dev(std::size_t(kExtent) * kRel * 4));
++    float* gate  = static_cast<float*>(dev(std::size_t(tmax) * kQH * 128 * 4));
++    auto* out    = static_cast<__nv_bfloat16*>(dev(std::size_t(tmax) * kQH * 128 * 2));
++    auto* out2   = static_cast<__nv_bfloat16*>(dev(std::size_t(tmax) * kQH * 128 * 2));
++    float* partial = static_cast<float*>(dev(k::attention_workspace_floats(16, kQH, 128) * 4));
++    fill_float<<<1024, 256>>>(q, std::size_t(tmax) * kQH * 128, qscale, 3);
++    fill_float<<<1024, 256>>>(r, std::size_t(tmax) * kQH * kRel, 0.5f, 4);
++    fill_float<<<1024, 256>>>(sinks, std::size_t(tmax) * kQH, 1.0f, 5);
++    fill_float<<<1024, 256>>>(table, std::size_t(kExtent) * kRel, 0.5f, 6);
++    fill_float<<<1024, 256>>>(gate, std::size_t(tmax) * kQH * 128, 2.0f, 7);
++    std::vector<std::int32_t> pos(tmax);
++    std::int32_t* positions = static_cast<std::int32_t*>(dev(tmax * 4));
++    CUDA_CHECK(cudaDeviceSynchronize());
++
++    auto base_args = [&]() {
++        k::AttentionArgs a;
++        a.q = q; a.r = r; a.sinks = sinks; a.sink_stride = kQH; a.table = table; a.extent = kExtent;
++        a.k_plane = kp; a.v_plane = vp; a.query_heads = kQH; a.kv_heads = kKVH;
++        a.scale = 1.0f / std::sqrt(128.0f); a.gate = gate; a.gate_stride = kQH * 128; a.out = out;
++        return a;
++    };
++    cudaEvent_t e0, e1;
++    CUDA_CHECK(cudaEventCreate(&e0));
++    CUDA_CHECK(cudaEventCreate(&e1));
++    auto time_call = [&](const k::AttentionArgs& a) {
++        k::attention(a, nullptr);
++        CUDA_CHECK(cudaDeviceSynchronize());
++        CUDA_CHECK(cudaEventRecord(e0));
++        for (int i = 0; i < reps; ++i) { k::attention(a, nullptr); }
++        CUDA_CHECK(cudaEventRecord(e1));
++        CUDA_CHECK(cudaEventSynchronize(e1));
++        float ms = 0;
++        CUDA_CHECK(cudaEventElapsedTime(&ms, e0, e1));
++        return ms / reps;
++    };
++    const double kv_bytes_per_key = kKVH * double(kv_code_bytes(kc) + kv_scale_bytes(kc) + kv_code_bytes(vc) + kv_scale_bytes(vc));
++    std::printf("depth %d, kv %s, %d SMs, scalar splits %d, far route %d + %d, KV of one visit %.1f MiB\n", depth,
++                kv.c_str(), sms, splits, near_splits, far_splits, kv_bytes_per_key * depth / 1048576.0);
++    if (chunk > 0 && depth > chunk) {
++        const int first = depth - chunk;
++        std::vector<int> rows_pos(chunk);
++        for (int t = 0; t < chunk; ++t) { pos[t] = rows_pos[t] = first + t; }
++        CUDA_CHECK(cudaMemcpy(positions, pos.data(), chunk * 4, cudaMemcpyHostToDevice));
++        k::AttentionArgs a = base_args();
++        a.rows.positions = positions; a.rows.tokens = chunk; a.rows.chunk = true; a.rows.first = first;
++        a.splits = 1;
++        const float ms = time_call(a);
++        const double flops = 4.0 * kQH * 128 * (double(first) * chunk + 0.5 * double(chunk) * chunk);
++        std::printf("prompt chunk %d rows after %d keys: scalar %.2f ms per visit, x8 visits %.1f ms = %.0f tok/s attention only, %.1f TFLOPS\n",
++                    chunk, first, ms, 8 * ms, chunk / (8 * ms / 1000.0), flops / (ms / 1000.0) / 1e12);
++        if (chunk_far > 0) {
++            k::AttentionArgs f = a;
++            f.far_splits = chunk_far; f.out = out2;
++            f.partial = static_cast<float*>(dev(k::attention_workspace_floats(chunk, kQH, 1 + chunk_far) * 4));
++            const float mf = time_call(f);
++            std::printf("prompt chunk far route (1 + %d slots): %.2f ms per visit, x8 visits %.1f ms = %.0f tok/s attention only, %.1f TFLOPS, %.2fx\n",
++                        chunk_far, mf, 8 * mf, chunk / (8 * mf / 1000.0), flops / (mf / 1000.0) / 1e12, ms / mf);
++            if (check) {
++                const std::vector<double> ref = oracle(kp, vp, a, rows_pos);
++                report("chunk scalar", out, ref);
++                report("chunk far   ", out2, ref);
++            }
++            CUDA_CHECK(cudaFree(f.partial));
++        }
++    }
++    for (int t : rows_list) {
++        std::vector<int> rows_pos(t);
++        for (int i = 0; i < t; ++i) { pos[i] = rows_pos[i] = depth - t + i; }
++        CUDA_CHECK(cudaMemcpy(positions, pos.data(), t * 4, cudaMemcpyHostToDevice));
++        k::AttentionArgs a = base_args();
++        a.rows.positions = positions; a.rows.tokens = t; a.rows.chunk = false;
++        a.splits = splits; a.partial = partial;
++        const float ms = time_call(a);
++        k::AttentionArgs f = a;
++        f.splits = near_splits; f.far_splits = far_splits; f.out = out2;
++        const float mf = time_call(f);
++        std::printf("decode %d row(s): scalar %.3f ms per visit (x8 %.2f ms, %.0f GB/s); far route %.3f ms (x8 %.2f ms, %.0f GB/s), %.2fx\n",
++                    t, ms, 8 * ms, kv_bytes_per_key * depth / (ms / 1000.0) / 1e9, mf, 8 * mf,
++                    kv_bytes_per_key * depth / (mf / 1000.0) / 1e9, ms / mf);
++        if (check) {
++            const std::vector<double> ref = oracle(kp, vp, a, rows_pos);
++            report("scalar", out, ref);
++            report("far   ", out2, ref);
++        }
++    }
++    return 0;
++}

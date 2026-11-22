@@ -1,0 +1,26 @@
+{
+ "end_q2": {
+  "seconds": 22.41,
+  "prompt": 44262,
+  "cached": 0,
+  "text": "The user asks: How many kg in record 22-00011 and what is its route? Also name the site of record 11-00005.\n\nNeed read from provided data.\n\nRecord 22-00011: \"record 22-00011: owner onyx lumen, site delta, load 1051 kg, route nectar-yarrow, status marble, code 982043\". So load 1051 kg, route nectar-yarrow.\n\nRecord 11-00005: \"record 11-00005: owner amber yarrow, site onyx, load 3300 kg, route kelp-onyx, status sable, code 644341\". Site onyx.\n\nNeed answer concise in Russian. Ensure no extra. ## Запись 22-00011: 1051 кг, маршрут nectar-yarrow. Площадка записи 11-00005: onyx."
+ },
+ "side": {
+  "seconds": 1.11,
+  "prompt": 2282,
+  "cached": 0,
+  "text": "The user wants a three-word title in Russian for this text. The text is a list of records with owner, site, load, route, status, code. Looks like logist ## "
+ },
+ "after_side_q3": {
+  "seconds": 21.85,
+  "prompt": 44251,
+  "cached": 0,
+  "text": "The user asks: status of record 11-00009 and code of record 22-00002.\n\nFrom first part: record 11-00009: owner delta marble, site delta, load 376 kg, route jasper-marble, status cedar, code 988468. Status = cedar.\n\nFrom second part: record 22-00002: owner tundra fjord, site river, load 893 kg, route velvet-xenon, status nectar, code 705179. Code = 705179.\n\nAnswer concisely in Russian. ## Статус записи 11-00009: cedar. Код записи 22-00002: 705179."
+ },
+ "middle_q4": {
+  "seconds": 22.58,
+  "prompt": 44248,
+  "cached": 0,
+  "text": "The user asks in Russian: \"Назови владельца и груз записи 22-00004 и маршрут записи 11-00001.\" Need answer from provided data.\n\nFind record 22-00004: \"record 22-00004: owner delta sable, site quartz, load 1102 kg, route xenon-yarrow, status sable, code 832310\". Owner: delta sable. Load: 1102 kg.\nRecord 11-00001: \"record 11-00001: owner fjord zephyr, site quartz, load 3150 kg, route prism-umber, status tundra, code 198695\". Route: prism-umber.\nNeed answer concise. In Russian. Ensure exact owner maybe \"delta sable\" (two words). Load 1102 kg. Route prism-umber. ## Запись 22-00004: владелец — delta sable, груз — 1102 kg.\nЗапись 11-00001: маршрут — prism-umber."
+ }
+}

@@ -1,0 +1,164 @@
+From 4758f70e6b47cd0a4ca0c49057536ef1feb72298 Mon Sep 17 00:00:00 2001
+From: basalt-ink-experiments <noreply@localhost>
+Date: Sun, 22 Nov 2026 01:20:59 +0300
+Subject: [PATCH 2/4] inkling2: decode's routing counts as an expert profile
+ file (BASALT_INK_PROFILE_OUT)
+
+BASALT_INK_PROFILE_OUT=<file> makes a session write its running count of every (layer, expert) pair's decode lookups
+as an expert profile, the most routed first, in the format --expert-profile reads: when the session ends and every
+BASALT_INK_PROFILE_EVERY decoded tokens (4096; 0: at the end only), since a server that is killed never reaches the
+end. A pair the session never routed keeps its place in the profile the run started from. Unset: nothing is written.
+
+Experimental, local work branch.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+---
+ src/models/inkling2/ink.cpp     | 10 +++++++
+ src/models/inkling2/ink.hpp     | 10 +++++++
+ src/models/inkling2/session.cpp | 50 +++++++++++++++++++++++++++++++++
+ 3 files changed, 70 insertions(+)
+
+diff --git a/src/models/inkling2/ink.cpp b/src/models/inkling2/ink.cpp
+index 8b806f9..820e00e 100644
+--- a/src/models/inkling2/ink.cpp
++++ b/src/models/inkling2/ink.cpp
+@@ -47,4 +47,14 @@ const Reserves& reserves() {
+     return r;
+ }
+ 
++const ProfileOut& profile_out() {
++    static const ProfileOut p = [] {
++        ProfileOut v;
++        v.path = env_text("BASALT_INK_PROFILE_OUT");
++        v.every = env_int("BASALT_INK_PROFILE_EVERY", 4096, 0, 1ll << 40);
++        return v;
++    }();
++    return p;
++}
++
+ }  // namespace basalt::models::inkling2::ink
+diff --git a/src/models/inkling2/ink.hpp b/src/models/inkling2/ink.hpp
+index 993f846..5619610 100644
+--- a/src/models/inkling2/ink.hpp
++++ b/src/models/inkling2/ink.hpp
+@@ -6,6 +6,9 @@
+ //   BASALT_INK_ELASTIC_KEEP_MIB   free bytes an elastic KV grow leaves, and a restart's copy-back (default 512)
+ //   BASALT_INK_SESSION_FIXED_MIB  what the plan counts for a session beside its caches (default 768)
+ //   BASALT_INK_SPILL_MARGIN_MIB   the plan's margin when experts leave the card (default 128)
++//   BASALT_INK_PROFILE_OUT        a file a session writes decode's routing counts to as an expert profile, the most
++//                                 routed pair first (--expert-profile reads it): when the session ends and every
++//   BASALT_INK_PROFILE_EVERY      decoded tokens (default 4096; 0: at the end only)
+ #pragma once
+ 
+ #include <cstdint>
+@@ -30,4 +33,11 @@ struct Reserves {
+ };
+ const Reserves& reserves();
+ 
++/// Where and how often a session writes its routing counts as an expert profile (`path` empty: never).
++struct ProfileOut {
++    std::string path;
++    long long every = 4096;
++};
++const ProfileOut& profile_out();
++
+ }  // namespace basalt::models::inkling2::ink
+diff --git a/src/models/inkling2/session.cpp b/src/models/inkling2/session.cpp
+index cf5a4c6..bb9fc1a 100644
+--- a/src/models/inkling2/session.cpp
++++ b/src/models/inkling2/session.cpp
+@@ -12,6 +12,7 @@
+ #include "basalt/core/conversation_cache.hpp"
+ #include "basalt/core/elastic_array.hpp"
+ #include "basalt/core/elastic_kv.hpp"
++#include "basalt/core/expert_cache.hpp"
+ #include "basalt/core/graph.hpp"
+ #include "basalt/kernels/iq_kernels.hpp"
+ #include "basalt/kernels/logprobs.hpp"
+@@ -22,6 +23,7 @@
+ #include "basalt/kernels/sampler.hpp"
+ #include "basalt/log.hpp"
+ #include "basalt/models/inkling2/kernels.hpp"
++#include "basalt/platform/file.hpp"
+ #include "basalt/program/expert_spill.hpp"
+ #include "models/inkling2/caches.hpp"
+ #include "models/inkling2/dspark.hpp"   // DSPARK HOOK
+@@ -57,6 +59,7 @@ public:
+     ~Session() override {
+         if (stream_) cudaStreamSynchronize(stream_);
+         prompt_.reset();   // it synchronizes the session's stream as it goes, so before that stream is destroyed
++        ink_profile(true);
+         if (m_.spill().any() && ex_tally_) {   // how decode's lookups fell between the card and RAM
+             std::vector<uint32_t> t((size_t) expert_pairs());
+             if (cudaMemcpy(t.data(), ex_tally_, t.size() * 4, cudaMemcpyDeviceToHost) == cudaSuccess) {
+@@ -204,6 +207,8 @@ public:
+                 cudaMemcpyAsync(r.logits, logits_ + (size_t) (head - 1) * g_.n_vocab, (size_t) g_.n_vocab * 4, cudaMemcpyDeviceToHost, stream_);
+         }
+         if (cudaStreamSynchronize(stream_) != cudaSuccess) return {model::Status::Error, "inkling2: the window failed"};
++        prof_rows_ += r.n_tokens;
++        if (const long long every = ink::profile_out().every; every > 0 && prof_rows_ >= every) ink_profile(false);
+         return {};
+     }
+ 
+@@ -497,6 +502,47 @@ public:
+ private:
+     int64_t expert_pairs() const { return (int64_t) g_.n_layers * g_.n_expert; }
+ 
++    // BASALT_INK_PROFILE_OUT (ink.hpp): decode's running counts of every (layer, expert) pair as an expert profile, the
++    // most routed first; a pair this session never routed keeps its place in the profile the run started from. Written
++    // whole each time (a file beside it, renamed over it). One session only: with more, each would write its own counts.
++    void ink_profile(bool last) {
++        const ink::ProfileOut& po = ink::profile_out();
++        prof_rows_ = 0;
++        if (po.path.empty() || !ex_tally_ || !stream_ || lookups_ == 0 || m_.sessions() != 1) return;
++        std::vector<uint32_t> t((size_t) expert_pairs());
++        if (cudaMemcpyAsync(t.data(), ex_tally_, t.size() * 4, cudaMemcpyDeviceToHost, stream_) != cudaSuccess ||
++            cudaStreamSynchronize(stream_) != cudaSuccess) {
++            cudaGetLastError();
++            return;
++        }
++        std::string err;
++        if (!prof_prior_read_) {
++            prof_prior_read_ = true;
++            const std::string& from = m_.flags().expert_profile;
++            uint64_t pb = 0;
++            int64_t slots = 0;
++            if (!from.empty() && platform::file_size(from, pb) &&
++                !core::read_expert_profile(core::FileRange{from, 0, pb}, g_.n_layers, g_.n_expert, prof_prior_, slots, err))
++                prof_prior_.clear();
++        }
++        uint64_t all = 0;
++        std::vector<double> heat(t.size());
++        for (size_t i = 0; i < t.size(); ++i) {
++            heat[i] = (double) t[i];
++            all += t[i];
++        }
++        const auto ranked = core::rank_learned_profile(g_.n_layers, g_.n_expert, {}, heat, prof_prior_);
++        if (!core::write_expert_profile(po.path, g_.n_layers, g_.n_expert, ranked, err)) {
++            if (!prof_failed_) basalt::log::warn("basalt inkling2", "ink: the routing profile %s was not written: %s", po.path.c_str(), err.c_str());
++            prof_failed_ = true;
++            return;
++        }
++        if (last || !prof_said_)
++            basalt::log::info("basalt inkling2", "ink: routing profile written to %s (%llu routed lookups%s)", po.path.c_str(),
++                              (unsigned long long) all, last ? ", the session's last" : "; rewritten as decode goes on");
++        prof_said_ = true;
++    }
++
+     void* alloc(size_t bytes, bool& ok) {
+         void* p = nullptr;
+         if (!ok || cudaMalloc(&p, std::max<size_t>(bytes, 16)) != cudaSuccess) {
+@@ -940,6 +986,10 @@ private:
+     std::vector<uint32_t> tally_h_;
+     ResidentExpertMap map_;
+     int64_t lookups_ = 0;                    // decode's routed lookups so far
++    // BASALT_INK_PROFILE_OUT: decoded rows since the last write, the profile the run started from (the ties' order)
++    int64_t prof_rows_ = 0;
++    std::vector<std::pair<int32_t, int32_t>> prof_prior_;
++    bool prof_prior_read_ = false, prof_said_ = false, prof_failed_ = false;
+     // the elastic KV (model.hpp elastic()): the full visits' caches back their first backed_ cells
+     std::vector<std::unique_ptr<core::ElasticArray>> elastic_;
+     int64_t backed_ = 0;
+-- 
+2.55.0.windows.3
+

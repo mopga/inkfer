@@ -1,0 +1,13 @@
+[basalt-bs3b-512k-fp8-nospec-lean]       0 warmup prompt=22 cached=0 ttft=0.93s prefill=26.7 gen=39 decode=50.9/47.1 vram=15002 rss=15.44 avail=37.66 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  131072 cold   prompt=132476 cached=0 ttft=40.92s prefill=3250.3 gen=282 decode=28.2/27.9 vram=15002 rss=15.45 avail=37.58 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  131072 turn1  prompt=132567 cached=132475 ttft=0.8s prefill=141.9 gen=600 decode=29.0/28.8 vram=14272 rss=15.45 avail=37.63 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  131072 turn2  prompt=132952 cached=132566 ttft=0.81s prefill=582.5 gen=273 decode=31.6/31.3 vram=14272 rss=15.45 avail=37.63 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  262144 cold   prompt=260274 cached=0 ttft=108.23s prefill=2410.2 gen=240 decode=23.1/22.9 vram=14424 rss=15.46 avail=37.6 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  262144 turn1  prompt=260365 cached=260273 ttft=0.98s prefill=120.7 gen=600 decode=23.1/23.0 vram=14424 rss=15.46 avail=37.66 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  262144 turn2  prompt=260830 cached=260364 ttft=1.02s prefill=593.8 gen=305 decode=23.3/23.4 vram=14424 rss=15.47 avail=37.65 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  393216 cold   prompt=391315 cached=0 ttft=200.7s prefill=1952.9 gen=243 decode=18.3/18.2 vram=14424 rss=15.47 avail=37.63 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  393216 turn1  prompt=391406 cached=391314 ttft=1.19s prefill=104.1 gen=600 decode=18.0/18.1 vram=14304 rss=15.48 avail=37.64 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  393216 turn2  prompt=391739 cached=391405 ttft=1.19s prefill=374.2 gen=284 decode=18.1/18.3 vram=14298 rss=15.48 avail=37.64 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  498000 cold   prompt=495925 cached=0 ttft=294.76s prefill=1684.5 gen=283 decode=15.4/15.6 vram=14501 rss=15.48 avail=37.49 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  498000 turn1  prompt=496016 cached=495924 ttft=1.35s prefill=93.8 gen=600 decode=15.9/15.8 vram=14486 rss=15.48 avail=37.64 disk=0 
+[basalt-bs3b-512k-fp8-nospec-lean]  498000 turn2  prompt=496428 cached=496015 ttft=1.34s prefill=415.3 gen=284 decode=15.7/15.8 vram=14483 rss=15.49 avail=37.64 disk=0 

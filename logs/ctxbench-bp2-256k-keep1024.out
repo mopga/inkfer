@@ -1,0 +1,5 @@
+[bp2-256k-keep1024]       0 warmup prompt=22 cached=0 ttft=0.75s prefill=35.9 gen=39 decode=35.6/52.7 vram=15033 rss=13.36 avail=36.97 disk=0 
+[bp2-256k-keep1024]  249000 cold   prompt=248899 cached=0 ttft=99.11s prefill=2517.6 gen=251 decode=41.1/40.4 vram=15033 rss=13.42 avail=36.1 disk=0 
+[bp2-256k-keep1024]  249000 turn1  prompt=248990 cached=248898 ttft=0.9s prefill=143.9 gen=600 decode=29.4/30.7 vram=14527 rss=13.44 avail=37.21 disk=0 
+[bp2-256k-keep1024]  249000 turn2  prompt=249323 cached=248989 ttft=0.93s prefill=505.0 gen=286 decode=34.2/38.2 vram=14512 rss=13.44 avail=37.13 disk=1 
+[bp2-256k-keep1024]  249000 turn3  prompt=249400 cached=249322 ttft=0.92s prefill=121.8 gen=403 decode=39.0/38.6 vram=14512 rss=13.44 avail=37.14 disk=0 

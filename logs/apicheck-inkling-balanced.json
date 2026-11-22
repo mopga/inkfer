@@ -1,0 +1,71 @@
+{
+ "port": 8081,
+ "model": "inkling-balanced",
+ "results": [
+  {
+   "check": "health",
+   "ok": true,
+   "detail": "{\"status\":\"ok\",\"version\":\"2026-11-21.4+2026-11-21.4-16-gd0bd340\"}"
+  },
+  {
+   "check": "models",
+   "ok": true,
+   "detail": "inkling-balanced"
+  },
+  {
+   "check": "state /metrics",
+   "ok": true,
+   "detail": "8593 bytes: # HELP llamacpp:prompt_tokens_total Prompt tokens evaluated by prefill; reused prefix tokens are excluded. # T"
+  },
+  {
+   "check": "state /stats",
+   "ok": true,
+   "detail": "3420 bytes: {\"capacity\":{\"device_state_slots\":2,\"host_kv_bytes\":17179869184,\"host_state_slots\":0,\"kv_capacity_pages\":0,\"kv"
+  },
+  {
+   "check": "stream: reasoning apart from the answer",
+   "ok": true,
+   "detail": "reasoning 694 chars, answer '391', finish stop, chunks 87, first token 0.32 s"
+  },
+  {
+   "check": "stream: usage in the last chunk",
+   "ok": true,
+   "detail": "{\"completion_tokens\": 196, \"completion_tokens_details\": {\"reasoning_tokens\": 189}, \"prompt_tokens\": 38, \"prompt_tokens_details\": {\"cached_tokens\": 0}, \"total_to"
+  },
+  {
+   "check": "stream: reasoning_effort none",
+   "ok": true,
+   "detail": "reasoning 269 chars, answer 'Париж'"
+  },
+  {
+   "check": "tools: call in a stream",
+   "ok": true,
+   "detail": "finish tool_calls, read_file({\"path\":\"config/app.toml\"}), id call_fcb4549efa9aeebd, reasoning 186 chars"
+  },
+  {
+   "check": "tools: answer after the tool result",
+   "ok": true,
+   "detail": "answer 'В файле `config/app.toml` указан порт **8457** (`port = 8457`). Также там заданы', cached 319 of 353"
+  },
+  {
+   "check": "tools: two calls in one reply",
+   "ok": true,
+   "detail": "finish tool_calls, calls [('read_file', '{\"path\":\"README.md\"}'), ('list_dir', '{\"path\":\"src\"}')]"
+  },
+  {
+   "check": "limit: finish_reason length",
+   "ok": true,
+   "detail": "finish length, completion 40"
+  },
+  {
+   "check": "stop: stream closed by the client",
+   "ok": true,
+   "detail": "stopped after 602 chars of the answer in 6.85 s; the next request answered in 0.32 s ('')"
+  },
+  {
+   "check": "continue after stop",
+   "ok": true,
+   "detail": "stopped part 602 chars; cached 5170 of 5393, first token 0.27 s, text '...как менялось небо над седьмым маяком. В заметка'"
+  }
+ ]
+}

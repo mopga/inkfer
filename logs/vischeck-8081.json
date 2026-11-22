@@ -1,0 +1,209 @@
+{
+ "model": "inkling-balanced",
+ "results": [
+  {
+   "name": "natural",
+   "ok": true,
+   "checks": {
+    "24": true,
+    "right": true
+   },
+   "prompt": 599,
+   "cached": 598,
+   "output": 449,
+   "ttft": 0.05,
+   "total": 4.28,
+   "vram_peak_mib": 15302,
+   "answer": "На картинке — солнечный жёлто-розовый домик у гор с синими окнами и коричневой дверью, слева скамейка, справа дерево и синий указатель «24», на заднем плане горы с заснеженной вершиной и жёлтое солнце.\n\nЧисло — 24; солнце находится справа (в верхнем правом углу кадра).",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "chart",
+   "ok": true,
+   "checks": {
+    "title": true,
+    "3": true,
+    "left": true
+   },
+   "prompt": 608,
+   "cached": 607,
+   "output": 302,
+   "ttft": 0.07,
+   "total": 2.57,
+   "vram_peak_mib": 15302,
+   "answer": "NIFER VISION 731; 3; слева",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "compare",
+   "ok": true,
+   "checks": {
+    "2": true,
+    "3": true,
+    "star": true
+   },
+   "prompt": 730,
+   "cached": 729,
+   "output": 212,
+   "ttft": 0.06,
+   "total": 1.99,
+   "vram_peak_mib": 15302,
+   "answer": "2; 3; звезда",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "term",
+   "ok": true,
+   "checks": {
+    "totals.py": true,
+    "214": true,
+    "KeyError": true,
+    "KZT": true
+   },
+   "prompt": 544,
+   "cached": 543,
+   "output": 629,
+   "ttft": 0.06,
+   "total": 5.42,
+   "vram_peak_mib": 15302,
+   "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py`, на строке **214**, внутри функции `summarize` (строка `rate = RATES[currency]`).\n\nИсключение: **KeyError**, значение: **`'KZT'`** — то есть в словаре `RATES` нет ключа `'KZT'`.\n\nВызов произошёл из `run.py`, строка 88 (`total = summarize(rows, currency=args.currency)`).",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "table",
+   "ok": true,
+   "checks": {
+    "orders": true,
+    "9100": true,
+    "388": true,
+    "57": true,
+    "reports": true
+   },
+   "prompt": 596,
+   "cached": 595,
+   "output": 247,
+   "ttft": 0.08,
+   "total": 2.02,
+   "vram_peak_mib": 15302,
+   "answer": "Сервис **orders** — порт **9100**, состояние **degraded**, **p95: 388 ms**, ошибок **57/ч**.  \nОстановлен сервис **reports** (порт **9310**, p95 и ошибки: «-»).",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "code",
+   "ok": true,
+   "checks": {
+    "line 39": true,
+    "count": true,
+    "indent": true
+   },
+   "prompt": 614,
+   "cached": 613,
+   "output": 949,
+   "ttft": 0.05,
+   "total": 8.58,
+   "vram_peak_mib": 15302,
+   "answer": "Ошибка на **строке 39**: `count += 1` находится **вне цикла**, поэтому счётчик увеличивается только один раз, а не для каждой записи с рейтингом.\n\nИсправление — перенести `count += 1` внутрь `for` (после учета рейтинга), например:\n\n```python\nfor r in reviews:\n    stars = r.get('stars')\n    if stars is None:\n        continue\n    total += stars\n    count += 1\n\nreturn total / count if count else 0.0\n```\n\nВажно: строка `count += 1` должна иметь отступ на уровне строк 36–38 внутри цикла.",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "dense",
+   "ok": true,
+   "checks": {
+    "077": true,
+    "K90816": true,
+    "13": true,
+    "R05": true,
+    "ORLOVA": true
+   },
+   "prompt": 3013,
+   "cached": 3012,
+   "output": 623,
+   "ttft": 0.08,
+   "total": 4.86,
+   "vram_peak_mib": 15298,
+   "answer": "Пометка стоит на строке **item-077**: **sku=K90816**, **qty=13**, **bin=R05**.  \nТекст пометки: **“<-- RECOUNT REQUESTED BY M. ORLOVA”**.",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "tool",
+   "ok": true,
+   "checks": {
+    "tool called": true,
+    "currency KZT": true
+   },
+   "prompt": 706,
+   "cached": 705,
+   "output": 171,
+   "ttft": 0.07,
+   "total": 1.71,
+   "vram_peak_mib": 15302,
+   "answer": "",
+   "tools": [
+    {
+     "id": "call_62264b550ee1dd55",
+     "name": "lookup_rate",
+     "args": "{\"currency\":\"KZT\"}"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "name": "tool-2",
+   "ok": true,
+   "checks": {
+    "rate used": true,
+    "KZT": true
+   },
+   "prompt": 765,
+   "cached": 764,
+   "output": 765,
+   "ttft": 0.07,
+   "total": 7.71,
+   "vram_peak_mib": 15302,
+   "answer": "Курс получен: **1 EUR = 0.00181 KZT**... точнее, согласно инструменту, коэффициент перевода KZT в EUR — **0.00181** (т.е. 1 KZT ≈ 0.00181 EUR).\n\nСтрока для добавления в таблицу RATES (в месте, где хранится словарь курсов в `totals.py`, рядом с остальными валютами):\n\n```python\n'KZT': 0.00181\n```\n\nили, если словарь создаётся через присваивание, например:\n\n```python\nRATES['KZT'] = 0.00181\n```\n\n(точное оформление зависит от того, как у тебя объявлен RATES — проверь синтаксис соседних записей).\n\nНесколько замечаний:\n\n- Проверь единицы измерения: инструмент говорит «eur: 0.00181», т.е. 1 KZT = 0.001",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "follow-1",
+   "ok": true,
+   "checks": {
+    "gateway 8443": true,
+    "mailer 9400": true
+   },
+   "prompt": 578,
+   "cached": 577,
+   "output": 301,
+   "ttft": 0.06,
+   "total": 2.55,
+   "vram_peak_mib": 15303,
+   "answer": "- gateway — 8443  \n- auth — 9001  \n- orders — 9100  \n- search — 9200  \n- reports — 9310  \n- mailer — 9400",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "follow-2",
+   "ok": true,
+   "checks": {
+    "orders": true,
+    "~22.8x": true
+   },
+   "prompt": 650,
+   "cached": 649,
+   "output": 414,
+   "ttft": 0.06,
+   "total": 3.41,
+   "vram_peak_mib": 15306,
+   "answer": "Больше всего ошибок в час — у **orders**: **57 errors/h**.\n\nУ auth p95 = **17 ms**, у orders p95 = **388 ms**.  \nОтношение: **388 / 17 ≈ 22,8**, то есть p95 у orders примерно в **23 раза** больше, чем у auth.",
+   "tools": [],
+   "note": "cached tokens show whether the image turn was reused from the cache"
+  }
+ ]
+}

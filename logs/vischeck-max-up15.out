@@ -1,0 +1,27 @@
+PASS natural   prompt 599 cached 0 ttft 0.71 s total 5.71 s vram 14758 MiB 
+      Яркая солнечная сцена: на зелёной поляне у гор стоит домик с красной крышей, синими окнами и коричневой дверью, слева — скамейка, справа — дерево и почтовый ящик. Число на ящике — 24; солнце — в правой части кадра, в верхнем правом углу.
+PASS chart     prompt 608 cached 0 ttft 0.39 s total 2.01 s vram 14765 MiB 
+      NIFER VISION 731; 3; слева
+PASS compare   prompt 730 cached 0 ttft 0.4 s total 2.3 s vram 14765 MiB 
+      2; 3; звезда
+PASS term      prompt 544 cached 0 ttft 0.38 s total 4.85 s vram 14765 MiB 
+      Программа упала в файле `C:\work\billing\billing\totals.py` на строке `214` в функции `summarize`, в строке `rate = RATES[currency]`. Исключение: `KeyError` с значением `'KZT'`.
+PASS table     prompt 596 cached 0 ttft 0.38 s total 2.28 s vram 14751 MiB 
+      Сервис в состоянии **degraded** — **orders**: порт **9100**, p95 — **388 мс**, ошибок — **57 в час**. Остановлен сервис — **reports** (порт 9310); у него p95 и ошибки/ч показаны как «-».
+PASS code      prompt 614 cached 0 ttft 0.39 s total 13.73 s vram 14750 MiB 
+      Ошибка на строке **39**: `count += 1` стоит **вне цикла**, поэтому счётчик увеличивается только один раз после цикла (или не увеличивается, если цикл не выполнился), а не для каждой корректной оценки. Исправление — перенести `count += 1` внутрь цикла, после строки `total += r['stars']`: ```python fo
+PASS dense     prompt 3013 cached 0 ttft 2.71 s total 12.57 s vram 14752 MiB 
+      С пометкой строка **item-077**: **sku=K90816**, **qty=13**, **bin=R05**. Пометка: **«RECOUNT REQUESTED BY M. ORLOVA»** — запрос на пересчёт.
+PASS tool      prompt 706 cached 0 ttft 0.37 s total 2.0 s vram 14752 MiB 
+      
+PASS tool-2    prompt 778 cached 705 ttft 0.27 s total 4.29 s vram 14752 MiB 
+      Ошибка — `KeyError: 'KZT'`, поэтому нужно добавить KZT в таблицу `RATES`. Курс по инструменту (на 2026-10-01, месяц, для которого запускается команда): **1 KZT = 0.00181 EUR**. Добавьте такую строку: ```python RATES['KZT'] = 0.00181 ``` (или в виде элемента словаря, если RATES задан как литерал — на
+PASS follow-1  prompt 578 cached 0 ttft 0.38 s total 1.43 s vram 14752 MiB 
+      - gateway — 8443 - auth — 9001 - orders — 9100 - search — 9200 - reports — 9310 - mailer — 9400
+PASS follow-2  prompt 650 cached 577 ttft 0.28 s total 3.14 s vram 14752 MiB 
+      Больше всего ошибок в час у **orders**: **57 ошибок/ч**. Его p95 **388 мс**, у auth **17 мс**: 388 / 17 ≈ **22.8**, то есть почти в **23 раза** больше.
+PASS long-img-first prompt 331545 cached 0 ttft 189.59 s total 198.4 s vram 14816 MiB 
+      Есть пометка у строки **item-077**: **sku=K90816**, **qty=13**.
+PASS long-img-last prompt 329088 cached 0 ttft 188.02 s total 201.66 s vram 14897 MiB 
+      Программа упала в файле `C:\work\billing\billing\totals.py` на строке 214, в функции `summarize` (вызвано из `run.py`, строка 88). Причина: `rate = RATES[currency]` — ключ `'KZT'` отсутствует в словаре `RATES`, отсюда `KeyError: 'KZT'`. То есть в программе не задан курс для валюты KZT. В журнале зам
+13/13 passed; C:\distrib\strata-tuning\inkling\logs\vischeck-8082-long250000.json

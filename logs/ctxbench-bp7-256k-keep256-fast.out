@@ -1,0 +1,5 @@
+[bp7-256k-keep256-fast]       0 warmup prompt=22 cached=0 ttft=0.72s prefill=38.3 gen=39 decode=37.7/56.9 vram=15035 rss=13.36 avail=38.81 disk=0 
+[bp7-256k-keep256-fast]  249000 cold   prompt=248899 cached=0 ttft=98.49s prefill=2533.7 gen=251 decode=43.7/42.9 vram=15281 rss=13.43 avail=38.75 disk=0 
+[bp7-256k-keep256-fast]  249000 turn1  prompt=248990 cached=248898 ttft=0.88s prefill=141.5 gen=600 decode=35.4/35.5 vram=15281 rss=13.44 avail=38.72 disk=0 
+[bp7-256k-keep256-fast]  249000 turn2  prompt=249323 cached=248989 ttft=0.95s prefill=496.4 gen=283 decode=39.8/44.5 vram=15279 rss=13.44 avail=38.73 disk=0 
+[bp7-256k-keep256-fast]  249000 turn3  prompt=249397 cached=249322 ttft=0.9s prefill=116.0 gen=363 decode=44.0/43.3 vram=15273 rss=13.44 avail=38.73 disk=0 

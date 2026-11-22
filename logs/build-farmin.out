@@ -1,0 +1,354 @@
+[1/4] Stamping NINFER build id from git (build-time)
+-- NINFER build id will be marked dirty -- product sources differ from HEAD:
+ M apps/cli/main.cpp
+ M apps/cli/options.cpp
+ M apps/cli/options.h
+ M include/ninfer/engine_options.h
+ M src/models/inkling2/executor.cpp
+ M src/models/inkling2/kernels.cu
+ M src/models/inkling2/kernels.h
+ M src/models/qwen3_5/frontend/frontend.cpp
+ M src/models/qwen3_5/frontend/frontend.h
+ M src/models/qwen3_5/frontend/processor.cpp
+ M src/models/qwen3_5/frontend/processor.h
+ M src/runtime/engine/inkling2_core.cpp
+ M src/serve/generation_service.cpp
+ M src/serve/serve_options.cpp
+ M src/serve/serve_options.h
+[2/4] Building CXX object src\models\CMakeFiles\ninfer_model_runtime.dir\inkling2\executor.cpp.obj
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/executor.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device_launch.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_config.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\builtin_types.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\device_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\limits.h
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime.h
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\sal.h
+Примечание: включение файла:           C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\concurrencysal.h
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vadefs.h
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stddef.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\surface_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\texture_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\library_types.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\channel_descriptor.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\builtin_types.h
+Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\device_types.h
+Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\surface_types.h
+Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\texture_types.h
+Примечание: включение файла:         C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_device_runtime_api.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_functions.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\builtin_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\device_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\surface_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\texture_types.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\crt/host_defines.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.hpp
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\utility
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\yvals_core.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xkeycheck.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\initializer_list
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cstddef
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xtr1common
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\type_traits
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cstdint
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\stdint.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cstring
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\string.h
+Примечание: включение файла:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_memory.h
+Примечание: включение файла:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_memcpy_s.h
+Примечание: включение файла:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\errno.h
+Примечание: включение файла:            C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime_string.h
+Примечание: включение файла:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wstring.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\compare
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\concepts
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime_new.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\algorithm
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_heap_algorithms.hpp
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xutility
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\yvals.h
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\crtdbg.h
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime_new_debug.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\crtdefs.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\use_ansi.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_iter_core.hpp
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\climits
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cstdlib
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\math.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_math.h
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdlib.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_malloc.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_search.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wstdlib.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cwchar
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cstdio
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdio.h
+Примечание: включение файла:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wstdio.h
+Примечание: включение файла:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_stdio_config.h
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\wchar.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wconio.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wctype.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wdirect.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wio.h
+Примечание: включение файла:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_share.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wprocess.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wtime.h
+Примечание: включение файла:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\sys/stat.h
+Примечание: включение файла:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\sys/types.h
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\intrin.h
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\intrin0.inl.h
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\setjmp.h
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\immintrin.h
+Примечание: включение файла:           C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\wmmintrin.h
+Примечание: включение файла:            C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\nmmintrin.h
+Примечание: включение файла:             C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\smmintrin.h
+Примечание: включение файла:              C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\tmmintrin.h
+Примечание: включение файла:               C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\pmmintrin.h
+Примечание: включение файла:                C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\emmintrin.h
+Примечание: включение файла:                 C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xmmintrin.h
+Примечание: включение файла:                  C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\mmintrin.h
+Примечание: включение файла:                  C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\malloc.h
+Примечание: включение файла:           C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\zmmintrin.h
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ammintrin.h
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_minmax.hpp
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xmemory
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\limits
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cfloat
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\float.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\intrin0.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\new
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\exception
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime_exception.h
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\eh.h
+Примечание: включение файла:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_terminate.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xatomic.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\tuple
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\array
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\mutex
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_chrono.hpp
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ctime
+Примечание: включение файла:       C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\time.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ratio
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xtimec.h
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\system_error
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_system_error_abi.hpp
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cerrno
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\stdexcept
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xstring
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_sanitizer_annotate_container.hpp
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_string_view.hpp
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\iosfwd
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xpolymorphic_allocator.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xcall_once.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xerrc.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\atomic
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xatomic_wait.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xthreads.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_threads_core.hpp
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\thread
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\memory
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\typeinfo
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime_typeinfo.h
+Примечание: включение файла:      C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\process.h
+Примечание: включение файла:       C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_startup.h
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\math.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vcruntime_startup.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\stop_token
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\optional
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xsmf_control.h
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\span
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\string
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cctype
+Примечание: включение файла:      C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\ctype.h
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\unordered_map
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xhash
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cmath
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\list
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\vector
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_bit_utils.hpp
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xbit_ops.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xnode_handle.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_disk.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/model_enums.h
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\filesystem
+Примечание: включение файла:     C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\chrono
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xfilesystem_abi.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_tzdb.hpp
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\format
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_format_ucd_tables.hpp
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_formatter.hpp
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_print.hpp
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_ranges_tuple_formatter.hpp
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\bit
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\iterator
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xlocale
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xfacet
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xlocinfo
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_xlocinfo_types.hpp
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\clocale
+Примечание: включение файла:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\locale.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\charconv
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xcharconv.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xcharconv_ryu.h
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xcharconv_ryu_tables.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xcharconv_tables.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\locale
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xlocbuf
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\streambuf
+Примечание: включение файла:          C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xiosbase
+Примечание: включение файла:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\share.h
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xlocmes
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xlocmon
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xlocnum
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xloctime
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\forward_list
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\iomanip
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\istream
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_ostream.hpp
+Примечание: включение файла:         C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ios
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\sstream
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/tensor.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/dtype.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/expert_profile.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/framing.h
+Примечание: включение файла:    C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\string_view
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/kv_format.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/kv_cache_storage.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/model.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/materializer.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/schema.h
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\functional
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\third_party\nlohmann/json.hpp
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\map
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\xtree
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\valarray
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\version
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\cassert
+Примечание: включение файла:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\assert.h
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ranges
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_int128.hpp
+Примечание: включение файла:        C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\__msvc_ranges_to.hpp
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\numeric
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\ostream
+Примечание: включение файла:       C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\any
+Примечание: включение файла:      C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include\variant
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\artifact/selection.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/weight_view.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/qtype.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/weight.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/arena.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/host_pages.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/pinned_memory.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/evictable_weight_pool.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/vmm.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/startup.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_delivery.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_tier.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/startup.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/model.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/config.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/weights.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/stage_plan.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/config.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/load_options.h
+Примечание: включение файла:        C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/engine_options.h
+Примечание: включение файла:         C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/base.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/registry.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/linear_policy.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/weight_input.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/sparse_moe.h
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/config.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/frontend/resources.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/frontend/tokenizer.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\text/byte_span.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/model.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/auxiliary_replicas.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device_buffer.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/expert_sources.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/qwen3_5/expert_layout.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/decode_graph.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/device_wait.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/expert_parallel.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/stage_link.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/growable_region.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/tensor_parallel.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_bf16.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_fp16.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\nv/target
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\nv/detail/__target_macros
+Примечание: включение файла:       C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\nv/detail/__preprocessor
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_fp16.hpp
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_functions.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_bf16.hpp
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/divided_head.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/runtime.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/cyclic_kv_cache.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\src\core/layout.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime_api.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/dspine/drafter.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/sampling.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/cpu_experts.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops/moe_experts/gguf_expert_cpu.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/kernels.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/kv_planes.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\models/inkling2/vision.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cublas_v2.h
+Примечание: включение файла:    C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cublas_api.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\driver_types.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuComplex.h
+Примечание: включение файла:      C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\math.h
+Примечание: включение файла:      C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\vector_types.h
+Примечание: включение файла:     C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\library_types.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\include\ninfer/ops/linear.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops/linear/gguf/ggml_bridge.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops\linear\gguf\ggml_bridge_args.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+Примечание: включение файла:  C:\distrib\strata-tuning\inkling\src\ninfer-all\src\ops/linear/gguf/gguf_linear.h
+Примечание: включение файла:   C:\distrib\strata-tuning\inkling\toolchain\cuda-13.4\include\cuda_runtime.h
+[3/4] Linking CXX static library src\models\ninfer_model_runtime.lib
+[4/4] Linking CXX shared library portable\backends\cuda13\ninfer-runtime.dll
+build_exit=0

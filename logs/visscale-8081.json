@@ -1,0 +1,401 @@
+{
+ "model": "inkling-balanced",
+ "rows": [
+  {
+   "image": "code",
+   "scale": 1.0,
+   "size": "1000x400",
+   "passed": 2,
+   "reps": 3,
+   "prompt": 294,
+   "out": 4205,
+   "seconds": 33.4,
+   "runs": [
+    {
+     "ok": false,
+     "prompt": 294,
+     "out": 6531,
+     "s": 51.2,
+     "answer": "Самая первая ошибка — строка **35**: `for r in reviews:` набрана без отступа, т.е. вне функции. Нужно сдвинуть цикл и весь его тело вправо, внутрь `average_rating`. Также `total += r['stars']` нужен внутри цикла, но не внутри ветки `continue`, а `count += 1` и `return` — внутри функции.\n\nИсправлено:"
+    },
+    {
+     "ok": true,
+     "prompt": 294,
+     "out": 925,
+     "s": 7.4,
+     "answer": "Ошибка на строке **39**: `count += 1` стоит **вне цикла `for`**, а должно быть внутри него. Поэтому `count` увеличивается только один раз после цикла, и среднее считается неверно.\n\nИсправление: вложить строку 39 в цикл на тот же уровень отступа, что и `total += r['stars']`:\n\n```python\nfor r in revie"
+    },
+    {
+     "ok": true,
+     "prompt": 294,
+     "out": 5160,
+     "s": 41.5,
+     "answer": "Ошибка на **строке 39**: `count += 1` висит **вне** цикла `for`, поэтому счётчик увеличивается один раз после обработки списка, а не для каждого рейтинга.\n\nИсправление — отступить строку 39 внутрь цикла, под `total += r['stars']`:\n\n```python\n    for r in reviews:\n        if r.get('stars') is None:\n "
+    }
+   ]
+  },
+  {
+   "image": "code",
+   "scale": 1.5,
+   "size": "1500x600",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 614,
+   "out": 1689,
+   "seconds": 13.1,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 614,
+     "out": 1253,
+     "s": 10.3,
+     "answer": "Ошибка на **строке 39**: `count += 1` находится **после цикла**, поэтому счётчик не считает реальные оценки. Если все ревью с `None`, он всё равно станет `1`, а при наличии нескольких оценок будет неверным.\n\nИсправление: перенести `count += 1` **внутрь цикла**, после `total += r['stars']`:\n\n```pytho"
+    },
+    {
+     "ok": true,
+     "prompt": 614,
+     "out": 1500,
+     "s": 11.9,
+     "answer": "Ошибка — на строке **39**: `count += 1` вынесен за цикл, поэтому считается один раз, а не за каждую обработанную рецензию.\n\nИсправь так, перенеся `count += 1` внутрь цикла после подсчета `total`:\n\n```python\nfor r in reviews:\n    stars = r.get('stars')\n    if stars is None:\n        continue\n    total"
+    },
+    {
+     "ok": true,
+     "prompt": 614,
+     "out": 2313,
+     "s": 17.2,
+     "answer": "Ошибка на **строке 39**: `count += 1` стоит на том же уровне отступа, что и `for`/`return`, то есть вне цикла. Поэтому `count` увеличивается только один раз (после цикла), а не на каждую валидную рецензию — среднее получается неверно.\n\nИсправление: перенести строку 39 внутрь цикла, ровно на уровень "
+    }
+   ]
+  },
+  {
+   "image": "code",
+   "scale": 2.0,
+   "size": "2000x800",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 1044,
+   "out": 1943,
+   "seconds": 14.9,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 1044,
+     "out": 1518,
+     "s": 11.9,
+     "answer": "Ошибка на строке **39**: `count += 1` стоит **вне** цикла `for`. Поэтому он выполнится всего один раз за всю функцию, а не для каждого валидного отзыва.\n\nИсправить — переместить его внутрь цикла, после `total += r['stars']`:\n\n```python\nfor r in reviews:\n    if r.get('stars') is None:\n        continu"
+    },
+    {
+     "ok": true,
+     "prompt": 1044,
+     "out": 2243,
+     "s": 16.6,
+     "answer": "Ошибка на **строке 39**: `count += 1` стоит с отступом уровня функции (вровень с `for`), то есть выполняется **один раз после цикла**, а не внутри него. Поэтому `count` не равен числу оценённых отзывов (после цикла он равен 1), и вместо среднего возвращается просто сумма.\n\nКак исправить — увеличить "
+    },
+    {
+     "ok": true,
+     "prompt": 1044,
+     "out": 2067,
+     "s": 16.3,
+     "answer": "Ошибка на строке **39**: `count += 1` расположена вне цикла (на одном уровне с `for`), поэтому счётчик увеличивается один раз за весь вызов функции, а не за каждую отзыв. В результате `total / count` делит сумму не на число оценённых отзывов, а на 1.\n\nИсправление — сделать её внутри цикла, сразу пос"
+    }
+   ]
+  },
+  {
+   "image": "dense",
+   "scale": 1.0,
+   "size": "1920x1080",
+   "passed": 1,
+   "reps": 3,
+   "prompt": 1357,
+   "out": 855,
+   "seconds": 6.0,
+   "runs": [
+    {
+     "ok": false,
+     "prompt": 1357,
+     "out": 1152,
+     "s": 8.4,
+     "answer": "Пометка у **item-077**: **sku=K09816**, **qty=13**, **bin=R05**.  \nПометка: **«<-- recount requested by M. Orlova»** — запрошен пересчёт от M. Orlova."
+    },
+    {
+     "ok": true,
+     "prompt": 1357,
+     "out": 904,
+     "s": 6.0,
+     "answer": "Пометка стоит у строки **item-077**: **sku=K90816**, **qty=13**, **bin=R05**.\n\nПометка: «<-- RECOUNT REQUESTED BY M. ORLOVA» — запрошен пересчёт количества (recount requested) от M. Orlova."
+    },
+    {
+     "ok": false,
+     "prompt": 1357,
+     "out": 509,
+     "s": 3.6,
+     "answer": "Пометка стоит у строки **item-077**:\n- **sku:** K09816\n- **qty:** 13\n- **bin:** R05\n- **пометка:** «<-- RECOUNT REQUESTED BY M. ORLOVA» (повторный пересчёт, запрошенный M. Orlova)"
+    }
+   ]
+  },
+  {
+   "image": "dense",
+   "scale": 1.5,
+   "size": "2880x1620",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 3013,
+   "out": 598,
+   "seconds": 5.1,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 3013,
+     "out": 665,
+     "s": 7.1,
+     "answer": "Пометка стоит у строки **item-077**:\n\n- **sku:** K90816  \n- **qty:** 13  \n- **bin:** R05  \n\nПометка: «<- RECOUNT REQUESTED BY M. ORLOVA» — то есть «требуется пересчёт (recount) по запросу M. ORLOVA» (запросить пересчёт / пересчитать скан, вероятно, из-за возможной неточности количества)."
+    },
+    {
+     "ok": true,
+     "prompt": 3013,
+     "out": 696,
+     "s": 4.9,
+     "answer": "Item **item-077**: **sku=K90816**, **qty=13**, **bin=R05**. Пометка: **«RECOUNT REQUESTED BY M. ORLOVA»** — переучет запрошен М. Орловой."
+    },
+    {
+     "ok": true,
+     "prompt": 3013,
+     "out": 432,
+     "s": 3.4,
+     "answer": "item-077 — sku=K90816, qty=13, bin=R05.  \nПометка: «<-- RECOUNT REQUESTED BY M. ORLOVA» (требуется пересчёт, по запросу M. Orlova)."
+    }
+   ]
+  },
+  {
+   "image": "dense",
+   "scale": 2.0,
+   "size": "3840x2160",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 4141,
+   "out": 795,
+   "seconds": 5.8,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 4141,
+     "out": 836,
+     "s": 6.1,
+     "answer": "С пометкой строка **item-077**: **sku=K90816**, **qty=13**, **bin=R05**.  \n\nПометка справа: **«<- RECOUNT REQUESTED BY M. ORLOVA»** — пересчёт запрошен M. Orlova."
+    },
+    {
+     "ok": true,
+     "prompt": 4141,
+     "out": 768,
+     "s": 5.5,
+     "answer": "Пометка на строке **item-077**: **sku=K90816**, **qty=13**, **bin=R05**.  \nПометка: **«RECOUNT REQUESTED BY M. ORLOVA»** — переподсчёт запрошен M. Orlova."
+    },
+    {
+     "ok": true,
+     "prompt": 4141,
+     "out": 780,
+     "s": 5.7,
+     "answer": "Строка: **item-077**  \n**sku=K90816**, **qty=13**, **bin=R05**  \nПометка: **«<- RECOUNT REQUESTED BY M. ORLOVA»** — запрос пересчёта, инициатор M. Orlova."
+    }
+   ]
+  },
+  {
+   "image": "term",
+   "scale": 1.0,
+   "size": "1100x330",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 304,
+   "out": 590,
+   "seconds": 4.6,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 304,
+     "out": 622,
+     "s": 4.9,
+     "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py`, строка 214 — в функции `summarize` (строка `rate = RATES[currency]`).\n\nИсключение: `KeyError` с значением `'KZT'`.\n\nВызов пришел из `C:\\work\\billing\\billing\\run.py`, строка 88."
+    },
+    {
+     "ok": true,
+     "prompt": 304,
+     "out": 699,
+     "s": 5.5,
+     "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py` на строке **214** (`rate = RATES[currency]`). Исключение: **`KeyError: 'KZT'`** — ключ `'KZT'` отсутствует в `RATES`.\n\nВызов произошёл из `C:\\work\\billing\\billing\\run.py`, строка **88**."
+    },
+    {
+     "ok": true,
+     "prompt": 304,
+     "out": 448,
+     "s": 3.5,
+     "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py`, в строке **214**, функции `summarize`.\n\nИсключение: `KeyError`, значение: `'KZT'`.\n\nОтсюда вызов пришёл из `C:\\work\\billing\\billing\\run.py`, строка **88**."
+    }
+   ]
+  },
+  {
+   "image": "term",
+   "scale": 1.5,
+   "size": "1650x495",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 598,
+   "out": 675,
+   "seconds": 5.6,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 598,
+     "out": 633,
+     "s": 5.4,
+     "answer": "Падает в файле `C:\\work\\billing\\billing\\totals.py`, строка **214**, функция `summarize`, на `rate = RATES[currency]`.\n\nИсключение: `KeyError: 'KZT'` — отсутствует ключ `'KZT'`.\n\nВызов произошёл из `run.py`, строка 88: `total = summarize(rows, currency=args.currency)`."
+    },
+    {
+     "ok": true,
+     "prompt": 598,
+     "out": 616,
+     "s": 5.1,
+     "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py` на строке **214**, в функции `summarize`:\n\n```python\nrate = RATES[currency]\n```\n\nИсключение: **KeyError** с значением **`'KZT'`** — курс/ключ `KZT` отсутствует в `RATES`.\n\nПо стеку вызывающая строка — `run.py`, строка **88** (`total = summa"
+    },
+    {
+     "ok": true,
+     "prompt": 598,
+     "out": 777,
+     "s": 6.3,
+     "answer": "Программа падает в файле `C:\\work\\billing\\billing\\totals.py` на строке **214**, в функции `summarize`, в строке:\n\n```python\nrate = RATES[currency]\n```\n\nИсключение: **KeyError** со значением **`'KZT'`**.\n\nПо трассировке вызов `summarize(...)` пришёл из `run.py`, строка 88, но именно в `totals.py` клю"
+    }
+   ]
+  },
+  {
+   "image": "term",
+   "scale": 2.0,
+   "size": "2200x660",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 987,
+   "out": 672,
+   "seconds": 5.4,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 987,
+     "out": 652,
+     "s": 5.6,
+     "answer": "Падение произошло в файле `C:\\work\\billing\\billing\\totals.py`, строка 214 — в функции `summarize`, на строке `rate = RATES[currency]`.\n\nВызвано из `C:\\work\\billing\\billing\\run.py`, строка 88.\n\nИсключение: `KeyError` с значением `'KZT'` — в `RATES` нет ключа `'KZT'`."
+    },
+    {
+     "ok": true,
+     "prompt": 987,
+     "out": 576,
+     "s": 4.5,
+     "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py` на строке `214`:\n\n```python\nrate = RATES[currency]\n```\n\nИсключение: `KeyError` со значением `'KZT'`.\n\nВызов пришёл из `run.py`, строка `88` (`total = summarize(rows, currency=args.currency)`)."
+    },
+    {
+     "ok": true,
+     "prompt": 987,
+     "out": 789,
+     "s": 6.2,
+     "answer": "Исключение произошло в файле `C:\\work\\billing\\billing\\totals.py`, строка **214**, в функции `summarize`:\n\n```python\nrate = RATES[currency]\n```\n\nИсключение: **KeyError: 'KZT'** — в словаре `RATES` нет ключа `'KZT'`.\n\nВызов произошёл из `C:\\work\\billing\\billing\\run.py`, строка **88** в `main`:\n\n```pyt"
+    }
+   ]
+  },
+  {
+   "image": "table",
+   "scale": 1.0,
+   "size": "900x420",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 305,
+   "out": 269,
+   "seconds": 2.0,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 305,
+     "out": 294,
+     "s": 2.3,
+     "answer": "Сервис в состоянии **degraded** — **orders**: порт **9100**, p95 **388 мс**, ошибок **57/ч**.\n\nОстановлен сервис **reports** (порт 9310); p95 и ошибки/ч для него отсутствуют."
+    },
+    {
+     "ok": true,
+     "prompt": 305,
+     "out": 268,
+     "s": 1.9,
+     "answer": "Сервис **orders** в состоянии **degraded**: порт **9100**, p95 **388 мс**, ошибок **57/час**.\n\nОстановлен сервис **reports** (порт 9310; p95 и ошибки не указаны)."
+    },
+    {
+     "ok": true,
+     "prompt": 305,
+     "out": 246,
+     "s": 1.8,
+     "answer": "Сервис **orders** в состоянии **degraded**: порт **9100**, p95 **388 ms**, ошибок/ч **57**.\n\nОстановлен сервис **reports** (порт **9310**); p95 и ошибки/ч не указаны («-»)."
+    }
+   ]
+  },
+  {
+   "image": "table",
+   "scale": 1.5,
+   "size": "1350x630",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 596,
+   "out": 260,
+   "seconds": 2.0,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 596,
+     "out": 266,
+     "s": 2.4,
+     "answer": "Сервис **orders** в состоянии **degraded**: порт **9100**, p95 **388 мс**, ошибок **57/ч**.\n\nОстановлен сервис **reports** (порт **9310**); p95 и ошибки/ч для него показаны как «-»."
+    },
+    {
+     "ok": true,
+     "prompt": 596,
+     "out": 242,
+     "s": 1.8,
+     "answer": "Сервис в состоянии **degraded** — **orders**: порт **9100**, p95 **388 ms**, ошибок **57/h**.  \nОстановлен — **reports** (порт 9310, данные p95 и ошибок отсутствуют)."
+    },
+    {
+     "ok": true,
+     "prompt": 596,
+     "out": 271,
+     "s": 1.9,
+     "answer": "В состоянии **degraded** сервис **orders**: порт **9100**, p95 **388 ms**, ошибок **57/ч**.\nОстановлен сервис **reports** (порт 9310)."
+    }
+   ]
+  },
+  {
+   "image": "table",
+   "scale": 2.0,
+   "size": "1800x840",
+   "passed": 3,
+   "reps": 3,
+   "prompt": 997,
+   "out": 247,
+   "seconds": 2.0,
+   "runs": [
+    {
+     "ok": true,
+     "prompt": 997,
+     "out": 344,
+     "s": 3.0,
+     "answer": "В состоянии **degraded** — сервис **orders**: порт **9100**, p95 **388 мс**, ошибок **57/час**.  \nОстановлен сервис — **reports** (порт **9310**)."
+    },
+    {
+     "ok": true,
+     "prompt": 997,
+     "out": 251,
+     "s": 1.9,
+     "answer": "Сервис **orders**: порт **9100**, состояние **degraded**, p95 **388 ms**, ошибок **57/ч**.  \nОстановленный сервис: **reports** (порт **9310**), метрики отсутствуют."
+    },
+    {
+     "ok": true,
+     "prompt": 997,
+     "out": 145,
+     "s": 1.2,
+     "answer": "Сервис в состоянии **degraded**: **orders** — порт **9100**, p95 **388 ms**, ошибок **57/ч**.\n\nОстановленный сервис: **reports** (порт 9310)."
+    }
+   ]
+  }
+ ]
+}

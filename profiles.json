@@ -1,0 +1,65 @@
+{
+  "_comment": "Профили запуска Inkling 2 Mini для start_inkling.pyw. {HERE} = папка inkling, {PORT} = порт, {MODEL_ID} = model_id профиля, {LOG} = inkling\\logs. Описание и замеры: README.md",
+  "port": 8081,
+  "default": "balanced",
+  "profiles": {
+    "speed": {
+      "title": "скорость (окно 131k, точный KV)",
+      "exe": "{HERE}\\engines\\ninfer-trail\\app\\ninfer-serve.exe",
+      "args": [
+        "D:/AI/models/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
+        "--model-id", "{MODEL_ID}", "--host", "127.0.0.1", "--port", "{PORT}", "--cuda-backend", "13",
+        "--max-context", "131072", "--expert-residency", "host", "--host-cache-mib", "12288",
+        "--vision", "--vision-residency", "overlay", "--vision-upscale", "1.5",
+        "--log-stats-panel", "on"
+      ],
+      "model_id": "inkling-speed",
+      "min_free_vram_mib": 14500,
+      "load_timeout_s": 300
+    },
+    "balanced": {
+      "title": "баланс (окно 262k)",
+      "exe": "{HERE}\\engines\\ninfer-trail\\app\\ninfer-serve.exe",
+      "args": [
+        "D:/AI/models/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
+        "--model-id", "{MODEL_ID}", "--host", "127.0.0.1", "--port", "{PORT}", "--cuda-backend", "13",
+        "--max-context", "262144", "--expert-residency", "host", "--host-cache-mib", "16384", "--kv-dtype", "rk8v4",
+        "--vision", "--vision-residency", "overlay", "--vision-upscale", "1.5",
+        "--log-stats-panel", "on"
+      ],
+      "model_id": "inkling-balanced",
+      "min_free_vram_mib": 14500,
+      "load_timeout_s": 300
+    },
+    "max": {
+      "title": "максимальный контекст (окно 524k)",
+      "exe": "{HERE}\\engines\\ninfer-trail\\app\\ninfer-serve.exe",
+      "args": [
+        "D:/AI/models/inkling2mini/ninfer/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer",
+        "--model-id", "{MODEL_ID}", "--host", "127.0.0.1", "--port", "{PORT}", "--cuda-backend", "13",
+        "--max-context", "524288", "--expert-residency", "host", "--host-cache-mib", "20480", "--kv-dtype", "rk4v4",
+        "--vision", "--vision-residency", "overlay", "--vision-upscale", "1.5",
+        "--log-stats-panel", "on"
+      ],
+      "model_id": "inkling-max",
+      "min_free_vram_mib": 14500,
+      "load_timeout_s": 300
+    },
+    "basalt": {
+      "title": "Basalt: быстрое чтение промпта (окно 262k)",
+      "exe": "{HERE}\\engines\\basalt-src\\app\\bin\\basalt.exe",
+      "cwd": "{HERE}\\engines\\basalt-src\\app",
+      "args": [
+        "serve", "D:/AI/models/inkling2mini/basalt/Inkling-2-Mini-NVFP4-q8.basalt",
+        "--port", "{PORT}", "--alias", "{MODEL_ID}", "--max-context", "262144", "--kv", "fp8"
+      ],
+      "env": {
+        "BASALT_INK_ADAPT": "1", "BASALT_INK_STAGING": "1", "BASALT_INK_DECODE_KEEP_MIB": "256",
+        "BASALT_INK_ADAPT_INTERVAL": "32", "BASALT_INK_ADAPT_SWAPS": "96"
+      },
+      "model_id": "inkling-balanced",
+      "min_free_vram_mib": 14500,
+      "load_timeout_s": 300
+    }
+  }
+}

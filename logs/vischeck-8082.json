@@ -1,0 +1,97 @@
+{
+ "model": "inkling-max",
+ "results": [
+  {
+   "name": "natural",
+   "ok": true,
+   "checks": {
+    "24": true,
+    "right": true
+   },
+   "prompt": 599,
+   "cached": 0,
+   "output": 389,
+   "ttft": 0.53,
+   "total": 4.28,
+   "vram_peak_mib": 14868,
+   "answer": "Яркая летняя сцена: жёлтый домик с красной крышей стоит среди зелёной травы на фоне гор, а слева — скамья, справа — ель и табличка.\n\nНа почтовом ящике число **24**, солнце находится **справа** в кадре (в верхнем правом углу).",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "compare",
+   "ok": true,
+   "checks": {
+    "2": true,
+    "3": true,
+    "star": true
+   },
+   "prompt": 730,
+   "cached": 0,
+   "output": 284,
+   "ttft": 0.39,
+   "total": 2.57,
+   "vram_peak_mib": 14868,
+   "answer": "2; 3; звезда",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "term",
+   "ok": true,
+   "checks": {
+    "totals.py": true,
+    "214": true,
+    "KeyError": true,
+    "KZT": true
+   },
+   "prompt": 544,
+   "cached": 0,
+   "output": 535,
+   "ttft": 0.39,
+   "total": 4.57,
+   "vram_peak_mib": 14856,
+   "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py`, на строке 214, внутри функции `summarize`:\n\n```python\nrate = RATES[currency]\n```\n\nОб исключении говорит: `KeyError: 'KZT'` — то есть ключ `'KZT'` отсутствует в словаре `RATES`.\n\nТакже в трассировке видно, что `summarize` был вызван из `C:\\work\\billing\\billing\\run.py`, строка 88, функция `main`.",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "code",
+   "ok": true,
+   "checks": {
+    "line 39": true,
+    "count": true,
+    "indent": true
+   },
+   "prompt": 614,
+   "cached": 0,
+   "output": 1160,
+   "ttft": 0.4,
+   "total": 9.43,
+   "vram_peak_mib": 14856,
+   "answer": "Ошибка на строке **39**: `count += 1` написан не внутри цикла, а на уровне `for`, поэтому выполнение счётчика происходит один раз после перебора, а не для каждого отзыва с рейтингом.\n\nИсправление — сделать ровно одно отступ больше (вложить в цикл), после строки `total += r['stars']`:\n\n```python\n    for r in reviews:\n        if r.get('stars') is None:\n            continue\n        total += r['stars']\n        count += 1\n    return total / count if count else 0.0\n```\n\nТогда `count` будет равен количеству отзывов с рейтингом, а `0.0` в возвращении сработает только если подходящих отзывов нет вообще",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "dense",
+   "ok": true,
+   "checks": {
+    "077": true,
+    "K90816": true,
+    "13": true,
+    "R05": true,
+    "ORLOVA": true
+   },
+   "prompt": 3013,
+   "cached": 0,
+   "output": 634,
+   "ttft": 2.7,
+   "total": 6.84,
+   "vram_peak_mib": 14856,
+   "answer": "Помечена строка **item-077**: **sku=K90816**, **qty=13**, **bin=R05**. Пометка: **«RECOUNT REQUESTED BY M. ORLOVA»** (требуется пересчёт, запросил M. Orlova).",
+   "tools": [],
+   "note": ""
+  }
+ ]
+}

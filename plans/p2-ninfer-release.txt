@@ -1,0 +1,2 @@
+ninfer|ni2-128k-hc16|--max-context 131072 --expert-residency host --host-cache-mib 16384|--lean --gen 600 --turn-tokens 500 --turns 3 --extra '{"reasoning_effort":"low"}' --fills 120000 --note "NInfer release, 128k, bf16 KV, host cache 16 GiB: prefix reuse at 120k"
+ninfer|ni3-256k-hc24|--max-context 262144 --expert-residency host --host-cache-mib 24576|--lean --gen 600 --turn-tokens 500 --turns 3 --extra '{"reasoning_effort":"low"}' --fills 65536,131072,196608,249000 --note "NInfer release, 262144, bf16 KV elastic, host cache 24 GiB; fills 25/50/75/95 %"

@@ -1,0 +1,231 @@
+[
+ {
+  "prompt": "Write a Python function that merges overlapping intervals. Include a docstring and three asserts.",
+  "reasoning": "The user wants a Python function that merges overlapping intervals, with a docstring and three asserts. This is a benign coding request. Need provide code. Need ensure correctness.\n\nFunction: merge_intervals(intervals): intervals list of [start,end] or tuples. Sort by start. Merge if current start <= last end (overlap or touching). Return list.\n\nDocstring concise. Three asserts: e.g. assert merge_intervals([[1,3],[2,6],[8,10],[15,18]]) == [[1,6],[8,10],[15,18]]; assert merge_intervals([[1,4],[4,5]]) == [[1,5]] (touching merge); assert merge_intervals([]) == []. Maybe include non-overlap. Need exactly three asserts. Provide code block only maybe brief intro.\n\nNeed be careful: intervals may be tuples; sort key lambda x: x[0]. Use list(map(list, intervals))? Return list of lists.\n\nFinal answer with code.",
+  "content": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals.\n\n    Args:\n        intervals: iterable of (start, end) pairs, where start",
+  "tool_calls": [],
+  "finish": "length",
+  "usage": {
+   "completion_tokens": 300,
+   "completion_tokens_details": {
+    "reasoning_tokens": 250
+   },
+   "prompt_tokens": 34,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "total_tokens": 334
+  },
+  "timings": {
+   "cache_n": 0,
+   "draft_n": 309,
+   "draft_n_accepted": 179,
+   "predicted_ms": 2014.3876,
+   "predicted_n": 300,
+   "predicted_per_second": 148.43220837936056,
+   "predicted_per_token_ms": 6.737082274247491,
+   "prompt_ms": 985.7377,
+   "prompt_n": 34,
+   "prompt_per_second": 34.49193431477765,
+   "prompt_per_token_ms": 28.992285294117647
+  },
+  "seconds": 3.01
+ },
+ {
+  "prompt": "Объясни в пяти предложениях, почему быстрая сортировка в среднем работает за O(n log n).",
+  "reasoning": "The user asks in Russian: explain in five sentences why quicksort works on average in O(n log n). Need answer in Russian, exactly five sentences likely. Need ensure correctness. Compose concise five sentences.\n\nNeed be careful: average O(n log n) due to random pivots, expected recursion depth O(log n), each level total work O(n), partitioning linear. Mention worst case O(n^2) but average/random pivots. Five sentences exactly.\n\nDraft:\n1. В быстрой сортировке каждый шаг делит массив на две части относительно опорного элемента, а разбиение стоит O(k) для k элементов.\n2. Если опорный элемент выбирается случайно (или данные случайны), ожидаемое число элементов в меньшей части — примерно половина, поэтому рекурсия быстро сокращается.\n3. Глубина рекурсии в среднем порядка O(log n), а не O(n), как в худшем случае.\n4. На каждом уровне рекурсии суммарно обрабатывается O(n) элементов, потому что все подмассивы на этом уровне вместе дают исходный массив.\n5. Перемножая ожидаемую глубину O(log n) на работу уровня O(n), получаем среднее время O(n log n)",
+  "content": "",
+  "tool_calls": [],
+  "finish": "length",
+  "usage": {
+   "completion_tokens": 300,
+   "completion_tokens_details": {
+    "reasoning_tokens": 298
+   },
+   "prompt_tokens": 41,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "total_tokens": 341
+  },
+  "timings": {
+   "cache_n": 0,
+   "draft_n": 343,
+   "draft_n_accepted": 109,
+   "predicted_ms": 2738.6240000000003,
+   "predicted_n": 300,
+   "predicted_per_second": 109.178916127223,
+   "predicted_per_token_ms": 9.159277591973245,
+   "prompt_ms": 190.6576,
+   "prompt_n": 41,
+   "prompt_per_second": 215.04519096012956,
+   "prompt_per_token_ms": 4.650185365853659
+  },
+  "seconds": 2.93
+ },
+ {
+  "prompt": "Given the JSON {\"a\": [1, 2, {\"b\": null}], \"c\": \"x\"}, list every path to a leaf value, one per line.",
+  "reasoning": "The user wants paths to leaf values in JSON. Need determine definition of leaf value: values that are not objects/arrays? In JSON, leaf values are scalars (string, number, boolean, null). Paths likely JSONPath-like. Given {\"a\": [1, 2, {\"b\": null}], \"c\": \"x\"}. Need list every path to a leaf value, one per line.\n\nLet's enumerate:\nRoot object has keys a and c.\n- a is array:\n  - a[0] = 1 leaf -> path $.a[0]\n  - a[1] = 2 leaf -> $.a[1]\n  - a[2] = object {\"b\": null}; b is null leaf -> $.a[2].b\n- c = \"x\" leaf -> $.c\nNeed include null as leaf. Yes.\nFormat one per line. Could use dot notation: a[0], a[1], a[2].b, c. They said path; likely use JSONPath. Provide only lines no extra. Ensure every path. Final only.",
+  "content": "$.a[0]\n$.a[1]\n$.a[2].b\n$.c",
+  "tool_calls": [],
+  "finish": "stop",
+  "usage": {
+   "completion_tokens": 289,
+   "completion_tokens_details": {
+    "reasoning_tokens": 257
+   },
+   "prompt_tokens": 59,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "total_tokens": 348
+  },
+  "timings": {
+   "cache_n": 0,
+   "draft_n": 279,
+   "draft_n_accepted": 184,
+   "predicted_ms": 1771.7551,
+   "predicted_n": 289,
+   "predicted_per_second": 162.5506820891894,
+   "predicted_per_token_ms": 6.151927430555556,
+   "prompt_ms": 200.58190000000002,
+   "prompt_n": 59,
+   "prompt_per_second": 294.144187486508,
+   "prompt_per_token_ms": 3.3996932203389836
+  },
+  "seconds": 1.99
+ },
+ {
+  "prompt": "A train leaves at 14:35 and arrives at 17:10 after two stops of 7 and 12 minutes. How long was it moving? Show the steps.",
+  "reasoning": "The user wants a math word problem solved. Need compute elapsed time from 14:35 to 17:10. From 14:35 to 17:10: 14:35 to 17:35 would be 3 hours, but arrives 17:10, so 2 hours 35 minutes? Let's calculate: 14:35 -> 15:35 = 1h, ->16:35=2h, ->17:10 = 35 min less than 16:35? Actually 16:35 to 17:10 = 35 min. Total 2h35m. Stops total 7+12=19 min. Moving = 2h35m - 19m = 2h16m. Need show steps. Ensure no hidden trick: train leaves at 14:35 and arrives at 17:10 after two stops of 7 and 12 minutes. Total elapsed includes stops. Moving time = total - stops = 155 min -19 =136 min =2h16m. Respond concise with steps.",
+  "content": "Total elapsed time: 14:35 → 17:10  \n- 14:35 to 17:35 = 3 hours  \n- 17:10 is 25 minutes earlier, so 3:00 − 0:25 = 2:35  \n\nStop time: 7 + 12 =",
+  "tool_calls": [],
+  "finish": "length",
+  "usage": {
+   "completion_tokens": 300,
+   "completion_tokens_details": {
+    "reasoning_tokens": 230
+   },
+   "prompt_tokens": 51,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "total_tokens": 351
+  },
+  "timings": {
+   "cache_n": 0,
+   "draft_n": 315,
+   "draft_n_accepted": 185,
+   "predicted_ms": 1833.6876,
+   "predicted_n": 300,
+   "predicted_per_second": 163.05940008537988,
+   "predicted_per_token_ms": 6.132734448160535,
+   "prompt_ms": 184.81130000000002,
+   "prompt_n": 51,
+   "prompt_per_second": 275.95715197068574,
+   "prompt_per_token_ms": 3.623750980392157
+  },
+  "seconds": 2.04
+ },
+ {
+  "prompt": "Напиши SQL-запрос: для таблицы orders(id, customer_id, total, created_at) выведи трёх клиентов с наибольшей суммой заказов за 2025 год.",
+  "reasoning": "The user asks in Russian to write SQL query for table orders(id, customer_id, total, created_at) to output three customers with highest sum of orders for 2025. Need answer likely just query. Need consider SQL dialect. Use YEAR(created_at)=2025 or created_at >= '2025-01-01' and < '2026-01-01'. Portable. Group by customer_id, sum total, order desc, limit 3. Maybe include customer_id only or also sum. They said three customers; output customer_id and total_sum. Provide concise. Mention adjust date literal for dialect. Final in Russian.",
+  "content": "```sql\nSELECT customer_id, SUM(total) AS total_sum\nFROM orders\nWHERE created_at >= DATE '2025-01-01'\n  AND created_at <  DATE '2026-01-01'\nGROUP BY customer_id\nORDER BY total_sum DESC\nLIMIT 3;\n```\n\nДля MySQL/MariaDB вместо `DATE '2025-01-01'` можно использовать `'2025-01-01'`.",
+  "tool_calls": [],
+  "finish": "stop",
+  "usage": {
+   "completion_tokens": 253,
+   "completion_tokens_details": {
+    "reasoning_tokens": 144
+   },
+   "prompt_tokens": 57,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "total_tokens": 310
+  },
+  "timings": {
+   "cache_n": 0,
+   "draft_n": 249,
+   "draft_n_accepted": 151,
+   "predicted_ms": 1766.4207000000001,
+   "predicted_n": 253,
+   "predicted_per_second": 142.66137166531166,
+   "predicted_per_token_ms": 7.009605952380953,
+   "prompt_ms": 200.50670000000002,
+   "prompt_n": 57,
+   "prompt_per_second": 284.279777184503,
+   "prompt_per_token_ms": 3.5176614035087725
+  },
+  "seconds": 1.99
+ },
+ {
+  "prompt": "Write a Rust function that returns the longest common prefix of a slice of strings, with two unit tests.",
+  "reasoning": "The user wants a Rust function for longest common prefix of a slice of strings, with two unit tests. Need provide code. Need ensure correctness: empty slice returns empty string; slice with empty strings? Common prefix of [\"\", \"abc\"] is \"\". Implementation: if input empty return String::new(); let mut iter = input.iter(); let first = iter.next().unwrap(); for s in iter { let mut common = 0; for (a,b) in first.chars().zip(s.chars()) { if a==b {common+=1} else {break} } ... } Better use bytes/chars. Strings are UTF-8; prefix by chars is fine. Simpler: let mut prefix = first.clone(); for s in input.iter().skip(1) { while !s.starts_with(&prefix) { prefix.pop(); if prefix.is_empty() { return prefix; } } } return prefix; This is O(n*m) but fine. Need unit tests: one for common prefix, one for no common prefix/empty. Include #[cfg(test)] mod tests. Provide concise answer.",
+  "content": "```rust\nfn longest_common_prefix(strings: &[&str]) -> String {\n    if strings.is_empty() {\n        return String::",
+  "tool_calls": [],
+  "finish": "length",
+  "usage": {
+   "completion_tokens": 300,
+   "completion_tokens_details": {
+    "reasoning_tokens": 259
+   },
+   "prompt_tokens": 36,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "total_tokens": 336
+  },
+  "timings": {
+   "cache_n": 0,
+   "draft_n": 306,
+   "draft_n_accepted": 178,
+   "predicted_ms": 1982.2351,
+   "predicted_n": 300,
+   "predicted_per_second": 150.83982722331976,
+   "predicted_per_token_ms": 6.629548829431439,
+   "prompt_ms": 163.1368,
+   "prompt_n": 36,
+   "prompt_per_second": 220.67369226318036,
+   "prompt_per_token_ms": 4.531577777777778
+  },
+  "seconds": 2.15
+ },
+ {
+  "prompt": "Read the file config/app.yaml and tell me which port the service listens on.",
+  "reasoning": "The user wants me to read config/app.yaml and tell which port the service listens on. Let me read the file.",
+  "content": "",
+  "tool_calls": [
+   [
+    "read_file",
+    "{\"path\":\"config/app.yaml\"}"
+   ]
+  ],
+  "finish": "tool_calls",
+  "usage": {
+   "completion_tokens": 66,
+   "completion_tokens_details": {
+    "reasoning_tokens": 28
+   },
+   "prompt_tokens": 135,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "total_tokens": 201
+  },
+  "timings": {
+   "cache_n": 0,
+   "draft_n": 51,
+   "draft_n_accepted": 49,
+   "predicted_ms": 333.15250000000003,
+   "predicted_n": 66,
+   "predicted_per_second": 195.10584492086954,
+   "predicted_per_token_ms": 5.125423076923077,
+   "prompt_ms": 208.195,
+   "prompt_n": 135,
+   "prompt_per_second": 648.4305578904392,
+   "prompt_per_token_ms": 1.542185185185185
+  },
+  "seconds": 0.56
+ }
+]

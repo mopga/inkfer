@@ -1,0 +1,61 @@
+# oh-my-pi 18.18.8 -> Strata. Ключи взяты из `omp config list` этой версии.
+modelRoles:
+  default: inkling/inkling-balanced
+defaultThinkingLevel: medium
+
+# Начало промпта не трогаем, побочных запросов к модели не делаем
+provider:
+  appendOnlyContext: "on"
+providers:
+  cacheWarming: "off"
+recap:
+  enabled: false
+compaction:
+  enabled: true
+  thresholdTokens: 180000   # под кэш разговоров движка 8192 МиБ (REPORT.md, раздел 8); при кэше 5120 МиБ вернуть 135000
+  keepRecentTokens: 20000   # умолчание oh-my-pi; 4000 из `strata connect omp` рассчитано на окно 32K
+  methodOrder: [soft]
+  asyncEnabled: false
+  idleEnabled: false
+  # Inkling: порог сжатия истории под окно профиля (f = фиксированное число токенов); Qwen остаётся на thresholdTokens
+  modelThresholds:
+    inkling/inkling: "f100000"
+    inkling/inkling-speed: "f100000"
+    inkling/inkling-balanced: "f200000"
+    inkling/inkling-max: "f430000"
+
+# Субагенты: движок Strata выполняет один запрос за раз, параллельные субагенты только чередуют диалоги
+task:
+  maxConcurrency: 1
+  maxRecursionDepth: 1      # субагент не порождает своих субагентов: чередуются максимум два диалога
+
+# Без обращений наружу
+startup:
+  checkUpdate: false
+  setupWizard: false
+telemetry:
+  otlpExportEnabled: false
+
+# Права: правка файлов без вопросов, команды оболочки и запуск субагентов — с подтверждением в окне
+tools:
+  approvalMode: write
+  restrictedFolders:
+    - 'D:\path\to\protect'
+    - 'D:\AI\models'
+    - 'C:\Users\USER\AppData\Local\Strata'
+    - 'C:\Users\USER\.strata'
+bash:
+  patterns:
+    - match: 'git status'
+      approval: allow
+    - match: 'git status *'
+      approval: allow
+    - match: 'git diff'
+      approval: allow
+    - match: 'git diff *'
+      approval: allow
+    - match: 'git log'
+      approval: allow
+    - match: 'git log *'
+      approval: allow
+setupVersion: 2

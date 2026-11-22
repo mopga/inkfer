@@ -1,0 +1,5 @@
+[bm0-256k]       0 warmup prompt=22 cached=0 ttft=0.85s prefill=29.8 gen=39 decode=31.2/49.7 vram=15048 rss=13.36 avail=37.42 disk=0 
+[bm0-256k]  249000 cold   prompt=248899 cached=0 ttft=99.26s prefill=2513.7 gen=251 decode=33.3/32.9 vram=15048 rss=13.43 avail=35.86 disk=1 
+[bm0-256k]  249000 turn1  prompt=248990 cached=248898 ttft=0.91s prefill=145.2 gen=600 decode=22.2/23.0 vram=14017 rss=13.44 avail=36.33 disk=1 
+[bm0-256k]  249000 turn2  prompt=249323 cached=248989 ttft=0.91s prefill=510.2 gen=286 decode=27.6/30.2 vram=14012 rss=13.44 avail=36.31 disk=0 
+[bm0-256k]  249000 turn3  prompt=249400 cached=249322 ttft=0.89s prefill=123.4 gen=403 decode=33.1/32.9 vram=14012 rss=13.44 avail=37.08 disk=0 

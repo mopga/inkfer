@@ -1,0 +1,17 @@
+[ninfer-ni1-128k-host-bf16]       0 warmup prompt=22 cached=0 ttft=0.41s prefill=59.1 gen=64 decode=129.7/123.9 vram=15139 rss=22.32 avail=30.71 disk=0 
+[ninfer-ni1-128k-host-bf16]    8000 cold   prompt=8152 cached=0 ttft=2.35s prefill=3492.5 gen=400 decode=131.8/131.1 vram=15145 rss=22.33 avail=30.71 disk=0 
+[ninfer-ni1-128k-host-bf16]    8000 warm   prompt=8140 cached=0 ttft=2.4s prefill=3462.6 gen=400 decode=139.2/138.1 vram=15145 rss=22.33 avail=30.7 disk=0 
+[ninfer-ni1-128k-host-bf16]    8000 turn1  prompt=8131 cached=0 ttft=2.4s prefill=3456.4 gen=300 decode=118.8/117.8 vram=15145 rss=22.33 avail=30.67 disk=7 
+[ninfer-ni1-128k-host-bf16]    8000 turn2  prompt=8168 cached=8130 ttft=0.25s prefill=186.5 gen=300 decode=122.0/121.0 vram=15144 rss=22.33 avail=30.71 disk=1 
+[ninfer-ni1-128k-host-bf16]   32000 cold   prompt=32218 cached=0 ttft=13.46s prefill=2401.4 gen=400 decode=118.0/117.1 vram=15144 rss=22.33 avail=30.72 disk=0 
+[ninfer-ni1-128k-host-bf16]   32000 warm   prompt=32206 cached=0 ttft=13.59s prefill=2378.6 gen=400 decode=118.4/117.5 vram=15144 rss=22.34 avail=30.72 disk=0 
+[ninfer-ni1-128k-host-bf16]   32000 turn1  prompt=32197 cached=0 ttft=13.64s prefill=2371.5 gen=284 decode=101.1/100.0 vram=15144 rss=22.34 avail=30.61 disk=2 
+[ninfer-ni1-128k-host-bf16]   32000 turn2  prompt=32244 cached=32196 ttft=0.42s prefill=129.3 gen=300 decode=109.5/108.5 vram=15142 rss=22.34 avail=30.62 disk=0 
+[ninfer-ni1-128k-host-bf16]   64000 cold   prompt=64558 cached=0 ttft=38.57s prefill=1676.8 gen=400 decode=96.8/96.0 vram=15144 rss=22.34 avail=30.61 disk=0 
+[ninfer-ni1-128k-host-bf16]   64000 warm   prompt=64546 cached=0 ttft=38.84s prefill=1664.6 gen=400 decode=102.1/101.2 vram=15139 rss=22.34 avail=30.64 disk=0 
+[ninfer-ni1-128k-host-bf16]   64000 turn1  prompt=64537 cached=0 ttft=38.92s prefill=1660.9 gen=221 decode=84.6/83.3 vram=15169 rss=22.35 avail=30.64 disk=0 
+[ninfer-ni1-128k-host-bf16]   64000 turn2  prompt=64588 cached=64536 ttft=0.61s prefill=93.7 gen=300 decode=88.2/87.5 vram=15170 rss=22.35 avail=30.68 disk=0 
+[ninfer-ni1-128k-host-bf16]  120000 cold   prompt=119788 cached=0 ttft=108.57s prefill=1104.4 gen=400 decode=72.0/71.5 vram=15180 rss=22.36 avail=30.64 disk=0 
+[ninfer-ni1-128k-host-bf16]  120000 warm   prompt=119776 cached=0 ttft=108.97s prefill=1099.9 gen=400 decode=75.6/75.1 vram=15178 rss=22.36 avail=30.67 disk=0 
+[ninfer-ni1-128k-host-bf16]  120000 turn1  prompt=119767 cached=0 ttft=108.97s prefill=1100.0 gen=211 decode=63.9/63.0 vram=15156 rss=22.36 avail=30.58 disk=0 
+[ninfer-ni1-128k-host-bf16]  120000 turn2  prompt=119819 cached=0 ttft=109.19s prefill=1098.0 gen=300 decode=69.2/68.6 vram=15161 rss=22.37 avail=30.49 disk=0 

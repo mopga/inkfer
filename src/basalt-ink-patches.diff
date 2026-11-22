@@ -1,0 +1,1073 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9f05a8..63e4f29 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -260,7 +260,7 @@ target_link_libraries(inkling2_kernels PUBLIC ${_gpu_runtime_target})
+ add_library(model_inkling2 STATIC src/models/inkling2/adapter.cpp src/models/inkling2/pretok_inkling2.cpp
+   src/models/inkling2/pack.cpp src/models/inkling2/model.cpp src/models/inkling2/session.cpp src/models/inkling2/walk.cpp
+   src/models/inkling2/prompt.cpp src/models/inkling2/vision.cpp src/models/inkling2/vision_encoder.cpp
+-  src/models/inkling2/dspark.cpp src/models/inkling2/spill.cpp)
++  src/models/inkling2/dspark.cpp src/models/inkling2/spill.cpp src/models/inkling2/ink.cpp)
+ target_include_directories(model_inkling2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src PRIVATE ${_gpu_include_directories} ${CMAKE_CURRENT_SOURCE_DIR}/src/program/tokenizer)
+ target_link_libraries(model_inkling2 PUBLIC model tokenizer inkling2_kernels tiers kernels window_gemm mmq prefill_fp4 core vision_cuda ${_gpu_runtime_target})
+ if(BUILD_TESTING)
+@@ -287,6 +287,9 @@ if(BUILD_TESTING)
+   add_executable(inkling2_spill_test src/models/inkling2/spill_test.cpp src/models/inkling2/spill.cpp)
+   target_include_directories(inkling2_spill_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+   basalt_cpu_test(NAME inkling2_spill_test COMMAND inkling2_spill_test)
++  add_executable(inkling2_ink_test src/models/inkling2/ink_test.cpp src/models/inkling2/ink.cpp)
++  target_include_directories(inkling2_ink_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
++  basalt_cpu_test(NAME inkling2_ink_test COMMAND inkling2_ink_test)
+   add_executable(inkling2_expert_map_test src/models/inkling2/expert_map_test.cpp)
+   target_include_directories(inkling2_expert_map_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include)
+   basalt_cpu_test(NAME inkling2_expert_map_test COMMAND inkling2_expert_map_test)
+diff --git a/src/models/inkling2/ink.cpp b/src/models/inkling2/ink.cpp
+new file mode 100644
+index 0000000..50ed744
+--- /dev/null
++++ b/src/models/inkling2/ink.cpp
+@@ -0,0 +1,116 @@
++// src/models/inkling2/ink.cpp - the BASALT_INK_* experiments' settings. Read the header first.
++#include "models/inkling2/ink.hpp"
++
++#include <algorithm>
++#include <cstdlib>
++
++namespace basalt::models::inkling2::ink {
++
++long long env_int(const char* name, long long def, long long lo, long long hi) {
++    const char* s = std::getenv(name);
++    if (!s || !*s) return def;
++    char* end = nullptr;
++    const long long v = std::strtoll(s, &end, 10);
++    if (end == s) return def;
++    return std::clamp(v, lo, hi);
++}
++
++double env_real(const char* name, double def, double lo, double hi) {
++    const char* s = std::getenv(name);
++    if (!s || !*s) return def;
++    char* end = nullptr;
++    const double v = std::strtod(s, &end);
++    if (end == s || !(v == v)) return def;
++    return std::clamp(v, lo, hi);
++}
++
++std::string env_text(const char* name) {
++    const char* s = std::getenv(name);
++    return s ? std::string(s) : std::string();
++}
++
++const Reserves& reserves() {
++    static const Reserves r = [] {
++        Reserves v;
++        const auto mib = [&](const char* name, uint64_t& bytes) {
++            const long long def = (long long) (bytes >> 20);
++            const long long got = env_int(name, def, 0, 65536);
++            if (got != def) v.custom = true;
++            bytes = (uint64_t) got << 20;
++        };
++        mib("BASALT_INK_CARD_SPARE_MIB", v.card_spare);
++        mib("BASALT_INK_ELASTIC_KEEP_MIB", v.elastic_keep);
++        mib("BASALT_INK_SESSION_FIXED_MIB", v.session_fixed);
++        mib("BASALT_INK_SPILL_MARGIN_MIB", v.spill_margin);
++        return v;
++    }();
++    return r;
++}
++
++const ProfileOut& profile_out() {
++    static const ProfileOut p = [] {
++        ProfileOut v;
++        v.path = env_text("BASALT_INK_PROFILE_OUT");
++        v.every = env_int("BASALT_INK_PROFILE_EVERY", 4096, 0, 1ll << 40);
++        return v;
++    }();
++    return p;
++}
++
++const Adapt& adapt() {
++    static const Adapt a = [] {
++        Adapt v;
++        v.on = env_int("BASALT_INK_ADAPT", 0, 0, 1) != 0;
++        v.interval = env_int("BASALT_INK_ADAPT_INTERVAL", v.interval, 1, 1ll << 40);
++        v.swaps = (int) env_int("BASALT_INK_ADAPT_SWAPS", v.swaps, 0, 1 << 20);
++        v.fills = (int) env_int("BASALT_INK_ADAPT_FILLS", v.fills, 0, 1 << 20);
++        v.decay = env_real("BASALT_INK_ADAPT_DECAY", v.decay, 0.0, 1.0);
++        v.ratio = env_real("BASALT_INK_ADAPT_RATIO", v.ratio, 1.0, 1e6);
++        v.floor = env_real("BASALT_INK_ADAPT_FLOOR", v.floor, 0.0, 1e12);
++        v.rerank = env_int("BASALT_INK_ADAPT_RERANK", 1, 0, 1) != 0;
++        v.decode_keep = (uint64_t) env_int("BASALT_INK_DECODE_KEEP_MIB", 0, 0, 65536) << 20;
++        v.prompt_keep = (uint64_t) env_int("BASALT_INK_PROMPT_KEEP_MIB", 0, 0, 65536) << 20;
++        v.staging = env_int("BASALT_INK_STAGING", 0, 0, 1) != 0;
++        v.log_all = env_int("BASALT_INK_ADAPT_LOG", 0, 0, 1) != 0;
++        return v;
++    }();
++    return a;
++}
++
++void rerank(std::vector<std::pair<int32_t, int32_t>>& order, int n_expert, const std::vector<double>& score) {
++    const auto at = [&](const std::pair<int32_t, int32_t>& p) { return score[(size_t) p.first * (size_t) n_expert + (size_t) p.second]; };
++    std::stable_sort(order.begin(), order.end(), [&](const auto& a, const auto& b) { return at(a) > at(b); });
++}
++
++std::vector<Swap> plan_swaps(const std::vector<std::pair<int32_t, int32_t>>& order, int n_expert, const std::vector<double>& score,
++                             const std::vector<uint64_t>& cap, const std::vector<uint64_t>& need, int max_swaps, double ratio,
++                             double floor) {
++    std::vector<Swap> out;
++    if (max_swaps <= 0) return out;
++    const auto index = [&](const std::pair<int32_t, int32_t>& p) { return (int32_t) (p.first * n_expert + p.second); };
++    // the holders, the coldest first
++    std::vector<int32_t> cold;
++    for (auto it = order.rbegin(); it != order.rend(); ++it)
++        if (cap[(size_t) index(*it)]) cold.push_back(index(*it));
++    std::vector<uint8_t> used(cold.size(), 0);
++    const auto worth = [&](int32_t hot, int32_t holder) { return score[(size_t) hot] > score[(size_t) holder] * ratio + floor; };
++    size_t c0 = 0;   // the coldest holder not yet in a swap
++    for (const auto& p : order) {
++        if ((int) out.size() >= max_swaps) break;
++        const int32_t hot = index(p);
++        if (cap[(size_t) hot]) continue;
++        while (c0 < cold.size() && used[c0]) ++c0;
++        // the pairs after this one are no hotter and the holders left no colder: when this one is not worth it, none is
++        if (c0 == cold.size() || !worth(hot, cold[c0])) break;
++        for (size_t c = c0; c < cold.size(); ++c) {
++            if (used[c] || cap[(size_t) cold[c]] < need[(size_t) hot]) continue;
++            if (!worth(hot, cold[c])) break;
++            used[c] = 1;
++            out.push_back({hot, cold[c]});
++            break;
++        }
++    }
++    return out;
++}
++
++}  // namespace basalt::models::inkling2::ink
+diff --git a/src/models/inkling2/ink.hpp b/src/models/inkling2/ink.hpp
+new file mode 100644
+index 0000000..6f9b972
+--- /dev/null
++++ b/src/models/inkling2/ink.hpp
+@@ -0,0 +1,100 @@
++// src/models/inkling2/ink.hpp - experiments on the on-card expert set of Inkling 2, each switched by an environment
++// variable (BASALT_INK_*) read once at first use. With none set the engine behaves as it does without this file.
++//
++//   BASALT_INK_CARD_SPARE_MIB     the card's spare the context plan keeps free and the elastic spill's first copy-back
++//                                 leaves (default 1024)
++//   BASALT_INK_ELASTIC_KEEP_MIB   free bytes an elastic KV grow leaves, and a restart's copy-back (default 512)
++//   BASALT_INK_SESSION_FIXED_MIB  what the plan counts for a session beside its caches (default 768)
++//   BASALT_INK_SPILL_MARGIN_MIB   the plan's margin when experts leave the card (default 128)
++//   BASALT_INK_PROFILE_OUT        a file a session writes decode's routing counts to as an expert profile, the most
++//                                 routed pair first (--expert-profile reads it): when the session ends and every
++//   BASALT_INK_PROFILE_EVERY      decoded tokens (default 4096; 0: at the end only)
++//
++//   BASALT_INK_ADAPT=1            the on-card set of the RAM experts follows the conversation (one session, a spill):
++//                                 every
++//   BASALT_INK_ADAPT_INTERVAL     decoded tokens (64) a round adds decode's lookups since the last round to each RAM
++//                                 expert's score, orders the RAM experts by score (the elastic spill's copy-back and
++//                                 its way back to RAM follow that order from then on), gives the card buffers of the
++//                                 coldest ones to the hottest without one, and multiplies the scores by
++//   BASALT_INK_ADAPT_DECAY        (0.95). At most
++//   BASALT_INK_ADAPT_SWAPS        buffers change hands a round (48), each only when the hot score is above the cold
++//                                 one's times
++//   BASALT_INK_ADAPT_RATIO        (1.25) plus
++//   BASALT_INK_ADAPT_FLOOR        lookups (2)
++//   BASALT_INK_ADAPT_RERANK=0     keeps the profile's order and swaps nothing (the top-up below still runs)
++//   BASALT_INK_DECODE_KEEP_MIB    with ADAPT: a round also copies the hottest RAM experts without a card buffer to the
++//                                 card while this much of it stays free (0, the default: no such copies), at most
++//   BASALT_INK_ADAPT_FILLS        a round (256). Before a prompt is read those copies go back, all of them or, with
++//   BASALT_INK_PROMPT_KEEP_MIB    set, only until this much is free
++//   BASALT_INK_STAGING=1          with ADAPT: while no prompt is being read, the prompt staging (card memory the spilled
++//                                 layers share, idle during decode) holds the hottest RAM experts without a card
++//                                 buffer; a round fills its free slots first (they count in ADAPT_FILLS). Before a
++//                                 prompt is read their table entries go back to RAM; the next round fills it again
++//   BASALT_INK_ADAPT_LOG=1        a log line for every round (default: for the rounds that moved something)
++#pragma once
++
++#include <cstdint>
++#include <string>
++#include <utility>
++#include <vector>
++
++namespace basalt::models::inkling2::ink {
++
++/// The integer in `name`, clamped to lo..hi; `def` when it is unset, empty or not a number.
++long long env_int(const char* name, long long def, long long lo, long long hi);
++/// The same for a real number.
++double env_real(const char* name, double def, double lo, double hi);
++/// The text in `name` (empty: unset).
++std::string env_text(const char* name);
++
++/// The memory reserves of the context plan and the elastic spill, in bytes.
++struct Reserves {
++    uint64_t card_spare = 1024ull << 20;
++    uint64_t elastic_keep = 512ull << 20;
++    uint64_t session_fixed = 768ull << 20;
++    uint64_t spill_margin = 128ull << 20;
++    bool custom = false;   ///< any of them was set by the environment
++};
++const Reserves& reserves();
++
++/// Where and how often a session writes its routing counts as an expert profile (`path` empty: never).
++struct ProfileOut {
++    std::string path;
++    long long every = 4096;
++};
++const ProfileOut& profile_out();
++
++/// The adaptive on-card set.
++struct Adapt {
++    bool on = false;
++    long long interval = 64;    ///< decoded tokens between two rounds
++    int swaps = 48;             ///< card buffers that change hands a round
++    int fills = 256;            ///< new card copies a round
++    double decay = 0.95;        ///< a score's factor each round
++    double ratio = 1.25;        ///< a swap needs hot > cold * ratio + floor
++    double floor = 2.0;
++    bool rerank = true;         ///< the RAM experts' order follows the scores
++    uint64_t decode_keep = 0;   ///< bytes the top-up leaves free (0: no top-up)
++    uint64_t prompt_keep = 0;   ///< bytes free before a prompt, when only part of the top-up should go (0: all of it goes)
++    bool staging = false;       ///< decode uses the prompt staging for RAM experts while no prompt is read
++    bool log_all = false;
++};
++const Adapt& adapt();
++
++/// Orders the RAM experts by `score` (index layer * n_expert + expert), the highest first; ties keep their order (the
++/// profile's at first).
++void rerank(std::vector<std::pair<int32_t, int32_t>>& order, int n_expert, const std::vector<double>& score);
++
++/// Pair `in` (no card buffer) takes the card buffer of pair `out`; both are indexes layer * n_expert + expert.
++struct Swap {
++    int32_t in = 0, out = 0;
++};
++/// A round's swaps: the hottest RAM experts without a card buffer, each for the coldest holder left whose buffer fits it,
++/// while its score is above that holder's times `ratio` plus `floor`; `max_swaps` at most. `order`: the RAM experts by
++/// score, the highest first (rerank). `cap`: the bytes of the card buffer each pair holds (0: none); `need`: each pair's
++/// blob bytes. No pair is in two swaps.
++std::vector<Swap> plan_swaps(const std::vector<std::pair<int32_t, int32_t>>& order, int n_expert, const std::vector<double>& score,
++                             const std::vector<uint64_t>& cap, const std::vector<uint64_t>& need, int max_swaps, double ratio,
++                             double floor);
++
++}  // namespace basalt::models::inkling2::ink
+diff --git a/src/models/inkling2/ink_test.cpp b/src/models/inkling2/ink_test.cpp
+new file mode 100644
+index 0000000..2e6484b
+--- /dev/null
++++ b/src/models/inkling2/ink_test.cpp
+@@ -0,0 +1,147 @@
++// src/models/inkling2/ink_test.cpp - the adaptive on-card set's choices (ink.hpp): the order follows the scores and keeps
++// ties where they were, a round swaps the hottest RAM experts without a card buffer for the coldest ones with one, only
++// when the gain clears the hysteresis, never into a buffer that is too small, and a second round over the same scores
++// has nothing left to do.
++#include "models/inkling2/ink.hpp"
++
++#include <cstdio>
++#include <set>
++#include <vector>
++
++using namespace basalt::models::inkling2;
++
++namespace {
++int failures = 0;
++void expect(bool ok, const char* what) {
++    if (!ok) {
++        std::fprintf(stderr, "FAIL %s\n", what);
++        ++failures;
++    }
++}
++using Order = std::vector<std::pair<int32_t, int32_t>>;
++
++// applies the swaps to the caps: `in` takes the buffer of `out`
++void apply(const std::vector<ink::Swap>& swaps, std::vector<uint64_t>& cap) {
++    for (const ink::Swap& s : swaps) {
++        cap[(size_t) s.in] = cap[(size_t) s.out];
++        cap[(size_t) s.out] = 0;
++    }
++}
++double held_score(const std::vector<uint64_t>& cap, const std::vector<double>& score) {
++    double v = 0;
++    for (size_t i = 0; i < cap.size(); ++i)
++        if (cap[i]) v += score[i];
++    return v;
++}
++}  // namespace
++
++int main() {
++    const int NE = 8;   // experts a layer; pair index = layer * NE + expert
++    // ---- the order
++    {
++        Order order = {{0, 0}, {0, 1}, {1, 2}, {1, 3}, {0, 4}};
++        std::vector<double> score((size_t) 2 * NE, 0.0);
++        score[(size_t) 1 * NE + 3] = 9;   // (1,3) hottest
++        score[(size_t) 0 * NE + 4] = 5;   // then (0,4)
++        ink::rerank(order, NE, score);
++        const Order want = {{1, 3}, {0, 4}, {0, 0}, {0, 1}, {1, 2}};
++        expect(order == want, "the order follows the scores; ties keep their order");
++        ink::rerank(order, NE, score);
++        expect(order == want, "ranking twice changes nothing");
++    }
++    // ---- the swaps: one layer, eight RAM experts in profile order 0..7; 0..2 hold a card copy
++    const uint64_t S = 4479120;
++    Order order;
++    for (int e = 0; e < NE; ++e) order.emplace_back(0, e);
++    std::vector<uint64_t> need((size_t) NE, S), cap((size_t) NE, 0);
++    cap[0] = cap[1] = cap[2] = S;
++    {
++        std::vector<double> score((size_t) NE, 0.0);
++        expect(ink::plan_swaps(order, NE, score, cap, need, 8, 1.25, 1.0).empty(), "no lookups, no swaps");
++    }
++    {
++        // the conversation routes 5, 6, 7 and the copy 1; copies 0 and 2 are idle
++        std::vector<double> score = {0, 40, 0, 0, 0, 30, 20, 10};
++        Order o = order;
++        ink::rerank(o, NE, score);
++        const std::vector<ink::Swap> sw = ink::plan_swaps(o, NE, score, cap, need, 8, 1.25, 1.0);
++        expect(sw.size() == 2, "two idle copies, two swaps");
++        expect(sw.size() == 2 && sw[0].in == 5 && sw[1].in == 6, "the hottest without a buffer come in first");
++        std::set<int32_t> outs;
++        for (const ink::Swap& s : sw) outs.insert(s.out);
++        expect(outs == std::set<int32_t>{0, 2}, "the idle copies go, the routed one stays");
++        std::vector<uint64_t> c2 = cap;
++        const double before = held_score(c2, score);
++        apply(sw, c2);
++        expect(held_score(c2, score) > before, "the card's share of the lookups grows");
++        expect(ink::plan_swaps(o, NE, score, c2, need, 8, 1.25, 1.0).empty(), "a second round over the same scores has nothing to do");
++        // bounded
++        expect(ink::plan_swaps(o, NE, score, cap, need, 1, 1.25, 1.0).size() == 1, "the round's bound holds");
++        expect(ink::plan_swaps(o, NE, score, cap, need, 0, 1.25, 1.0).empty(), "a bound of zero: none");
++    }
++    {
++        // hysteresis: 5 is only a little hotter than the coldest copy
++        std::vector<double> score = {100, 100, 20, 0, 0, 22, 0, 0};
++        Order o = order;
++        ink::rerank(o, NE, score);
++        expect(ink::plan_swaps(o, NE, score, cap, need, 8, 1.25, 1.0).empty(), "a gain inside the ratio: no swap");
++        expect(ink::plan_swaps(o, NE, score, cap, need, 8, 1.0, 1.0).size() == 1, "the same gain with no ratio: one swap");
++        expect(ink::plan_swaps(o, NE, score, cap, need, 8, 1.0, 5.0).empty(), "the floor counts too");
++    }
++    {
++        // sizes: two layers of different strides; a large blob does not take a small buffer but takes a large one
++        const int L = 2;
++        Order o2;
++        for (int l = 0; l < L; ++l)
++            for (int e = 0; e < NE; ++e) o2.emplace_back(l, e);
++        std::vector<uint64_t> need2((size_t) L * NE), cap2((size_t) L * NE, 0);
++        for (int e = 0; e < NE; ++e) need2[(size_t) e] = S, need2[(size_t) NE + e] = 2 * S;
++        cap2[0] = S;                  // (0,0): a small buffer, idle
++        cap2[(size_t) NE + 1] = 2 * S;   // (1,1): a large buffer, idle
++        cap2[(size_t) NE + 2] = 2 * S;   // (1,2): a large buffer, routed a little
++        std::vector<double> score((size_t) L * NE, 0.0);
++        score[(size_t) NE + 5] = 50;   // large, hot
++        score[(size_t) 3] = 40;        // small, hot
++        score[(size_t) NE + 6] = 30;   // large, hot
++        score[(size_t) NE + 2] = 4;
++        ink::rerank(o2, NE, score);
++        const std::vector<ink::Swap> sw = ink::plan_swaps(o2, NE, score, cap2, need2, 8, 1.25, 1.0);
++        bool fits = true;
++        std::set<int32_t> ins, outs;
++        for (const ink::Swap& s : sw) {
++            fits = fits && need2[(size_t) s.in] <= cap2[(size_t) s.out] && cap2[(size_t) s.in] == 0 && cap2[(size_t) s.out] != 0;
++            ins.insert(s.in);
++            outs.insert(s.out);
++        }
++        expect(fits, "every swap fits its buffer, moves one without a buffer in and one with a buffer out");
++        expect(ins.size() == sw.size() && outs.size() == sw.size(), "no pair swaps twice in a round");
++        expect(sw.size() == 3, "each hot blob finds a buffer of its size");
++        expect(ins.count(NE + 5) && ins.count(3) && ins.count(NE + 6), "the three hot ones come in");
++        std::vector<uint64_t> c3 = cap2;
++        apply(sw, c3);
++        expect(c3[(size_t) NE + 5] == 2 * S && c3[(size_t) 3] != 0, "the large blob holds a large buffer afterwards");
++        expect(ink::plan_swaps(o2, NE, score, c3, need2, 8, 1.25, 1.0).empty(), "and the next round rests");
++    }
++    {
++        // a hot large blob with only small idle buffers: it stays out, and a small one behind it still gets its swap
++        const int L = 2;
++        Order o2;
++        for (int l = 0; l < L; ++l)
++            for (int e = 0; e < NE; ++e) o2.emplace_back(l, e);
++        std::vector<uint64_t> need2((size_t) L * NE), cap2((size_t) L * NE, 0);
++        for (int e = 0; e < NE; ++e) need2[(size_t) e] = S, need2[(size_t) NE + e] = 2 * S;
++        cap2[0] = S;
++        std::vector<double> score((size_t) L * NE, 0.0);
++        score[(size_t) NE + 5] = 50;
++        score[(size_t) 3] = 40;
++        ink::rerank(o2, NE, score);
++        const std::vector<ink::Swap> sw = ink::plan_swaps(o2, NE, score, cap2, need2, 8, 1.25, 1.0);
++        expect(sw.size() == 1 && sw[0].in == 3 && sw[0].out == 0, "a blob too large for every idle buffer is passed over");
++    }
++    // ---- the settings' readers
++    expect(ink::env_int("BASALT_INK_TEST_UNSET_VARIABLE", 7, 0, 10) == 7, "an unset variable gives the default");
++    expect(ink::env_real("BASALT_INK_TEST_UNSET_VARIABLE", 0.5, 0, 1) == 0.5, "and for a real number");
++    if (failures) return 1;
++    std::printf("inkling2 ink: ok\n");
++    return 0;
++}
+diff --git a/src/models/inkling2/model.cpp b/src/models/inkling2/model.cpp
+index ca52697..69bc57a 100644
+--- a/src/models/inkling2/model.cpp
++++ b/src/models/inkling2/model.cpp
+@@ -10,6 +10,7 @@
+ #include "basalt/models/inkling2/kernels.hpp"
+ #include "basalt/platform/file.hpp"
+ #include "basalt/prefill/moe_mmq.hpp"
++#include "models/inkling2/ink.hpp"
+ #include "models/inkling2/prompt.hpp"
+ 
+ #include <cuda_runtime.h>
+@@ -27,9 +28,9 @@ constexpr int kTypeBF16 = 30;
+ constexpr int kTypeNvfp4 = 40;
+ constexpr uint64_t kQ8Row = (uint64_t) kWidth / 32 * 34;   // bytes of a Q8_0 row of the hidden width
+ // what a session needs beside its caches (its row buffers, the expert scratch, the head's logits) and what the card keeps
+-// free for the kernels' modules and the driver
+-constexpr uint64_t kSessionFixed = 768 * kMiB;
+-constexpr uint64_t kCardSpare = 1024 * kMiB;
++// free for the kernels' modules and the driver: 768 MiB and 1024 MiB, unless the environment says otherwise (ink.hpp)
++uint64_t session_fixed() { return ink::reserves().session_fixed; }
++uint64_t card_spare() { return ink::reserves().card_spare; }
+ 
+ // The fused projection rows of a layer: tensor suffix, first row, rows, needed on a full layer only.
+ struct ProjPart {
+@@ -64,7 +65,7 @@ uint64_t session_bytes(const Geometry& g, int64_t context, bool fp8) {
+     const uint64_t elem = fp8 ? 1 : 2;
+     const uint64_t per_pos = 2ull * kKvHeads * kHeadDim * elem;
+     const uint64_t ring = (uint64_t) g.window + kDecodeRows;
+-    return (uint64_t) global * per_pos * (uint64_t) context + (uint64_t) swa * per_pos * ring + kSessionFixed +
++    return (uint64_t) global * per_pos * (uint64_t) context + (uint64_t) swa * per_pos * ring + session_fixed() +
+            prompt_bytes(g);   // PROMPT HOOK
+ }
+ 
+@@ -300,7 +301,12 @@ model::Result InklingModel::plan(const model::LoadRequest& req, core::LoadPlan&
+         const int64_t want = req.max_context > 0 ? req.max_context : kDefaultContext;
+         if (want < 1024 || (g.context_length > 0 && want > g.context_length))
+             return fail("--max-context " + std::to_string(want) + " is outside 1,024 .. " + std::to_string(g.context_length));
+-        const uint64_t spare = kCardSpare + vision_room;   // [vision]
++        const uint64_t spare = card_spare() + vision_room;   // [vision]
++        if (const ink::Reserves& rs = ink::reserves(); rs.custom)
++            basalt::log::info("basalt inkling2", "ink: reserves from the environment: card spare %llu MiB (1024), elastic keep %llu MiB (512), "
++                              "session fixed %llu MiB (768), spill margin %llu MiB (128)",
++                              (unsigned long long) (rs.card_spare >> 20), (unsigned long long) (rs.elastic_keep >> 20),
++                              (unsigned long long) (rs.session_fixed >> 20), (unsigned long long) (rs.spill_margin >> 20));
+         const uint64_t n_sess = (uint64_t) std::max(req.sessions, 1);
+         const auto bytes_at = [&](int64_t c) {   // DSPARK HOOK: a session's drafter beside its caches
+             return session_bytes(g, c, fp8_) + (dspark_ ? dspark_session_bytes(pack_, c, std::max(kDecodeRows, kPromptChunk)) : 0);
+@@ -316,7 +322,7 @@ model::Result InklingModel::plan(const model::LoadRequest& req, core::LoadPlan&
+             for (uint64_t st : stride) full += st * (uint64_t) g.n_expert;
+             const uint64_t want_b = full + bytes_at(want) * n_sess + spare;
+             // when some must go: a margin for the tables and maps allocated after the plan and the driver's own rounding
+-            const uint64_t short_b = want_b > free_b ? want_b - free_b + 128 * kMiB : 0;
++            const uint64_t short_b = want_b > free_b ? want_b - free_b + ink::reserves().spill_margin : 0;
+             const int64_t keep = req.expert_cache > 0 ? req.expert_cache : -1;
+             if (short_b > 0 || keep >= 0) {
+                 if (!core::vmm::supported()) return fail("the experts do not fit beside the context and this card has no virtual memory management");
+@@ -390,6 +396,7 @@ model::Result InklingModel::load_experts(core::LoadPlan& reads, int file, uint64
+         copy_.assign((size_t) g.n_layers * g.n_expert, nullptr);
+         layer_copies_.assign((size_t) g.n_layers, 0);
+         host_addr_.assign((size_t) g.n_layers * g.n_expert, 0);
++        card_addr_.assign((size_t) g.n_layers * g.n_expert, 0);
+     }
+     // the RAM copies, every spilled layer's in slot order, and the staging their ranges share
+     std::vector<uint64_t> host_at((size_t) g.n_layers, 0);
+@@ -507,7 +514,7 @@ model::Result InklingModel::attach(const model::LoadRequest&, std::vector<std::u
+     for (auto& s : sessions)
+         if (model::Result r = s->prepare(); !r.ok()) return r;
+     if (elastic_) {   // the caches back only their base yet: the RAM experts come back while the card has room
+-        const uint64_t moved = promote(kCardSpare);
++        const uint64_t moved = promote(card_spare());
+         basalt::log::info("basalt inkling2", "elastic spill: %lld of %lld RAM experts copied back to the card (%.2f GiB); they go back "
+                           "to RAM, the least routed first, as a conversation's caches grow",
+                           (long long) n_copy_, (long long) spill_.spilled, (double) moved / (double) kGiB);
+@@ -520,7 +527,7 @@ uint64_t InklingModel::promote(uint64_t keep_free) {
+     uint64_t moved = 0;
+     for (const auto& [l, e] : spill_order_) {
+         const size_t i = (size_t) l * ne + e;
+-        if (copy_[i]) continue;
++        if (copy_[i] || (!stage_at_.empty() && stage_at_[i] >= 0)) continue;   // on the card already (ink.hpp: or in the staging)
+         const LayerWeights& w = layers_[(size_t) l];
+         size_t free_b = 0, total_b = 0;
+         cudaMemGetInfo(&free_b, &total_b);
+@@ -579,4 +586,181 @@ uint64_t InklingModel::demote(uint64_t bytes, void* stream) {
+     return freed;
+ }
+ 
++// ---- BASALT_INK_ADAPT (ink.hpp)
++
++const uint8_t* InklingModel::ram_blob(size_t i) const {
++    const int ne = geo().n_expert;
++    const size_t l = i / (size_t) ne, e = i % (size_t) ne;
++    const LayerWeights& w = layers_[l];
++    return w.spill_host + (uint64_t) (spill_.slot[l][e] - (ne - w.n_spill)) * w.expert_stride;
++}
++
++bool InklingModel::ink_entry(size_t i, const unsigned long long* at, void* stream) {
++    const int ne = geo().n_expert;
++    return cudaMemcpyAsync(layers_[i / (size_t) ne].blob_table + i % (size_t) ne, at, 8, cudaMemcpyHostToDevice, (cudaStream_t) stream) ==
++           cudaSuccess;
++}
++
++InklingModel::InkRound InklingModel::ink_round(const std::vector<double>& score, const ink::Adapt& a, void* stream) {
++    InkRound out;
++    const int ne = geo().n_expert;
++    if (spill_order_.empty() || score.size() != copy_.size()) return out;
++    const cudaStream_t st = (cudaStream_t) stream;
++    if (a.rerank) ink::rerank(spill_order_, ne, score);
++    const bool stage = a.staging && ink_stage_init();
++    const auto in_stage = [&](size_t i) { return !stage_at_.empty() && stage_at_[i] >= 0; };
++    // a pair's blob into a card buffer and its table entry to that buffer, in this order on the stream
++    const auto load = [&](size_t i, void* buf) {
++        card_addr_[i] = (unsigned long long) buf;
++        return cudaMemcpyAsync(buf, ram_blob(i), layers_[i / (size_t) ne].expert_stride, cudaMemcpyHostToDevice, st) == cudaSuccess &&
++               ink_entry(i, &card_addr_[i], stream);
++    };
++    // the top-up: new copies of the hottest RAM experts without a card buffer, while the card keeps decode_keep free
++    // (BASALT_INK_STAGING: the staging's free slots first; they cost no card memory)
++    if (a.decode_keep > 0 || stage) {
++        size_t slot = 0;
++        for (const auto& [l, e] : spill_order_) {
++            if (out.filled + out.staged >= a.fills) break;
++            const size_t i = (size_t) l * ne + e;
++            if (copy_[i] || in_stage(i)) continue;
++            const uint64_t stride = layers_[(size_t) l].expert_stride;
++            if (stage) {
++                while (slot < stage_owner_.size() && stage_owner_[slot] >= 0) ++slot;
++                if (slot < stage_owner_.size()) {
++                    if (!load(i, stage_base_ + (uint64_t) slot * stage_slot_)) {
++                        ink_entry(i, &host_addr_[i], stream);
++                        out.failed = true;
++                        break;
++                    }
++                    stage_owner_[slot] = (int32_t) i;
++                    stage_at_[i] = (int32_t) slot;
++                    ++n_staged_;
++                    ++out.staged;
++                    continue;
++                }
++            }
++            if (a.decode_keep == 0) break;
++            size_t free_b = 0, total_b = 0;
++            cudaMemGetInfo(&free_b, &total_b);
++            if (free_b < a.decode_keep + stride) break;
++            void* p = nullptr;
++            if (cudaMalloc(&p, stride) != cudaSuccess) {
++                cudaGetLastError();
++                break;
++            }
++            if (!load(i, p)) {
++                ink_entry(i, &host_addr_[i], stream);
++                cudaStreamSynchronize(st);
++                cudaFree(p);
++                out.failed = true;
++                break;
++            }
++            copy_[i] = p;
++            ++n_copy_;
++            ++layer_copies_[(size_t) l];
++            ++out.filled;
++            out.copied += stride;
++        }
++    }
++    // the swaps: a buffer's bytes are counted as its holder's stride (never more than it has)
++    if (a.rerank && a.swaps > 0 && !out.failed) {
++        std::vector<uint64_t> cap(copy_.size(), 0), need(copy_.size(), 0);
++        for (const auto& [l, e] : spill_order_) {
++            const size_t i = (size_t) l * ne + e;
++            need[i] = layers_[(size_t) l].expert_stride;
++            if (copy_[i]) cap[i] = need[i];
++            else if (in_stage(i)) cap[i] = stage_slot_;
++        }
++        for (const ink::Swap& s : ink::plan_swaps(spill_order_, ne, score, cap, need, a.swaps, a.ratio, a.floor)) {
++            const size_t in = (size_t) s.in, og = (size_t) s.out;
++            if (in_stage(og)) {   // a slot of the staging changes hands
++                const int32_t slot = stage_at_[og];
++                if (!ink_entry(og, &host_addr_[og], stream)) {
++                    out.failed = true;
++                    break;
++                }
++                stage_at_[og] = -1;
++                stage_owner_[(size_t) slot] = -1;
++                --n_staged_;
++                if (!load(in, stage_base_ + (uint64_t) slot * stage_slot_)) {   // the slot stays free
++                    ink_entry(in, &host_addr_[in], stream);
++                    out.failed = true;
++                    break;
++                }
++                stage_at_[in] = slot;
++                stage_owner_[(size_t) slot] = (int32_t) in;
++                ++n_staged_;
++                ++out.swapped;
++                continue;
++            }
++            void* p = copy_[og];
++            if (!ink_entry(og, &host_addr_[og], stream)) {
++                out.failed = true;
++                break;
++            }
++            copy_[og] = nullptr;
++            --layer_copies_[og / (size_t) ne];
++            if (!load(in, p)) {   // the buffer holds neither blob whole: no entry points at it, it goes
++                ink_entry(in, &host_addr_[in], stream);
++                cudaStreamSynchronize(st);
++                cudaFree(p);
++                --n_copy_;
++                out.failed = true;
++                break;
++            }
++            copy_[in] = p;
++            ++layer_copies_[in / (size_t) ne];
++            ++out.swapped;
++        }
++    }
++    if (cudaStreamSynchronize(st) != cudaSuccess) out.failed = true;
++    if (out.failed) cudaGetLastError();
++    return out;
++}
++
++// The staging as slots: every spilled layer's range ends in a tail mapped over the shared staging from its first byte, so
++// the range with the longest tail shows all of it as one run of addresses. Decode reads no byte of it (a kept expert's
++// slot lies in the range's own backing, a RAM expert is read at its RAM address or its card copy); the prompt path
++// writes every byte of it that it reads, chunk by chunk.
++bool InklingModel::ink_stage_init() {
++    if (stage_base_) return true;
++    if (stage_tried_) return false;
++    stage_tried_ = true;
++    uint8_t* base = nullptr;
++    uint64_t tail = 0, slot = 0;
++    for (const Range& r : ranges_)
++        if (r.bytes - r.own > tail) {
++            tail = r.bytes - r.own;
++            base = r.va + r.own;
++        }
++    for (const LayerWeights& w : layers_)
++        if (w.n_spill) slot = std::max<uint64_t>(slot, w.expert_stride);
++    if (!base || !slot || tail < slot || tail > (uint64_t) staging_.size() * core::vmm::granularity()) return false;
++    stage_slot_ = slot;
++    stage_owner_.assign((size_t) (tail / slot), -1);
++    stage_at_.assign(copy_.size(), -1);
++    stage_base_ = base;
++    basalt::log::info("basalt inkling2", "ink: the prompt staging holds RAM experts during decode: %lld slots of %.2f MiB (%.2f GiB)",
++                      (long long) stage_owner_.size(), (double) slot / (double) (1ull << 20), (double) tail / (double) kGiB);
++    return true;
++}
++
++int InklingModel::ink_release_staging(void* stream) {
++    if (n_staged_ == 0) return 0;
++    int n = 0;
++    bool ok = true;
++    for (size_t s = 0; s < stage_owner_.size(); ++s) {
++        const int32_t i = stage_owner_[s];
++        if (i < 0) continue;
++        ok = ink_entry((size_t) i, &host_addr_[(size_t) i], stream) && ok;
++        stage_at_[(size_t) i] = -1;
++        stage_owner_[s] = -1;
++        ++n;
++    }
++    n_staged_ = 0;
++    if (cudaStreamSynchronize((cudaStream_t) stream) != cudaSuccess) ok = false;
++    if (!ok) cudaGetLastError();
++    return ok ? n : -1;
++}
++
+ }  // namespace basalt::models::inkling2
+diff --git a/src/models/inkling2/model.hpp b/src/models/inkling2/model.hpp
+index b0da40d..4707999 100644
+--- a/src/models/inkling2/model.hpp
++++ b/src/models/inkling2/model.hpp
+@@ -5,6 +5,7 @@
+ 
+ #include "basalt/model/adapter.hpp"
+ #include "models/inkling2/dspark.hpp"   // DSPARK HOOK
++#include "models/inkling2/ink.hpp"
+ #include "models/inkling2/pack.hpp"
+ #include "models/inkling2/spill.hpp"
+ #include "models/inkling2/vision_encoder.hpp"   // [vision]
+@@ -77,7 +78,8 @@ public:
+     bool on_card(int l, int e) const {
+         return spill_.slot.empty() || spill_.slot[(size_t) l].empty() ||
+                spill_.slot[(size_t) l][(size_t) e] < geo().n_expert - spill_.n_spill[(size_t) l] ||
+-               (!copy_.empty() && copy_[(size_t) l * geo().n_expert + e]);
++               (!copy_.empty() && copy_[(size_t) l * geo().n_expert + e]) ||
++               (!stage_at_.empty() && stage_at_[(size_t) l * geo().n_expert + e] >= 0);
+     }
+     /// The elastic spill: the experts the asked context sent to RAM come back to the card as copies while its caches back
+     /// only the positions in use. On with a spill the context made (not --expert-cache) and a context above the elastic
+@@ -94,6 +96,26 @@ public:
+     /// issued; the caller copies them from RAM).
+     bool stage_from_card(int l, void* stream) const;
+     const SpillPlan& spill() const { return spill_; }
++    /// BASALT_INK_ADAPT (ink.hpp), a round of the adaptive on-card set. The RAM experts' order follows `score` (index
++    /// layer * n_expert + expert); with a top-up the hottest ones without a card buffer get a new copy while
++    /// `a.decode_keep` bytes stay free; then the hottest still without one take the buffers of the coldest holders
++    /// (ink::plan_swaps): the holder's blob table entry goes back to its RAM address, the hot blob is copied over the
++    /// buffer, its entry points there. Every write is issued on `stream`, which is waited for before the call returns.
++    /// The caller is the model's only session, between two windows, with that stream drained: no kernel reads a table
++    /// while it changes.
++    struct InkRound {
++        int filled = 0;        ///< RAM experts that took a new card copy
++        int staged = 0;        ///< RAM experts copied into a free slot of the prompt staging (BASALT_INK_STAGING)
++        int swapped = 0;       ///< hot RAM experts that took a colder one's card buffer
++        uint64_t copied = 0;   ///< bytes of the new copies
++        bool failed = false;   ///< a CUDA call failed; the round stopped there
++    };
++    InkRound ink_round(const std::vector<double>& score, const ink::Adapt& a, void* stream);
++    /// BASALT_INK_STAGING: the RAM experts the prompt staging holds for decode, and their way out before a prompt is
++    /// read (the prompt path writes the staging): every one's table entry back to its RAM address, on `stream`, which is
++    /// waited for. How many left; -1 when an entry could not be written (the staging must not be written then).
++    int64_t staged() const { return n_staged_; }
++    int ink_release_staging(void* stream);
+ 
+ private:
+     float* small(const std::string& name, uint64_t floats, core::LoadPlan& reads, int file, std::string& err,
+@@ -137,6 +159,19 @@ private:
+     std::vector<unsigned long long> host_addr_;
+     int64_t n_copy_ = 0;
+     std::vector<int> layer_copies_;   ///< [layer] RAM experts with a card copy
++    // BASALT_INK_ADAPT: each pair's card buffer address as the stream's table writes read it (stable host storage)
++    std::vector<unsigned long long> card_addr_;
++    // BASALT_INK_STAGING: the staging as flat slots of the largest spilled blob, seen through the range whose tail maps
++    // all of it; each slot's pair (-1: free) and each pair's slot (-1: none)
++    uint8_t* stage_base_ = nullptr;
++    uint64_t stage_slot_ = 0;
++    std::vector<int32_t> stage_owner_, stage_at_;
++    int64_t n_staged_ = 0;
++    bool stage_tried_ = false;
++    bool ink_stage_init();
++    const uint8_t* ram_blob(size_t i) const;   ///< RAM expert i's bytes in pinned host memory
++    /// Pair i's blob table entry from `*at` (which must stay as it is until `stream` has run), on `stream`.
++    bool ink_entry(size_t i, const unsigned long long* at, void* stream);
+ };
+ 
+ /// A session over `model`; null with `err` set.
+diff --git a/src/models/inkling2/session.cpp b/src/models/inkling2/session.cpp
+index b5fbdc9..ea31390 100644
+--- a/src/models/inkling2/session.cpp
++++ b/src/models/inkling2/session.cpp
+@@ -12,6 +12,7 @@
+ #include "basalt/core/conversation_cache.hpp"
+ #include "basalt/core/elastic_array.hpp"
+ #include "basalt/core/elastic_kv.hpp"
++#include "basalt/core/expert_cache.hpp"
+ #include "basalt/core/graph.hpp"
+ #include "basalt/kernels/iq_kernels.hpp"
+ #include "basalt/kernels/logprobs.hpp"
+@@ -22,10 +23,12 @@
+ #include "basalt/kernels/sampler.hpp"
+ #include "basalt/log.hpp"
+ #include "basalt/models/inkling2/kernels.hpp"
++#include "basalt/platform/file.hpp"
+ #include "basalt/program/expert_spill.hpp"
+ #include "models/inkling2/caches.hpp"
+ #include "models/inkling2/dspark.hpp"   // DSPARK HOOK
+ #include "models/inkling2/expert_map.hpp"
++#include "models/inkling2/ink.hpp"
+ #include "models/inkling2/model.hpp"
+ #include "models/inkling2/prompt.hpp"
+ #include "models/inkling2/walk.hpp"
+@@ -56,11 +59,15 @@ public:
+     ~Session() override {
+         if (stream_) cudaStreamSynchronize(stream_);
+         prompt_.reset();   // it synchronizes the session's stream as it goes, so before that stream is destroyed
++        ink_profile(true);
+         if (m_.spill().any() && ex_tally_) {   // how decode's lookups fell between the card and RAM
+             std::vector<uint32_t> t((size_t) expert_pairs());
+             if (cudaMemcpy(t.data(), ex_tally_, t.size() * 4, cudaMemcpyDeviceToHost) == cudaSuccess) {
+-                const CardShare sh = card_share(t, g_.n_expert, [&](int l, int e) { return m_.on_card(l, e); });
++                const CardShare sh = ink_on_ ? ink_share(t) : card_share(t, g_.n_expert, [&](int l, int e) { return m_.on_card(l, e); });
+                 const uint64_t all = sh.all, card = sh.card;
++                if (ink_on_)
++                    basalt::log::info("basalt inkling2", "ink: %lld rounds, %lld swaps, %lld new copies in the session; each lookup below is "
++                                      "counted where it was served", (long long) ink_n_rounds_, (long long) ink_n_swaps_, (long long) ink_n_fills_);
+                 basalt::log::info("basalt inkling2", "experts: %llu decode lookups, %.2f%% on the card, %llu read from RAM",
+                                   (unsigned long long) all, all ? 100.0 * (double) card / (double) all : 100.0,
+                                   (unsigned long long) (all - card));
+@@ -175,6 +182,7 @@ public:
+         cudaStreamSynchronize(stream_);
+         if (!dspark_.init(m_.dspark(), g_, m_.context(), std::max(kMaxRows, kPromptChunk), m_.flags().diag_dump, err))   // DSPARK HOOK
+             return false;
++        ink_init();
+         prompt_ = make_prompt(m_, vc_, dspark_, stream_, err);   // PROMPT HOOK
+         return prompt_ != nullptr || err.empty();
+     }
+@@ -184,6 +192,10 @@ public:
+         if (r.pos + r.n_tokens > m_.context()) return {model::Status::Refused, "inkling2: the window runs past the context"};
+         std::string err;
+         if (!ensure_positions(r.pos + r.n_tokens, err)) return {model::Status::Refused, "inkling2: " + err};
++        if (ink_on_) {   // BASALT_INK_ADAPT: between two windows, the stream drained
++            if (!ink_stop_ && (ink_pending_ || ink_rows_ >= ink::adapt().interval)) ink_round();
++            ink_rows_ += r.n_tokens;
++        }
+         hist_.resize((size_t) r.pos);
+         for (int t0 = 0; t0 < r.n_tokens; t0 += kMaxRows) {
+             const int n = std::min(kMaxRows, r.n_tokens - t0);
+@@ -203,11 +215,15 @@ public:
+                 cudaMemcpyAsync(r.logits, logits_ + (size_t) (head - 1) * g_.n_vocab, (size_t) g_.n_vocab * 4, cudaMemcpyDeviceToHost, stream_);
+         }
+         if (cudaStreamSynchronize(stream_) != cudaSuccess) return {model::Status::Error, "inkling2: the window failed"};
++        prof_rows_ += r.n_tokens;
++        if (const long long every = ink::profile_out().every; every > 0 && prof_rows_ >= every) ink_profile(false);
+         return {};
+     }
+ 
+     model::Result prefill_chunk(const model::PrefillRequest& r) override {
+         if (r.pos + r.n_tokens > m_.context()) return {model::Status::Refused, "inkling2: the prompt runs past the context"};
++        if (ink_on_ && prompt_ && r.n_tokens > 16 && !ink_before_prompt())
++            return {model::Status::Error, "inkling2: ink: the prompt staging could not be given back"};
+         if (r.pos == 0) restart_positions(r.n_tokens);
+         if (std::string e; !ensure_positions(r.pos + r.n_tokens, e)) return {model::Status::Refused, "inkling2: " + e};
+         hist_.resize((size_t) r.pos);
+@@ -241,6 +257,8 @@ public:
+     void images_done() override { m_.encoder().release(); }
+     model::Result prefill_embeddings(const float* rows, int n_rows, int64_t pos, model::ImageGrid) override {
+         if (pos + n_rows > m_.context()) return {model::Status::Refused, "inkling2: the picture runs past the context"};
++        if (ink_on_ && prompt_ && n_rows > 16 && !ink_before_prompt())
++            return {model::Status::Error, "inkling2: ink: the prompt staging could not be given back"};
+         if (std::string e; !ensure_positions(pos + n_rows, e)) return {model::Status::Refused, "inkling2: " + e};
+         hist_.resize((size_t) pos);
+         if (prompt_ && n_rows > 16) return prompt_->read_rows(rows, n_rows, pos, g_.image_token, hist_);
+@@ -322,7 +340,8 @@ public:
+     // and when the card has no room the RAM experts' card copies go back to RAM first, the least routed first. False when
+     // even without any copy there is no room.
+     static constexpr int64_t kElasticKvStep = 8192;
+-    static constexpr uint64_t kElasticKeep = 512ull << 20;   // free bytes a grow leaves (the driver, the graphs)
++    // free bytes a grow leaves (the driver, the graphs): 512 MiB unless the environment says otherwise (ink.hpp)
++    const uint64_t kElasticKeep = ink::reserves().elastic_keep;
+     bool ensure_positions(int64_t positions, std::string& err) {
+         if (elastic_.empty() || positions <= backed_) return true;
+         const int64_t target = std::min<int64_t>(m_.context(), (positions + kElasticKvStep - 1) / kElasticKvStep * kElasticKvStep);
+@@ -331,7 +350,9 @@ public:
+         size_t free_b = 0, total_b = 0;
+         cudaMemGetInfo(&free_b, &total_b);
+         if (free_b < grow + kElasticKeep) {
++            if (ink_on_) ink_account();   // the placement changes: the lookups it served are counted first
+             const uint64_t freed = m_.demote(grow + kElasticKeep - free_b, stream_);
++            if (ink_on_) ink_freed(freed);
+             basalt::log::info("basalt inkling2", "elastic spill: the caches grow to %lld positions; %.2f GiB of expert copies go back to RAM "
+                               "(%lld stay on the card)", (long long) target, (double) freed / (double) (1ull << 30), (long long) m_.promoted());
+         }
+@@ -355,6 +376,7 @@ public:
+         }
+         if (m_.promoted() < m_.spill().spilled) {
+             cudaStreamSynchronize(stream_);
++            if (ink_on_) ink_account();
+             m_.promote(kElasticKeep + (uint64_t) elastic_.size() * cell_bytes() * (uint64_t) std::max<int64_t>(0, keep - backed_));
+         }
+     }
+@@ -468,7 +490,7 @@ public:
+         if (cudaMemcpyAsync(t.data(), ex_tally_, t.size() * 4, cudaMemcpyDeviceToHost, stream_) != cudaSuccess ||
+             cudaStreamSynchronize(stream_) != cudaSuccess)
+             return {lookups_, lookups_, 0, 0};
+-        const CardShare sh = card_share(t, g_.n_expert, [&](int l, int e) { return m_.on_card(l, e); });
++        const CardShare sh = ink_on_ ? ink_share(t) : card_share(t, g_.n_expert, [&](int l, int e) { return m_.on_card(l, e); });
+         return {(int64_t) sh.card, (int64_t) sh.all, 0, 0};
+     }
+     std::vector<CardExperts> experts_by_card() const override {
+@@ -495,6 +517,193 @@ public:
+ private:
+     int64_t expert_pairs() const { return (int64_t) g_.n_layers * g_.n_expert; }
+ 
++    // ---- BASALT_INK_ADAPT (ink.hpp): the on-card set of the RAM experts follows the conversation.
++    //
++    // Every blob table entry is written by the model (promote, demote, ink_round), always called from the session's
++    // thread between two calls of a window or a prompt, with the session's stream drained first: the two side streams
++    // join it at the end of every window, the last decode window ended with a wait, and nothing else reads a table. So
++    // no kernel is in flight while an entry or a card buffer changes. A captured graph holds the tables' addresses, not
++    // their entries; its kernels read the entries when they run. A card buffer holds the bytes of the RAM blob it
++    // copies and the experts' products do not depend on where a blob is read from, so the output is the same bit for
++    // bit. The prompt path reads no table (it stages every RAM expert of a layer by slot), so it does not see the set.
++    void ink_init() {
++        const ink::Adapt& a = ink::adapt();
++        if (!a.on) {
++            if (a.decode_keep) basalt::log::warn("basalt inkling2", "ink: BASALT_INK_DECODE_KEEP_MIB needs BASALT_INK_ADAPT=1; ignored");
++            if (a.staging) basalt::log::warn("basalt inkling2", "ink: BASALT_INK_STAGING needs BASALT_INK_ADAPT=1; ignored");
++            return;
++        }
++        if (!m_.spill().any()) {
++            basalt::log::info("basalt inkling2", "ink: BASALT_INK_ADAPT is set, but every expert is on the card at this context: nothing to adapt");
++            return;
++        }
++        if (m_.sessions() != 1) {
++            basalt::log::info("basalt inkling2", "ink: BASALT_INK_ADAPT works with one session; off with %d", m_.sessions());
++            return;
++        }
++        ink_last_.assign((size_t) expert_pairs(), 0);
++        ink_score_.assign((size_t) expert_pairs(), 0.0);
++        ink_on_ = true;
++        basalt::log::info("basalt inkling2",
++                          "ink: adaptive on-card set: a round every %lld decoded tokens, %s, at most %d swaps a round (hot > cold x %.2f + %.1f), "
++                          "scores x %.3f a round; top-up: %s (keeps %llu MiB free, at most %d copies a round; before a prompt %s); "
++                          "the prompt staging during decode: %s",
++                          a.interval, a.rerank ? "the order follows the scores" : "the profile's order kept", a.rerank ? a.swaps : 0, a.ratio,
++                          a.floor, a.decay, a.decode_keep ? "on" : "off", (unsigned long long) (a.decode_keep >> 20), a.fills,
++                          a.prompt_keep ? "they go until BASALT_INK_PROMPT_KEEP_MIB is free" : "they all go", a.staging ? "used" : "idle");
++    }
++
++    // The lookups since the last call: into the scores, and into the count of those the card served (the placement has
++    // not changed since that call, so each is counted where it was read).
++    bool ink_account() {
++        const size_t n = (size_t) expert_pairs();
++        ink_now_.resize(n);
++        if (cudaMemcpyAsync(ink_now_.data(), ex_tally_, n * 4, cudaMemcpyDeviceToHost, stream_) != cudaSuccess ||
++            cudaStreamSynchronize(stream_) != cudaSuccess) {
++            cudaGetLastError();
++            return false;
++        }
++        for (size_t i = 0; i < n; ++i) {
++            const uint32_t d = ink_now_[i] - ink_last_[i];
++            if (!d) continue;
++            ink_score_[i] += (double) d;
++            ink_all_ += d;
++            ink_iv_all_ += d;
++            if (m_.on_card((int) (i / (size_t) g_.n_expert), (int) (i % (size_t) g_.n_expert))) {
++                ink_card_ += d;
++                ink_iv_card_ += d;
++            }
++        }
++        ink_last_.swap(ink_now_);
++        return true;
++    }
++
++    // The card's share of the counts `t`: what ink_account has counted, and the lookups since under today's placement.
++    CardShare ink_share(const std::vector<uint32_t>& t) const {
++        CardShare s;
++        s.card = ink_card_;
++        s.all = ink_all_;
++        for (size_t i = 0; i < t.size() && i < ink_last_.size(); ++i) {
++            const uint32_t d = t[i] - ink_last_[i];
++            if (!d) continue;
++            s.all += d;
++            if (m_.on_card((int) (i / (size_t) g_.n_expert), (int) (i % (size_t) g_.n_expert))) s.card += d;
++        }
++        return s;
++    }
++
++    long long ink_on_card() const { return (long long) (expert_pairs() - m_.spill().spilled + m_.promoted() + m_.staged()); }
++    static double ink_free_mib() {
++        size_t free_b = 0, total_b = 0;
++        cudaMemGetInfo(&free_b, &total_b);
++        return (double) free_b / (double) (1ull << 20);
++    }
++
++    // Copies went back to RAM and were freed: the top-up owes that much less, and the read-ahead forgets the blobs the
++    // last window recorded (some may have been those copies).
++    void ink_freed(uint64_t freed) {
++        if (!freed) return;
++        ink_topup_ -= std::min(ink_topup_, freed);
++        cudaMemsetAsync(rec_n_, 0, (size_t) g_.visits.size() * 4, stream_);
++    }
++
++    // A round, before a decode window's first launch.
++    void ink_round() {
++        const ink::Adapt& a = ink::adapt();
++        ink_pending_ = false;
++        ink_rows_ = 0;
++        if (!ink_account()) return;
++        const InklingModel::InkRound r = m_.ink_round(ink_score_, a, stream_);
++        ink_topup_ += r.copied;
++        for (double& s : ink_score_) s *= a.decay;
++        ++ink_n_rounds_;
++        ink_n_swaps_ += r.swapped;
++        ink_n_fills_ += r.filled + r.staged;
++        if (a.log_all || r.filled || r.staged || r.swapped || r.failed)
++            basalt::log::info("basalt inkling2",
++                              "ink: round %lld: promoted %d (%d swaps, %d new copies, %d into the staging), demoted %d; on the card %lld of "
++                              "%lld experts (%lld kept, %lld copies, %lld in the staging); %llu lookups since the last round, %.1f%% on the "
++                              "card; %.0f MiB free",
++                              (long long) ink_n_rounds_, r.swapped + r.filled + r.staged, r.swapped, r.filled, r.staged, r.swapped,
++                              ink_on_card(), (long long) expert_pairs(), (long long) (expert_pairs() - m_.spill().spilled),
++                              (long long) m_.promoted(), (long long) m_.staged(), (unsigned long long) ink_iv_all_,
++                              ink_iv_all_ ? 100.0 * (double) ink_iv_card_ / (double) ink_iv_all_ : 100.0, ink_free_mib());
++        ink_iv_all_ = ink_iv_card_ = 0;
++        if (r.failed) {   // a buffer may have gone: the read-ahead forgets the last window's blobs
++            ink_stop_ = true;
++            cudaMemsetAsync(rec_n_, 0, (size_t) g_.visits.size() * 4, stream_);
++            basalt::log::warn("basalt inkling2", "ink: a round's copy failed; the set stays as it is from here on");
++        }
++    }
++
++    // Before the prompt path reads: the top-up's copies go back to RAM (the coldest first), so the prompt has the room it
++    // has without the top-up; the next decode window starts with a round.
++    // (BASALT_INK_STAGING: first the staging's experts go back to RAM, the prompt path writes it.) False: the staging
++    // could not be given back, the prompt must not be read.
++    bool ink_before_prompt() {
++        ink_pending_ = true;
++        if (ink_topup_ == 0 && m_.staged() == 0) return true;
++        ink_account();
++        const int unstaged = m_.ink_release_staging(stream_);
++        if (unstaged < 0) return false;
++        uint64_t want = ink_topup_;
++        if (const uint64_t keep = ink::adapt().prompt_keep; keep > 0) {
++            size_t free_b = 0, total_b = 0;
++            cudaMemGetInfo(&free_b, &total_b);
++            want = free_b >= keep ? 0 : std::min<uint64_t>(ink_topup_, keep - free_b);
++        }
++        const long long before = (long long) m_.promoted();
++        const uint64_t freed = want ? m_.demote(want, stream_) : 0;
++        ink_freed(freed);
++        if (unstaged || freed)
++            basalt::log::info("basalt inkling2", "ink: before a prompt: demoted %lld (%d out of the staging, %lld top-up copies, %.0f MiB "
++                              "freed); on the card %lld of %lld experts; %.0f MiB free",
++                              (long long) unstaged + before - (long long) m_.promoted(), unstaged, before - (long long) m_.promoted(),
++                              (double) freed / (double) (1ull << 20), ink_on_card(), (long long) expert_pairs(), ink_free_mib());
++        return true;
++    }
++
++    // BASALT_INK_PROFILE_OUT (ink.hpp): decode's running counts of every (layer, expert) pair as an expert profile, the
++    // most routed first; a pair this session never routed keeps its place in the profile the run started from. Written
++    // whole each time (a file beside it, renamed over it). One session only: with more, each would write its own counts.
++    void ink_profile(bool last) {
++        const ink::ProfileOut& po = ink::profile_out();
++        prof_rows_ = 0;
++        if (po.path.empty() || !ex_tally_ || !stream_ || lookups_ == 0 || m_.sessions() != 1) return;
++        std::vector<uint32_t> t((size_t) expert_pairs());
++        if (cudaMemcpyAsync(t.data(), ex_tally_, t.size() * 4, cudaMemcpyDeviceToHost, stream_) != cudaSuccess ||
++            cudaStreamSynchronize(stream_) != cudaSuccess) {
++            cudaGetLastError();
++            return;
++        }
++        std::string err;
++        if (!prof_prior_read_) {
++            prof_prior_read_ = true;
++            const std::string& from = m_.flags().expert_profile;
++            uint64_t pb = 0;
++            int64_t slots = 0;
++            if (!from.empty() && platform::file_size(from, pb) &&
++                !core::read_expert_profile(core::FileRange{from, 0, pb}, g_.n_layers, g_.n_expert, prof_prior_, slots, err))
++                prof_prior_.clear();
++        }
++        uint64_t all = 0;
++        std::vector<double> heat(t.size());
++        for (size_t i = 0; i < t.size(); ++i) {
++            heat[i] = (double) t[i];
++            all += t[i];
++        }
++        const auto ranked = core::rank_learned_profile(g_.n_layers, g_.n_expert, {}, heat, prof_prior_);
++        if (!core::write_expert_profile(po.path, g_.n_layers, g_.n_expert, ranked, err)) {
++            if (!prof_failed_) basalt::log::warn("basalt inkling2", "ink: the routing profile %s was not written: %s", po.path.c_str(), err.c_str());
++            prof_failed_ = true;
++            return;
++        }
++        if (last || !prof_said_)
++            basalt::log::info("basalt inkling2", "ink: routing profile written to %s (%llu routed lookups%s)", po.path.c_str(),
++                              (unsigned long long) all, last ? ", the session's last" : "; rewritten as decode goes on");
++        prof_said_ = true;
++    }
++
+     void* alloc(size_t bytes, bool& ok) {
+         void* p = nullptr;
+         if (!ok || cudaMalloc(&p, std::max<size_t>(bytes, 16)) != cudaSuccess) {
+@@ -938,6 +1147,17 @@ private:
+     std::vector<uint32_t> tally_h_;
+     ResidentExpertMap map_;
+     int64_t lookups_ = 0;                    // decode's routed lookups so far
++    // BASALT_INK_ADAPT: the counts at the last accounting, each pair's score, the exact lookups (all, on the card) so far
++    // and since the last round, the decoded rows since it, the bytes of top-up copies the card still holds
++    bool ink_on_ = false, ink_pending_ = true, ink_stop_ = false;
++    std::vector<uint32_t> ink_last_, ink_now_;
++    std::vector<double> ink_score_;
++    uint64_t ink_all_ = 0, ink_card_ = 0, ink_iv_all_ = 0, ink_iv_card_ = 0, ink_topup_ = 0;
++    int64_t ink_rows_ = 0, ink_n_rounds_ = 0, ink_n_swaps_ = 0, ink_n_fills_ = 0;
++    // BASALT_INK_PROFILE_OUT: decoded rows since the last write, the profile the run started from (the ties' order)
++    int64_t prof_rows_ = 0;
++    std::vector<std::pair<int32_t, int32_t>> prof_prior_;
++    bool prof_prior_read_ = false, prof_said_ = false, prof_failed_ = false;
+     // the elastic KV (model.hpp elastic()): the full visits' caches back their first backed_ cells
+     std::vector<std::unique_ptr<core::ElasticArray>> elastic_;
+     int64_t backed_ = 0;

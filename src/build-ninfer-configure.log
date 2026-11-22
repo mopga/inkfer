@@ -1,0 +1,69 @@
+﻿-- The C compiler identification is MSVC 19.44.35229.0
+-- The CXX compiler identification is MSVC 19.44.35229.0
+-- The CUDA compiler identification is NVIDIA 13.4.92 with host compiler MSVC 19.44.35229.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: C:/distrib/strata-tuning/inkling/toolchain/cuda-13.4/bin/nvcc.exe - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- Found CUDAToolkit: C:/distrib/strata-tuning/inkling/toolchain/cuda-13.4/include;C:/distrib/strata-tuning/inkling/toolchain/cuda-13.4/include/cccl (found version "13.4.92")
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+cmd : CMake Warning (dev) at C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/share/ffmpeg/FindFF
+MPEG.cmake:45 (cmake_parse_arguments):
+At line:1 char:302
++ ... tch {} } }; cmd /c "C:\distrib\strata-tuning\inkling\src\build-ninfer ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (CMake Warning (...rse_arguments)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  The NAMES keyword was followed by an empty string or no value at all.
+  Policy CMP0174 is not set, so cmake_parse_arguments() will unset the
+  arg_NAMES variable rather than setting it to an empty string.
+Call Stack (most recent call first):
+  C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/share/ffmpeg/FindFFMPEG.cmake:144 (append_depe
+ndencies)
+  C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/share/ffmpeg/vcpkg-cmake-wrapper.cmake:27 (_fi
+nd_package)
+  C:/distrib/strata-tuning/inkling/toolchain/vcpkg/scripts/buildsystems/vcpkg.cmake:911 (include)
+  cmake/Dependencies.cmake:37 (find_package)
+  CMakeLists.txt:360 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/share/ffmpeg/FindFFMPEG.c
+make:45 (cmake_parse_arguments):
+  The NAMES keyword was followed by an empty string or no value at all.
+  Policy CMP0174 is not set, so cmake_parse_arguments() will unset the
+  arg_NAMES variable rather than setting it to an empty string.
+Call Stack (most recent call first):
+  C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/share/ffmpeg/FindFFMPEG.cmake:145 (append_depe
+ndencies)
+  C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/share/ffmpeg/vcpkg-cmake-wrapper.cmake:27 (_fi
+nd_package)
+  C:/distrib/strata-tuning/inkling/toolchain/vcpkg/scripts/buildsystems/vcpkg.cmake:911 (include)
+  cmake/Dependencies.cmake:37 (find_package)
+  CMakeLists.txt:360 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Found FFMPEG: optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/avdevice.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/avdevice.lib;optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/avfilter.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/avfilter.lib;optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/avformat.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/avformat.lib;optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/avcodec.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/avcodec.lib;optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/swresample.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/swresample.lib;optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/swscale.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/swscale.lib;optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/avutil.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/avutil.lib
+-- Found ZLIB: optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/z.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/zd.lib (found suitable version "1.3.2", minimum required is "1")
+-- Found ZLIB: optimized;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/lib/z.lib;debug;C:/distrib/strata-tuning/inkling/toolchain/vcpkg_installed/x64-windows/debug/lib/zd.lib (found version "1.3.2")
+-- Configuring done (13.8s)
+-- Generating done (0.8s)
+-- Build files have been written to: C:/distrib/strata-tuning/inkling/src/build-ninfer-pr393
+configure_exit=0

@@ -1,0 +1,40 @@
+From 88caff17aa30adc5cea5490aca1fe568ad563a74 Mon Sep 17 00:00:00 2001
+From: local-build <local-build@localhost>
+Date: Sun, 22 Nov 2026 01:11:33 +0300
+Subject: [PATCH 2/6] fix(inkling2): a host image of quantized KV planes is
+ sized by the plane bytes
+
+image_bytes() sized the eight full-attention visits at F16 (32 KiB a token) whatever the
+format, while copy_image() copies the codes and scales of rk8v4/rk4v4 (12.75 and 8.75 KiB a
+token). The store therefore reserved F16-sized pages for each image and charged them to the
+host budget: 3.7 GiB for a 120K-token image whose copy is 1.0 GiB under rk4v4. image_bytes()
+now counts what copy_image() copies; bf16/fp16 are unchanged.
+
+Local patch, not upstream. Compiled only; not run on a GPU by the author.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+---
+ src/models/inkling2/executor.cpp | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/models/inkling2/executor.cpp b/src/models/inkling2/executor.cpp
+index bab0d31..ffa5a32 100644
+--- a/src/models/inkling2/executor.cpp
++++ b/src/models/inkling2/executor.cpp
+@@ -2996,7 +2996,12 @@ struct Executor::Impl {
+     [[nodiscard]] std::uint64_t image_bytes(std::uint32_t position) const {
+         std::uint64_t bytes = sequence_history_bytes();
+         for (const VisitPlan* p : cache_plans()) {
+-            if (p->full) {
++            if (p->full && p->k_codes.p != nullptr) {
++                // Quantized planes: what copy_image copies, a position's codes and scales a head.
++                for (const KvArea* area : {&p->k_codes, &p->k_scales, &p->v_codes, &p->v_scales}) {
++                    bytes += std::uint64_t(kv_heads) * position * area->position_bytes;
++                }
++            } else if (p->full) {
+                 bytes += 2 * std::uint64_t(kv_heads) * position * kD * sizeof(__half);
+             } else {
+                 for (const auto& r : ring_buffers(*p, 0)) { bytes += r.second; }
+-- 
+2.55.0.windows.3
+

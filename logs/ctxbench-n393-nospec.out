@@ -1,0 +1,5 @@
+[n393-nospec]       0 warmup prompt=22 cached=0 ttft=0.32s prefill=81.3 gen=60 decode=112.6/108.9 vram=15101 rss=30.28 avail=21.91 disk=0 
+[n393-nospec]  131072 cold   prompt=132476 cached=0 ttft=127.03s prefill=1043.7 gen=293 decode=53.7/53.3 vram=15101 rss=30.29 avail=21.74 disk=0 
+[n393-nospec]  131072 turn1  prompt=132567 cached=132475 ttft=0.79s prefill=127.9 gen=600 decode=54.9/54.7 vram=15099 rss=30.29 avail=21.83 disk=0 
+[n393-nospec]  131072 turn2  prompt=132826 cached=132566 ttft=1.03s prefill=267.9 gen=401 decode=55.2/54.9 vram=15099 rss=30.3 avail=21.81 disk=0 
+[n393-nospec]  131072 turn3  prompt=132935 cached=132825 ttft=0.8s prefill=149.5 gen=504 decode=52.5/52.3 vram=15099 rss=30.3 avail=21.82 disk=0 

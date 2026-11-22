@@ -1,0 +1,246 @@
+{
+ "model": "inkling-max",
+ "results": [
+  {
+   "name": "natural",
+   "ok": true,
+   "checks": {
+    "24": true,
+    "right": true
+   },
+   "prompt": 599,
+   "cached": 0,
+   "output": 520,
+   "ttft": 0.71,
+   "total": 5.71,
+   "vram_peak_mib": 14758,
+   "answer": "Яркая солнечная сцена: на зелёной поляне у гор стоит домик с красной крышей, синими окнами и коричневой дверью, слева — скамейка, справа — дерево и почтовый ящик. Число на ящике — 24; солнце — в правой части кадра, в верхнем правом углу.",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "chart",
+   "ok": true,
+   "checks": {
+    "title": true,
+    "3": true,
+    "left": true
+   },
+   "prompt": 608,
+   "cached": 0,
+   "output": 195,
+   "ttft": 0.39,
+   "total": 2.01,
+   "vram_peak_mib": 14765,
+   "answer": "NIFER VISION 731; 3; слева",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "compare",
+   "ok": true,
+   "checks": {
+    "2": true,
+    "3": true,
+    "star": true
+   },
+   "prompt": 730,
+   "cached": 0,
+   "output": 230,
+   "ttft": 0.4,
+   "total": 2.3,
+   "vram_peak_mib": 14765,
+   "answer": "2; 3; звезда",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "term",
+   "ok": true,
+   "checks": {
+    "totals.py": true,
+    "214": true,
+    "KeyError": true,
+    "KZT": true
+   },
+   "prompt": 544,
+   "cached": 0,
+   "output": 534,
+   "ttft": 0.38,
+   "total": 4.85,
+   "vram_peak_mib": 14765,
+   "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py` на строке `214` в функции `summarize`, в строке `rate = RATES[currency]`.\n\nИсключение: `KeyError` с значением `'KZT'`.",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "table",
+   "ok": true,
+   "checks": {
+    "orders": true,
+    "9100": true,
+    "388": true,
+    "57": true,
+    "reports": true
+   },
+   "prompt": 596,
+   "cached": 0,
+   "output": 262,
+   "ttft": 0.38,
+   "total": 2.28,
+   "vram_peak_mib": 14751,
+   "answer": "Сервис в состоянии **degraded** — **orders**: порт **9100**, p95 — **388 мс**, ошибок — **57 в час**.\n\nОстановлен сервис — **reports** (порт 9310); у него p95 и ошибки/ч показаны как «-».",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "code",
+   "ok": true,
+   "checks": {
+    "line 39": true,
+    "count": true,
+    "indent": true
+   },
+   "prompt": 614,
+   "cached": 0,
+   "output": 1627,
+   "ttft": 0.39,
+   "total": 13.73,
+   "vram_peak_mib": 14750,
+   "answer": "Ошибка на строке **39**: `count += 1` стоит **вне цикла**, поэтому счётчик увеличивается только один раз после цикла (или не увеличивается, если цикл не выполнился), а не для каждой корректной оценки.\n\nИсправление — перенести `count += 1` внутрь цикла, после строки `total += r['stars']`:\n\n```python\nfor r in reviews:\n    if r.get('stars') is None:\n        continue\n\n    total += r['stars']\n    count += 1   # на отступе на одном уровне с total += ...\n\nreturn total / count if count else 0.0\n```",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "dense",
+   "ok": true,
+   "checks": {
+    "077": true,
+    "K90816": true,
+    "13": true,
+    "R05": true,
+    "ORLOVA": true
+   },
+   "prompt": 3013,
+   "cached": 0,
+   "output": 1642,
+   "ttft": 2.71,
+   "total": 12.57,
+   "vram_peak_mib": 14752,
+   "answer": "С пометкой строка **item-077**: **sku=K90816**, **qty=13**, **bin=R05**. Пометка: **«RECOUNT REQUESTED BY M. ORLOVA»** — запрос на пересчёт.",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "tool",
+   "ok": true,
+   "checks": {
+    "tool called": true,
+    "currency KZT": true
+   },
+   "prompt": 706,
+   "cached": 0,
+   "output": 200,
+   "ttft": 0.37,
+   "total": 2.0,
+   "vram_peak_mib": 14752,
+   "answer": "",
+   "tools": [
+    {
+     "id": "call_1d15a8ca6decc337",
+     "name": "lookup_rate",
+     "args": "{\"currency\":\"KZT\",\"date\":\"2026-10-01\"}"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "name": "tool-2",
+   "ok": true,
+   "checks": {
+    "rate used": true,
+    "KZT": true
+   },
+   "prompt": 778,
+   "cached": 705,
+   "output": 417,
+   "ttft": 0.27,
+   "total": 4.29,
+   "vram_peak_mib": 14752,
+   "answer": "Ошибка — `KeyError: 'KZT'`, поэтому нужно добавить KZT в таблицу `RATES`.\n\nКурс по инструменту (на 2026-10-01, месяц, для которого запускается команда): **1 KZT = 0.00181 EUR**.\n\nДобавьте такую строку:\n\n```python\nRATES['KZT'] = 0.00181\n```\n\n(или в виде элемента словаря, если RATES задан как литерал — например, `'KZT': 0.00181`).\n\nУчтите: это курс на конкретную дату и может меняться по месяцам — если инструмент возвращает курс на произвольную дату, лучше запрашивать его динамически или обновлять значение при каждом запуске для нового месяца, иначе при следующем месяце суммы будут посчитаны по у",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "follow-1",
+   "ok": true,
+   "checks": {
+    "gateway 8443": true,
+    "mailer 9400": true
+   },
+   "prompt": 578,
+   "cached": 0,
+   "output": 154,
+   "ttft": 0.38,
+   "total": 1.43,
+   "vram_peak_mib": 14752,
+   "answer": "- gateway — 8443  \n- auth — 9001  \n- orders — 9100  \n- search — 9200  \n- reports — 9310  \n- mailer — 9400",
+   "tools": [],
+   "note": ""
+  },
+  {
+   "name": "follow-2",
+   "ok": true,
+   "checks": {
+    "orders": true,
+    "~22.8x": true
+   },
+   "prompt": 650,
+   "cached": 577,
+   "output": 339,
+   "ttft": 0.28,
+   "total": 3.14,
+   "vram_peak_mib": 14752,
+   "answer": "Больше всего ошибок в час у **orders**: **57 ошибок/ч**.  \nЕго p95 **388 мс**, у auth **17 мс**:  \n388 / 17 ≈ **22.8**, то есть почти в **23 раза** больше.",
+   "tools": [],
+   "note": "cached tokens show whether the image turn was reused from the cache"
+  },
+  {
+   "name": "long-img-first",
+   "ok": true,
+   "checks": {
+    "077": true,
+    "K90816": true,
+    "13": true
+   },
+   "prompt": 331545,
+   "cached": 0,
+   "output": 671,
+   "ttft": 189.59,
+   "total": 198.4,
+   "vram_peak_mib": 14816,
+   "answer": "Есть пометка у строки **item-077**: **sku=K90816**, **qty=13**.",
+   "tools": [],
+   "note": "image, then about 250000 tokens of text, then the question"
+  },
+  {
+   "name": "long-img-last",
+   "ok": true,
+   "checks": {
+    "totals.py": true,
+    "214": true,
+    "KZT": true,
+    "last note 11362": true
+   },
+   "prompt": 329088,
+   "cached": 0,
+   "output": 856,
+   "ttft": 188.02,
+   "total": 201.66,
+   "vram_peak_mib": 14897,
+   "answer": "Программа упала в файле `C:\\work\\billing\\billing\\totals.py` на строке 214, в функции `summarize` (вызвано из `run.py`, строка 88). Причина: `rate = RATES[currency]` — ключ `'KZT'` отсутствует в словаре `RATES`, отсюда `KeyError: 'KZT'`. То есть в программе не задан курс для валюты KZT.\n\nВ журнале заметки нумеруются от 0 до 11362, т.е. последняя — **Заметка 11362** (всего 11363 заметки, если считать с «Заметка 0»).",
+   "tools": [],
+   "note": "about 250000 tokens of text, then the image and the question"
+  }
+ ]
+}

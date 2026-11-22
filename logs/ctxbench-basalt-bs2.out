@@ -1,0 +1,13 @@
+[basalt-bs2-256k-fp8-lean]       0 warmup prompt=22 cached=0 ttft=0.87s prefill=29.6 gen=39 decode=36.7/55.5 vram=14961 rss=13.24 avail=39.75 disk=10 
+[basalt-bs2-256k-fp8-lean]   65536 cold   prompt=66009 cached=0 ttft=16.75s prefill=3969.8 gen=240 decode=55.4/54.6 vram=14961 rss=13.29 avail=39.71 disk=18 
+[basalt-bs2-256k-fp8-lean]   65536 turn1  prompt=66100 cached=66008 ttft=0.55s prefill=200.1 gen=600 decode=38.3/38.2 vram=14647 rss=13.3 avail=39.73 disk=0 
+[basalt-bs2-256k-fp8-lean]   65536 turn2  prompt=66512 cached=66099 ttft=0.58s prefill=839.3 gen=213 decode=46.9/46.3 vram=14647 rss=13.3 avail=39.73 disk=0 
+[basalt-bs2-256k-fp8-lean]  131072 cold   prompt=131052 cached=0 ttft=39.25s prefill=3353.1 gen=283 decode=48.8/48.9 vram=14806 rss=13.36 avail=39.68 disk=0 
+[basalt-bs2-256k-fp8-lean]  131072 turn1  prompt=131143 cached=131051 ttft=0.68s prefill=177.1 gen=600 decode=33.8/33.9 vram=14808 rss=13.37 avail=39.68 disk=0 
+[basalt-bs2-256k-fp8-lean]  131072 turn2  prompt=131476 cached=131142 ttft=0.68s prefill=617.6 gen=285 decode=38.9/42.3 vram=14809 rss=13.37 avail=39.66 disk=0 
+[basalt-bs2-256k-fp8-lean]  196608 cold   prompt=196914 cached=0 ttft=65.5s prefill=3014.7 gen=245 decode=42.2/41.7 vram=14809 rss=13.37 avail=39.66 disk=0 
+[basalt-bs2-256k-fp8-lean]  196608 turn1  prompt=197005 cached=196913 ttft=0.75s prefill=157.5 gen=600 decode=25.9/25.9 vram=14553 rss=13.37 avail=39.73 disk=0 
+[basalt-bs2-256k-fp8-lean]  196608 turn2  prompt=197454 cached=197004 ttft=0.8s prefill=734.2 gen=282 decode=33.2/36.2 vram=14553 rss=13.38 avail=39.73 disk=0 
+[basalt-bs2-256k-fp8-lean]  249000 cold   prompt=250779 cached=0 ttft=98.7s prefill=2546.5 gen=281 decode=39.9/39.4 vram=14758 rss=13.38 avail=39.59 disk=0 
+[basalt-bs2-256k-fp8-lean]  249000 turn1  prompt=250870 cached=250778 ttft=0.82s prefill=145.4 gen=600 decode=26.6/27.5 vram=14740 rss=13.38 avail=39.69 disk=0 
+[basalt-bs2-256k-fp8-lean]  249000 turn2  prompt=251203 cached=250869 ttft=0.84s prefill=512.3 gen=284 decode=29.8/32.6 vram=14740 rss=13.38 avail=39.69 disk=0 

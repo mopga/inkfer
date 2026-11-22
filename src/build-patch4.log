@@ -1,0 +1,7 @@
+[1/22] Stamping NINFER build id from git (build-time)
+-- NINFER build id will be marked dirty -- product sources differ from HEAD:
+ M src/runtime/engine/inkling2_core.cpp
+[2/4] Building CXX object src\runtime\CMakeFiles\ninfer_engine.dir\engine\inkling2_core.cpp.obj
+[3/4] Linking CXX static library src\runtime\ninfer_engine.lib
+[4/4] Linking CXX shared library portable\backends\cuda13\ninfer-runtime.dll
+build_exit=0

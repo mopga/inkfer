@@ -1,0 +1,371 @@
+From 50d8a1e19d469ea41ea72909bb805b6554139ffa Mon Sep 17 00:00:00 2001
+From: local <local@localhost>
+Date: Sun, 22 Nov 2026 05:02:43 +0300
+Subject: [PATCH 3/6] feat(inkling2): trail points - a prompt that parts from
+ the cached tokens mid-way resumes from the nearest saved ring state
+
+A sequence resumed only from a state that is a whole prefix of the new prompt. Every NINFER_TRAIL_GRID prompt
+tokens (default max(8192, max_context/32)) the sequence's rings are copied to host memory (NINFER_TRAIL_MIB,
+default 4096); a prompt that starts with a point's tokens resumes there from the live sequence or a stored image.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+---
+ src/models/inkling2/executor.cpp     |  39 +++++
+ src/models/inkling2/executor.h       |   8 +
+ src/runtime/engine/inkling2_core.cpp | 213 ++++++++++++++++++++++++++-
+ 3 files changed, 259 insertions(+), 1 deletion(-)
+
+diff --git a/src/models/inkling2/executor.cpp b/src/models/inkling2/executor.cpp
+index ffa5a32..6d27024 100644
+--- a/src/models/inkling2/executor.cpp
++++ b/src/models/inkling2/executor.cpp
+@@ -3103,6 +3103,32 @@ struct Executor::Impl {
+         ring_floor[sequence] = from.position;
+     }
+ 
++    // ---- Trail points (local patch) ---------------------------------------------------------------
++    // A sequence's rings alone (sliding-window caches, the drafter's contexts and the convolution
++    // histories) in host memory: with them a sequence goes back to an earlier position of the tokens
++    // it still holds, since its full-attention rows below that position are only ever appended to.
++    [[nodiscard]] bool trail_supported() const { return options.checkpoints && !spine; }
++
++    [[nodiscard]] std::uint64_t rings_bytes() const { return image_bytes(0); }
++
++    void save_rings(std::uint32_t sequence, std::byte* buffer, std::size_t bytes) {
++        std::byte* const pages[1] = {buffer};
++        copy_image(sequence, 0, pages, bytes, true, false);
++        CUDA_CHECK(cudaStreamSynchronize(stream));
++    }
++
++    void load_rings(std::uint32_t sequence, std::uint32_t position, std::byte* buffer,
++                    std::size_t bytes) {
++        if (position > positions.at(sequence)) {
++            throw std::invalid_argument("inkling2 load_rings: the sequence does not reach the position");
++        }
++        std::byte* const pages[1] = {buffer};
++        copy_image(sequence, 0, pages, bytes, false, false);
++        CUDA_CHECK(cudaStreamSynchronize(stream));
++        positions.at(sequence)  = position;
++        ring_floor.at(sequence) = position;
++    }
++
+     // A position's state lies in the rings while the sequence has written fewer positions past it
+     // than the sliding rings hold beyond the window and a round's drafts, and than the histories
+     // hold beyond the convolutions' three earlier inputs and a round's drafts.
+@@ -3260,6 +3286,19 @@ bool Executor::rewind(std::uint32_t sequence, std::uint32_t tokens) {
+     return impl_->rewind(sequence, tokens);
+ }
+ 
++bool Executor::trail_supported() const noexcept { return impl_->trail_supported(); }
++
++std::uint64_t Executor::rings_bytes() const { return impl_->rings_bytes(); }
++
++void Executor::save_rings(std::uint32_t sequence, std::byte* buffer, std::size_t bytes) {
++    impl_->save_rings(sequence, buffer, bytes);
++}
++
++void Executor::load_rings(std::uint32_t sequence, std::uint32_t position, std::byte* buffer,
++                          std::size_t bytes) {
++    impl_->load_rings(sequence, position, buffer, bytes);
++}
++
+ bool Executor::vision() const noexcept { return impl_->tower != nullptr; }
+ 
+ std::uint32_t Executor::encode_image(std::span<const std::uint16_t> patches, int grid_w, int grid_h,
+diff --git a/src/models/inkling2/executor.h b/src/models/inkling2/executor.h
+index 0590de7..b03292d 100644
+--- a/src/models/inkling2/executor.h
++++ b/src/models/inkling2/executor.h
+@@ -186,6 +186,14 @@ public:
+     // image, and within the slots its rings keep past the window, the convolutions' taps and a
+     // round's drafts).
+     bool rewind(std::uint32_t sequence, std::uint32_t tokens);
++    // Trail points (local patch): a sequence's rings alone, rings_bytes() of host memory. With a
++    // copy saved at a position, load_rings() takes the sequence back there while it still holds
++    // the same tokens below that position (its full-attention rows are only appended to).
++    [[nodiscard]] bool trail_supported() const noexcept;
++    [[nodiscard]] std::uint64_t rings_bytes() const;
++    void save_rings(std::uint32_t sequence, std::byte* buffer, std::size_t bytes);
++    void load_rings(std::uint32_t sequence, std::uint32_t position, std::byte* buffer,
++                    std::size_t bytes);
+     [[nodiscard]] std::uint64_t image_bytes(std::uint32_t position) const;
+     SequenceImage save_image(std::uint32_t sequence, const SequenceSnapshot* at,
+                              std::span<std::byte* const> pages, std::size_t page_bytes);
+diff --git a/src/runtime/engine/inkling2_core.cpp b/src/runtime/engine/inkling2_core.cpp
+index 7fef61e..634e75f 100644
+--- a/src/runtime/engine/inkling2_core.cpp
++++ b/src/runtime/engine/inkling2_core.cpp
+@@ -36,8 +36,11 @@
+ 
+ #include <algorithm>
+ #include <atomic>
++#include <bit>
+ #include <cmath>
+ #include <condition_variable>
++#include <cstdio>
++#include <cstdlib>
+ #include <cstring>
+ #include <deque>
+ #include <mutex>
+@@ -556,6 +559,8 @@ struct Inkling2Core::Impl {
+         models::inkling2::SequenceSnapshot snapshot;
+         std::uint64_t last_used = 0;
+         bool disposable         = false; // its last request's
++        // Trail points: no point is due while `fed` is shorter than this (0: look again).
++        std::size_t trail_next = 0;
+     };
+ 
+     struct SampleRow {
+@@ -639,6 +644,41 @@ struct Inkling2Core::Impl {
+     static constexpr double kPrefillSecondsPerToken  = 2e-4;
+     std::vector<Stored> stored;
+     std::uint64_t host_budget = 0, host_used = 0;
++
++    // ---- Trail points (local patch) ---------------------------------------------------------------
++    // A sequence resumes only from a state that is a whole prefix of the new prompt (its live end,
++    // its anchor, a stored image). A prompt that parts from what the sequence holds somewhere in
++    // the middle (a client that renders an earlier message differently after a restart, an edited
++    // turn) would compute everything again. A trail point is the sequence's rings at a position,
++    // in pageable host memory, taken every `trail_grid` tokens of a prompt: the full-attention
++    // rows below a position are only appended to, so the rings are all it takes to go back there.
++    // A point serves a prompt that starts with the point's tokens (by hash) when a sequence, or a
++    // stored image, still holds those tokens (compared exactly).
++    struct TrailPoint {
++        std::uint32_t position = 0;
++        std::uint64_t hash_a = 0, hash_b = 0;
++        std::unique_ptr<std::byte[]> rings;
++        std::uint64_t born = 0;
++    };
++    struct TrailHash {
++        std::uint64_t a = 0xcbf29ce484222325ULL, b = 0x9e3779b97f4a7c15ULL;
++        void feed(TokenId token) {
++            const auto t = std::uint64_t(std::uint32_t(token));
++            a            = (a ^ t) * 0x100000001b3ULL;
++            b            = std::rotl(b, 23) * 0xff51afd7ed558ccdULL + t + 1;
++        }
++    };
++    struct TrailPick {
++        const TrailPoint* point = nullptr;
++        std::optional<std::size_t> image; // the stored image that holds its tokens; else the sequence
++    };
++    // A prompt resumes from a point only when that saves this many tokens over the whole prefixes.
++    static constexpr std::uint32_t kTrailMargin = 1024;
++    std::vector<std::unique_ptr<TrailPoint>> trail; // by position, ascending
++    std::uint32_t trail_grid       = 0;             // 0: no trail
++    std::uint64_t trail_ring_bytes = 0;
++    std::size_t trail_max_points   = 0;
++    std::uint64_t trail_used_count = 0;
+     std::uint32_t decode_run                = 0;
+     std::uint32_t decode_rounds_per_prefill = 1;
+ 
+@@ -703,6 +743,24 @@ struct Inkling2Core::Impl {
+                 free_pages.reserve(pages);
+                 for (std::size_t i = pages; i-- > 0;) { free_pages.push_back(base + i * kHostPageBytes); }
+             }
++            if (i.executor->trail_supported()) {
++                // NINFER_TRAIL_GRID: tokens between points (0 turns the trail off);
++                // NINFER_TRAIL_MIB: host memory the points may take.
++                std::uint64_t grid = std::max<std::uint32_t>(8192, max_context / 32), mib = 4096;
++                if (const char* v = std::getenv("NINFER_TRAIL_GRID")) { grid = std::strtoull(v, nullptr, 10); }
++                if (const char* v = std::getenv("NINFER_TRAIL_MIB")) { mib = std::strtoull(v, nullptr, 10); }
++                trail_ring_bytes = i.executor->rings_bytes();
++                trail_max_points =
++                    trail_ring_bytes != 0 ? static_cast<std::size_t>((mib << 20) / trail_ring_bytes) : 0;
++                trail_grid = trail_max_points >= 2 && grid < max_context ? std::uint32_t(grid) : 0;
++                if (trail_grid != 0) {
++                    std::fprintf(stderr,
++                                 "Inkling 2: trail points every %u prompt tokens, up to %zu of %.0f MiB "
++                                 "in host memory\n",
++                                 trail_grid, trail_max_points, double(trail_ring_bytes) / 1048576.0);
++                    std::fflush(stderr);
++                }
++            }
+         }
+         const std::size_t rows = slots.size();
+         // A sampling call's columns per row: one, or a verification's drafts and bonus.
+@@ -1188,6 +1246,151 @@ struct Inkling2Core::Impl {
+         stats.state_h2d_bytes += image.bytes;
+     }
+ 
++    // The trail points whose tokens `tokens` starts with, none past `limit`: indexes, ascending.
++    [[nodiscard]] std::vector<std::size_t> trail_matches(const std::vector<TokenId>& tokens,
++                                                         std::size_t limit) const {
++        std::vector<std::size_t> out;
++        TrailHash hash;
++        std::size_t at = 0;
++        limit          = std::min(limit, tokens.size());
++        for (std::size_t i = 0; i < trail.size(); ++i) {
++            const std::size_t position = trail[i]->position;
++            if (position > limit) { break; }
++            for (; at < position; ++at) { hash.feed(tokens[at]); }
++            if (hash.a == trail[i]->hash_a && hash.b == trail[i]->hash_b) { out.push_back(i); }
++        }
++        return out;
++    }
++
++    // After a prompt step: a point at the sequence's end, once it lies a grid past the last one of
++    // its tokens. With the trail full, the oldest point of other tokens goes, else the one of
++    // these tokens whose neighbours lie closest.
++    void take_trail_point(std::uint32_t s) {
++        Slot& slot = slots[s];
++        if (trail_grid == 0 || !slot.media.empty()) { return; }
++        const std::size_t n = slot.fed.size();
++        if (n < trail_grid || n < slot.trail_next) { return; }
++        auto& executor = *instance.executor;
++        if (executor.position(s) != n) { return; }
++        const auto own         = trail_matches(slot.fed, n);
++        const std::size_t last = own.empty() ? 0 : trail[own.back()]->position;
++        slot.trail_next        = last + trail_grid;
++        if (n < slot.trail_next) { return; }
++        if (trail.size() >= trail_max_points) {
++            std::vector<char> mine(trail.size(), 0);
++            for (const std::size_t i : own) { mine[i] = 1; }
++            std::optional<std::size_t> victim;
++            for (std::size_t i = 0; i < trail.size(); ++i) {
++                if (mine[i] == 0 && (!victim || trail[i]->born < trail[*victim]->born)) { victim = i; }
++            }
++            if (!victim) {
++                std::size_t closest = 0;
++                for (std::size_t k = 0; k < own.size(); ++k) {
++                    const std::size_t before = k == 0 ? 0 : trail[own[k - 1]]->position;
++                    const std::size_t after  = k + 1 < own.size() ? trail[own[k + 1]]->position : n;
++                    if (!victim || after - before < closest) {
++                        closest = after - before;
++                        victim  = own[k];
++                    }
++                }
++            }
++            if (!victim) { return; }
++            trail.erase(trail.begin() + static_cast<std::ptrdiff_t>(*victim));
++        }
++        auto point = std::make_unique<TrailPoint>();
++        try {
++            point->rings = std::make_unique_for_overwrite<std::byte[]>(trail_ring_bytes);
++        } catch (const std::bad_alloc&) { return; }
++        TrailHash hash;
++        for (const TokenId token : slot.fed) { hash.feed(token); }
++        point->position = static_cast<std::uint32_t>(n);
++        point->hash_a   = hash.a;
++        point->hash_b   = hash.b;
++        point->born     = ++use_clock;
++        executor.save_rings(s, point->rings.get(), trail_ring_bytes);
++        const auto at = std::upper_bound(
++            trail.begin(), trail.end(), point->position,
++            [](std::uint32_t position, const std::unique_ptr<TrailPoint>& held) {
++                return position < held->position;
++            });
++        trail.insert(at, std::move(point));
++        slot.trail_next = n + trail_grid;
++    }
++
++    // The furthest trail point a text prompt can resume from: one of the prompt's own tokens,
++    // below a position up to which the sequence (first) or a stored image holds those tokens.
++    [[nodiscard]] TrailPick pick_trail(const Slot& slot, std::uint32_t s, const Request& r) const {
++        if (trail.empty() || !r.media.empty() || r.branches || r.prompt_tokens.size() < 2) { return {}; }
++        const auto& tokens = r.prompt_tokens;
++        const auto matches = trail_matches(tokens, tokens.size() - 1);
++        if (matches.empty()) { return {}; }
++        const auto common = [&](const std::vector<TokenId>& held) {
++            const std::size_t n = std::min(held.size(), tokens.size());
++            return static_cast<std::size_t>(
++                std::mismatch(held.begin(), held.begin() + static_cast<std::ptrdiff_t>(n), tokens.begin())
++                    .first -
++                held.begin());
++        };
++        const std::size_t live =
++            slot.media.empty()
++                ? std::min<std::size_t>(common(slot.fed), instance.executor->position(s))
++                : 0;
++        std::size_t kept = 0;
++        std::optional<std::size_t> image;
++        for (std::size_t i = 0; i < stored.size(); ++i) {
++            if (!stored[i].media.empty() || stored[i].header.position != stored[i].tokens.size()) {
++                continue;
++            }
++            const std::size_t held = common(stored[i].tokens);
++            if (held > kept) {
++                kept  = held;
++                image = i;
++            }
++        }
++        for (auto it = matches.rbegin(); it != matches.rend(); ++it) {
++            const TrailPoint* point = trail[*it].get();
++            if (point->position <= live) { return {point, std::nullopt}; }
++            if (point->position <= kept) { return {point, image}; }
++        }
++        return {};
++    }
++
++    // Takes sequence `s` back to the picked trail point: its own tokens, or the stored image's,
++    // cut at the point. False when the image could not be brought in (the sequence keeps its state).
++    bool resume_from_trail(std::uint32_t s, const TrailPick& pick) {
++        Slot& slot             = slots[s];
++        auto& executor         = *instance.executor;
++        const std::uint32_t at = pick.point->position;
++        if (pick.image) {
++            std::vector<TokenId> tokens  = stored[*pick.image].tokens;
++            std::vector<MediaMark> media = stored[*pick.image].media;
++            stored[*pick.image].held     = true;
++            const auto release = [this] {
++                for (Stored& kept : stored) { kept.held = false; }
++            };
++            try {
++                retire(s);
++            } catch (...) {
++                release();
++                throw;
++            }
++            release();
++            const auto index = stored_index(tokens, media);
++            if (!index) { return false; }
++            restore_stored(s, *index);
++            slot.fed   = std::move(tokens);
++            slot.media = std::move(media);
++        } else {
++            retire(s);
++        }
++        executor.load_rings(s, at, pick.point->rings.get(), trail_ring_bytes);
++        slot.fed.resize(at);
++        slot.anchor.clear();
++        slot.anchor_media.clear();
++        trail_used_count += 1;
++        return true;
++    }
++
+     [[nodiscard]] std::uint32_t reuse(const Slot& slot, const Request& prompt) const {
+         if (!reuse_prefixes) { return 0; }
+         return std::max(prefix_reuse(slot.fed, slot.media, prompt),
+@@ -1251,7 +1454,13 @@ struct Inkling2Core::Impl {
+             const std::uint32_t live       = prefix_reuse(slot.fed, slot.media, r);
+             const std::uint32_t anchored   = prefix_reuse(slot.anchor, slot.anchor_media, r);
+             const auto [image, from_store] = find_stored(r);
+-            if (from_store > std::max(live, anchored)) {
++            const TrailPick pick           = pick_trail(slot, s, r);
++            if (pick.point != nullptr &&
++                pick.point->position > std::max({live, anchored, from_store}) + kTrailMargin &&
++                resume_from_trail(s, pick)) {
++                reused       = pick.point->position;
++                r.reuse_path = PrefixReusePath::PrivateLongAnchor;
++            } else if (from_store > std::max(live, anchored)) {
+                 std::vector<TokenId> tokens  = stored[image].tokens;
+                 std::vector<MediaMark> media = stored[image].media;
+                 const PrefixReusePath path   = stored[image].path;
+@@ -1303,6 +1512,7 @@ struct Inkling2Core::Impl {
+         slot.request    = request;
+         slot.last_used  = ++use_clock;
+         slot.disposable = r.disposable;
++        slot.trail_next = 0;
+         r.reused = r.prefilled = reused;
+         if (drafts > 0) {
+             r.speculative.enabled      = true;
+@@ -1703,6 +1913,7 @@ struct Inkling2Core::Impl {
+             slot.anchor       = slot.fed;
+             slot.anchor_media = slot.media;
+         }
++        if (reuse_prefixes && r.reusable) { take_trail_point(r.slot); }
+         if (r.observation.prompt_progress) {
+             CUDA_CHECK(ninfer::wait_for_stream(executor.head_stream()));
+             executor.check_experts();
+-- 
+2.55.0.windows.3
+

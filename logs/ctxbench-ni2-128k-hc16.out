@@ -1,0 +1,5 @@
+[ni2-128k-hc16]       0 warmup prompt=22 cached=0 ttft=0.42s prefill=56.9 gen=60 decode=126.9/121.9 vram=15031 rss=30.31 avail=22.63 disk=0 
+[ni2-128k-hc16]  120000 cold   prompt=120901 cached=0 ttft=110.2s prefill=1098.0 gen=290 decode=74.9/74.0 vram=15153 rss=30.34 avail=22.5 disk=0 
+[ni2-128k-hc16]  120000 turn1  prompt=120992 cached=120900 ttft=1.01s prefill=98.4 gen=600 decode=63.4/63.1 vram=15149 rss=30.34 avail=22.61 disk=0 
+[ni2-128k-hc16]  120000 turn2  prompt=121130 cached=120991 ttft=1.03s prefill=145.8 gen=291 decode=59.8/59.3 vram=15149 rss=30.34 avail=22.61 disk=0 
+[ni2-128k-hc16]  120000 turn3  prompt=121204 cached=121129 ttft=0.93s prefill=85.7 gen=414 decode=65.9/65.4 vram=15149 rss=30.34 avail=22.22 disk=6 

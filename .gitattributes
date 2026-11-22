@@ -1,0 +1,7 @@
+# patches and diffs are kept byte for byte
+*.patch -text
+*.diff -text
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.png binary

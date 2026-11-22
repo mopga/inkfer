@@ -1,0 +1,295 @@
+From d0bd34024d3f16b1cbeb1b8938cbfec37aa16dac Mon Sep 17 00:00:00 2001
+From: local <local@localhost>
+Date: Sun, 22 Nov 2026 19:44:03 +0300
+Subject: [PATCH 6/6] feat(inkling2): --vision-upscale enlarges an image before
+ the vision tower's token budget bounds it
+
+Inkling 2's tower takes an image at its own resolution in 40-pixel cells, so screen text whose glyphs are smaller
+than a 20-pixel patch reached it unreadable. --vision-upscale F (1 to 4, default 1: unchanged behaviour; Inkling 2
+only, other families refuse another value) enlarges each side by F, in whole cells, before the existing
+--vision-max-merged bound; an image already at the budget is unchanged.
+
+On a local probe (dense UI text and code screenshots, RTX 5080) 1.5 read every line where 1.0 missed some; a
+1920 x 1080 screenshot then takes 3,013 positions instead of 1,357. Options plumbing for ninfer and ninfer-serve,
+docs/cli.md, docs/serving.md and the family guide are updated.
+
+Not done: the repository test suite was not run, no frontend test for the new resize bound, and no README What's New item.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+---
+ apps/cli/main.cpp                         |  1 +
+ apps/cli/options.cpp                      |  4 ++++
+ apps/cli/options.h                        |  1 +
+ docs/cli.md                               |  1 +
+ docs/inkling2.md                          |  7 ++++++-
+ docs/serving.md                           |  1 +
+ include/ninfer/engine_options.h           |  2 ++
+ src/models/qwen3_5/frontend/frontend.cpp  |  4 ++++
+ src/models/qwen3_5/frontend/frontend.h    |  2 ++
+ src/models/qwen3_5/frontend/processor.cpp | 19 +++++++++++--------
+ src/models/qwen3_5/frontend/processor.h   |  5 ++++-
+ src/runtime/engine/inkling2_core.cpp      |  3 ++-
+ src/serve/generation_service.cpp          |  1 +
+ src/serve/serve_options.cpp               |  7 +++++++
+ src/serve/serve_options.h                 |  1 +
+ 15 files changed, 48 insertions(+), 11 deletions(-)
+
+diff --git a/apps/cli/main.cpp b/apps/cli/main.cpp
+index 54010e1..4d5ba11 100644
+--- a/apps/cli/main.cpp
++++ b/apps/cli/main.cpp
+@@ -411,6 +411,7 @@ int main(int argc, char** argv) {
+         engine_options.enable_vision            = cli.enable_vision;
+         engine_options.vision_residency         = cli.vision_residency;
+         engine_options.vision_max_merged_tokens = cli.vision_max_merged_tokens;
++        engine_options.vision_upscale           = cli.vision_upscale;
+         engine_options.use_cuda_graph           = cli.use_cuda_graph;
+         engine_options.gpu_clock_floor_mhz      = cli.gpu_clock_floor_mhz;
+         engine_options.lm_head_q4               = cli.lm_head_q4;
+diff --git a/apps/cli/options.cpp b/apps/cli/options.cpp
+index 5a99b32..751c651 100644
+--- a/apps/cli/options.cpp
++++ b/apps/cli/options.cpp
+@@ -395,6 +395,8 @@ std::string usage_text(const char* argv0) {
+            "  --vision-cpu                  --vision with --vision-residency cpu\n"
+            "  --vision-max-merged N         merged tokens of one media item (default 16384);\n"
+            "                                larger media is downscaled\n"
++           "  --vision-upscale F            Inkling 2: enlarge each image side by F, 1..4,\n"
++           "                                before that budget bounds it (default 1)\n"
+            "\n"
+            "LOGGING\n"
+            "  --log-level L                 trace, debug, info (default), warning, error,\n"
+@@ -659,6 +661,8 @@ Options parse_arguments(const std::vector<std::string>& arguments,
+             if (options.vision_max_merged_tokens < 64 || options.vision_max_merged_tokens > 16384) {
+                 throw std::invalid_argument("--vision-max-merged must be in [64, 16384]");
+             }
++        } else if (arg == "--vision-upscale") {
++            options.vision_upscale = parse_float(value(arg), "vision-upscale", 1.0F, 4.0F);
+         } else if (product::switch_option(arg, "cuda-graph",
+                                           [&](bool on) { options.use_cuda_graph = on; })) {
+         } else if (arg == "--gpu-clock-floor") {
+diff --git a/apps/cli/options.h b/apps/cli/options.h
+index 01edc5d..1bc8112 100644
+--- a/apps/cli/options.h
++++ b/apps/cli/options.h
+@@ -58,6 +58,7 @@ struct Options {
+     bool enable_vision  = false;
+     VisionResidency vision_residency       = VisionResidency::Resident;
+     std::uint32_t vision_max_merged_tokens = 16384;
++    float vision_upscale                   = 1.0f;
+     bool use_cuda_graph = true;
+     std::uint32_t gpu_clock_floor_mhz = 0;
+     bool lm_head_q4     = false;
+diff --git a/docs/cli.md b/docs/cli.md
+index 5ae9578..b5a93d9 100644
+--- a/docs/cli.md
++++ b/docs/cli.md
+@@ -396,6 +396,7 @@ The table lists executable defaults. The examples above select INT8 KV and MTP3.
+ | `--vision-residency resident\|overlay\|cpu` | `overlay` keeps the Vision tower host-pinned and borrows device memory per image from the evictable text weight tail (no resident Vision cost; needs CUDA VMM); for Gemma 4 the tower's blocks stay pinned and stream through a two-block device window. `--vision-offload on\|off` is accepted as an alias for `overlay\|resident`. `cpu` encodes on CPU threads from host FP32 weights, with no device Vision memory and `--vision-max-merged` capped at 256 unless given. Qwen3.8-Flash-Next keeps its tower resident; DeepSeek-V4.1 keeps it resident or, with `overlay`, streams its blocks from pinned memory through a two-block device window, and refuses `cpu` ([DeepSeek-V4.1](deepseek-v41.md#images)) | `resident` |
+ | `--vision-cpu` | `--vision` with `--vision-residency cpu` | off |
+ | `--vision-max-merged N` | merged-token budget of one media item; larger media downscales at preprocessing. Gemma 4: the most soft tokens an image or video frame may take, rounded down to its budgets 70, 140, 280, 560, 1120 (an image takes 280, 70 with `detail: low` and this bound with `detail: high`; a video frame 70). DeepSeek-V4.1: the most prompt positions an image's span takes, at most the release's 1024 (a quarter with `detail: low`) | 16384 |
++| `--vision-upscale F` | Inkling 2: each image side enlarged by F, `[1, 4]`, PIL bicubic to whole cells, before the merged-token budget bounds it; helps small screen text ([Inkling 2](inkling2.md)) | 1 |
+ | `--no-cuda-graph` | disable CUDA Graph decode | graphs on |
+ | `--gpu-clock-floor MHZ` | hold the graphics clock of the model's GPUs at MHZ or more while requests run and for 2 s after the last one (NVML locked clocks; an idle card then returns to the driver's clocks and idle power), so the stages of a layer pipeline do not wait at idle clocks (four RTX 3060 under Windows idled at 210 MHz between stages; two RTX 4090 under Linux kept their boost clocks without it, and decode stayed within 0.6 %). Giving the clocks back resets the cards' locked clocks, including a lock set before the start; a killed process leaves them locked until `nvidia-smi -rgc`. Needs administrator rights on Windows and root on Linux (a container usually lacks them); without them the start reports it and keeps the driver's clocks | off |
+ | `--wddm-evictable-budget` | Windows builds: budget the KV cache against dedicated memory less the weights and a 512 MiB desktop floor, committing the device arenas at startup; another process taking memory can then slow generation | off |
+diff --git a/docs/inkling2.md b/docs/inkling2.md
+index 752fbc4..4e77db0 100644
+--- a/docs/inkling2.md
++++ b/docs/inkling2.md
+@@ -88,7 +88,12 @@ tokenization, the chat template, output parsing and the serving protocols.
+   `--vision-max-merged`). Its matrices are BF16 or, from a Q8_0 mmproj, the GGUF's blocks, which
+   the tower decodes to BF16 rows before each product; cuBLAS multiplies BF16 inputs into FP32
+   results either way. They stay on the GPU or, with `--vision-residency overlay`, in pinned host
+-  memory through two device slots.
++  memory through two device slots. An image enters at its own resolution, padded to whole 40-pixel
++  cells, and is downscaled only past that budget; `--vision-upscale F` (1 to 4, default 1) first
++  enlarges each side by F (PIL bicubic, whole cells), so screen text whose glyphs are smaller than a
++  20-pixel patch reaches the tower readably. On a local probe (screenshots of dense UI text and
++  code, RTX 5080), 1.5 read all of their lines where 1.0 missed some; a 1920 x 1080 screenshot
++  then takes 3,013 positions instead of 1,357, and an image already at the budget is unchanged.
+ - **Expert residency.** The routed experts stay on the GPU, in pinned host memory or in the
+   artifact's files, with a device cache and a CPU share of decode misses
+   ([below](#expert-residency)). Several GPUs divide the routed experts on the devices (`--devices
+diff --git a/docs/serving.md b/docs/serving.md
+index 566ace3..48b01f0 100644
+--- a/docs/serving.md
++++ b/docs/serving.md
+@@ -2520,6 +2520,7 @@ The table lists executable defaults. The startup example selects a long-context
+ | `--vision-residency resident\|overlay\|cpu` | `overlay` keeps the Vision tower in pinned host memory and encodes each image inside a window borrowed from the evict-ranked text weight tail, so `--vision` no longer reserves device memory and `--kv-capacity auto` resolves the no-vision capacity; requires `--vision` and CUDA virtual memory management; Gemma 4 keeps its tower's blocks pinned and streams them through a two-block device window instead. `--vision-offload on\|off` is accepted as an alias for `overlay\|resident`. `cpu` decodes the tower to host FP32 and encodes on CPU threads with no device Vision memory (see [Vision residency](#vision-residency)); it caps `--vision-max-merged` at 256 unless given. Qwen3.8-Flash-Next keeps its tower resident | `resident` |
+ | `--vision-cpu` | `--vision` with `--vision-residency cpu` | off |
+ | `--vision-max-merged N` | merged-token budget of one media item, `[64, 16384]`; larger images and video frame pairs are downscaled at preprocessing instead of being rejected, and the overlay window is sized for it. Gemma 4 (at least 70): the most soft tokens an image or video frame takes, rounded down to its budgets 70, 140, 280, 560, 1120; an image takes 280 (70 at `detail: low`, this bound at `detail: high`), a video frame 70 | 16384 |
++| `--vision-upscale F` | Inkling 2: each image side enlarged by F, `[1, 4]`, PIL bicubic to whole cells, before the merged-token budget bounds it; helps small screen text ([Inkling 2](inkling2.md)) | 1 |
+ | `--no-cuda-graph` | disable CUDA Graph decode | graphs on |
+ | `--gpu-clock-floor MHZ` | hold the graphics clock of the model's GPUs at MHZ or more while requests run and for 2 s after the last one (NVML locked clocks; an idle card then returns to the driver's clocks and idle power), so the stages of a layer pipeline do not wait at idle clocks (four RTX 3060 under Windows idled at 210 MHz between stages; two RTX 4090 under Linux kept their boost clocks without it, and decode stayed within 0.6 %). Giving the clocks back resets the cards' locked clocks, including a lock set before the start; a killed process leaves them locked until `nvidia-smi -rgc`. Needs administrator rights on Windows and root on Linux (a container usually lacks them); without them the start reports it and keeps the driver's clocks | off |
+ | `--cuda-graph-allowance-mib N` | total CUDA Graph driver-state allowance in MiB, subtracted from the KV sizing budget | computed |
+diff --git a/include/ninfer/engine_options.h b/include/ninfer/engine_options.h
+index 6623350..77900a1 100644
+--- a/include/ninfer/engine_options.h
++++ b/include/ninfer/engine_options.h
+@@ -698,6 +698,8 @@ struct EngineOptions {
+     // Largest merged-token count one media item may occupy; larger media is downscaled at
+     // preprocessing. Also bounds the overlay window.
+     std::uint32_t vision_max_merged_tokens = 16384;
++    // Inkling 2: each image side enlarged by this factor before that budget bounds it (1: none).
++    float vision_upscale                   = 1.0f;
+     bool use_cuda_graph                    = true;
+     // Explicit total CUDA Graph driver-state allowance in bytes; zero keeps the
+     // computed per-profile allowance.
+diff --git a/src/models/qwen3_5/frontend/frontend.cpp b/src/models/qwen3_5/frontend/frontend.cpp
+index 6ed83a3..629518d 100644
+--- a/src/models/qwen3_5/frontend/frontend.cpp
++++ b/src/models/qwen3_5/frontend/frontend.cpp
+@@ -1025,11 +1025,15 @@ public:
+         const bool deepseek_media =
+             options.architecture == Architecture::DeepSeekV41 && vision_enabled;
+         const bool inkling_media = options.architecture == Architecture::Inkling2 && vision_enabled;
++        if (options.vision_upscale != 1.0f && options.architecture != Architecture::Inkling2) {
++            throw std::invalid_argument("--vision-upscale applies to Inkling 2 images only");
++        }
+         if (inkling_media) {
+             fi::InklingMediaOptions& k = processor.inkling.emplace(inkling_media_options(resources));
+             if (options.vision_max_merged_tokens != 0) {
+                 k.max_tokens = std::min(k.max_tokens, options.vision_max_merged_tokens);
+             }
++            k.upscale = options.vision_upscale;
+         } else if (deepseek_media) {
+             fi::DeepSeekMediaOptions& d = processor.deepseek.emplace(deepseek_media_options(resources));
+             if (options.vision_max_merged_tokens != 0) {
+diff --git a/src/models/qwen3_5/frontend/frontend.h b/src/models/qwen3_5/frontend/frontend.h
+index ab4ea87..ad2d6d2 100644
+--- a/src/models/qwen3_5/frontend/frontend.h
++++ b/src/models/qwen3_5/frontend/frontend.h
+@@ -36,6 +36,8 @@ struct FrontendOptions {
+     // Largest merged-token count one media item may occupy; larger media is downscaled at
+     // preprocessing instead of being rejected. Zero leaves the artifact's pixel ceilings.
+     std::uint32_t vision_max_merged_tokens = 16384;
++    // Inkling 2: each image side enlarged by this factor before the budget bounds it (1: none).
++    float vision_upscale = 1.0f;
+     // End-of-thinking message injected when a request hits its thinking budget. Empty
+     // preserves the built-in canonical control suffix; a message lacking the canonical
+     // </think> close serialization gets it appended at startup.
+diff --git a/src/models/qwen3_5/frontend/processor.cpp b/src/models/qwen3_5/frontend/processor.cpp
+index df8d709..30bcac6 100644
+--- a/src/models/qwen3_5/frontend/processor.cpp
++++ b/src/models/qwen3_5/frontend/processor.cpp
+@@ -1431,23 +1431,26 @@ InklingImagePlan inkling_image_plan(int width, int height, const InklingMediaOpt
+         throw ProcessorError(ProcessorErrorKind::InvalidMedia, "Inkling 2 image plan");
+     }
+     const int m = options.merge, align = options.patch * m;
++    const bool upscaled = options.upscale > 1.0f;
+     InklingImagePlan plan{width, height, ceil_div(width, align) * m, ceil_div(height, align) * m};
+-    if (plan.cells(m) <= budget) { return plan; }
++    if (!upscaled && plan.cells(m) <= budget) { return plan; }
+     // llama.cpp's calc_size_preserved_ratio at this alignment and budget, in its FP32 arithmetic:
+     // the sides rounded to whole cells, and past the budget each scaled down by the same factor to
+-    // whole cells below it.
+-    const auto round_cells = [&](int side) {
+-        return std::max(align, int(std::round(float(side) / float(align))) * align);
++    // whole cells below it. An upscaled image enters it at its enlarged sides.
++    const float sw = upscaled ? float(width) * options.upscale : float(width);
++    const float sh = upscaled ? float(height) * options.upscale : float(height);
++    const auto round_cells = [&](float side) {
++        return std::max(align, int(std::round(side / float(align))) * align);
+     };
+     const auto floor_cells = [&](float side) {
+         return std::max(align, int(std::floor(side / float(align))) * align);
+     };
+     const std::int64_t max_pixels = std::int64_t(budget) * align * align;
+-    int w = round_cells(width), h = round_cells(height);
++    int w = round_cells(sw), h = round_cells(sh);
+     if (std::int64_t(w) * h > max_pixels) {
+-        const float beta = std::sqrt(float(height) * float(width) / float(max_pixels));
+-        h                = floor_cells(float(height) / beta);
+-        w                = floor_cells(float(width) / beta);
++        const float beta = std::sqrt(sh * sw / float(max_pixels));
++        h                = floor_cells(sh / beta);
++        w                = floor_cells(sw / beta);
+     }
+     plan = {w, h, w / options.patch, h / options.patch};
+     if (plan.cells(m) > budget) {
+diff --git a/src/models/qwen3_5/frontend/processor.h b/src/models/qwen3_5/frontend/processor.h
+index 65f6b51..da8b7ac 100644
+--- a/src/models/qwen3_5/frontend/processor.h
++++ b/src/models/qwen3_5/frontend/processor.h
+@@ -140,11 +140,14 @@ struct DeepSeekImagePlan {
+ // the raw value -1, values (x - 127.5) / 127.5. The release does not resize: an image of more than
+ // max_tokens cells (the release's bound, or --vision-max-merged below it) is first resized, PIL
+ // bicubic, to the aligned size llama.cpp bounds it to; a low-detail image takes at most a quarter
+-// of that. Images only.
++// of that. An `upscale` above 1 (--vision-upscale) first enlarges each side by that factor, PIL
++// bicubic to whole cells, and the same budget then bounds the enlarged image: small screen text
++// that a 20-pixel patch blurs reaches the tower at a readable size. Images only.
+ struct InklingMediaOptions {
+     int patch                = 20;
+     int merge                = 2;
+     std::uint32_t max_tokens = 4096;
++    float upscale            = 1.0f;
+ };
+ 
+ // An image's plan: its pixel size after any resize, and its patch grid (whole cells, the padding
+diff --git a/src/runtime/engine/inkling2_core.cpp b/src/runtime/engine/inkling2_core.cpp
+index 37d4e34..8c53b17 100644
+--- a/src/runtime/engine/inkling2_core.cpp
++++ b/src/runtime/engine/inkling2_core.cpp
+@@ -228,7 +228,8 @@ ConstructedInkling2 construct_inkling2(const EngineOptions& options, DeviceConte
+              .media_cache_bytes        = options.media_cache_bytes,
+              .media_live_bytes         = options.media_live_bytes,
+              .media_preprocess_threads = options.media_preprocess_threads,
+-             .vision_max_merged_tokens = options.vision_max_merged_tokens}),
++             .vision_max_merged_tokens = options.vision_max_merged_tokens,
++             .vision_upscale           = options.vision_upscale}),
+         .executor = nullptr,
+         .capacity = options.max_context});
+     frontend_phase.complete();
+diff --git a/src/serve/generation_service.cpp b/src/serve/generation_service.cpp
+index 54d0442..c94bb25 100644
+--- a/src/serve/generation_service.cpp
++++ b/src/serve/generation_service.cpp
+@@ -314,6 +314,7 @@ ninfer::EngineOptions make_engine_options(const ServeOptions& options) {
+     options.prompt_routes.apply(engine_options);
+     engine_options.vision_residency         = options.vision_residency;
+     engine_options.vision_max_merged_tokens = options.vision_max_merged_tokens;
++    engine_options.vision_upscale           = options.vision_upscale;
+     engine_options.use_cuda_graph           = options.use_cuda_graph;
+     engine_options.gpu_clock_floor_mhz      = options.gpu_clock_floor_mhz;
+     engine_options.lm_head_q4               = options.lm_head_q4;
+diff --git a/src/serve/serve_options.cpp b/src/serve/serve_options.cpp
+index 09dd77f..6517db9 100644
+--- a/src/serve/serve_options.cpp
++++ b/src/serve/serve_options.cpp
+@@ -568,6 +568,8 @@ std::string serve_usage_text(const char* argv0) {
+            "  --vision-cpu                  --vision with --vision-residency cpu\n"
+            "  --vision-max-merged N         merged tokens of one media item, 64..16384\n"
+            "                                (default 16384); larger media is downscaled\n"
++           "  --vision-upscale F            Inkling 2: enlarge each image side by F, 1..4,\n"
++           "                                before that budget bounds it (default 1)\n"
+            "  --media-cache-mib N           retained prepared media (default 1024; 0\n"
+            "                                disables)\n"
+            "  --media-urls SIZE             fetch the HTTP(S) image and video URLs of\n"
+@@ -1464,6 +1466,11 @@ ServeOptions parse_serve_arguments(bool artifact_given, const std::vector<std::s
+             vision_max_merged_explicit       = true;
+             continue;
+         }
++        if (arg == "--vision-upscale") {
++            options.vision_upscale =
++                parse_float_in(require_value("--vision-upscale"), "vision-upscale", 1.0f, 4.0f);
++            continue;
++        }
+         if (product::switch_option(arg, "cuda-graph", [&](bool on) { options.use_cuda_graph = on; })) {
+             continue;
+         }
+diff --git a/src/serve/serve_options.h b/src/serve/serve_options.h
+index cf7017b..2643f9e 100644
+--- a/src/serve/serve_options.h
++++ b/src/serve/serve_options.h
+@@ -102,6 +102,7 @@ struct ServeOptions {
+     bool enable_vision      = false;
+     VisionResidency vision_residency       = VisionResidency::Resident;
+     std::uint32_t vision_max_merged_tokens = 16384;
++    float vision_upscale                   = 1.0f;
+     bool use_cuda_graph     = true;
+     std::uint32_t gpu_clock_floor_mhz = 0;
+     bool lm_head_q4         = false;
+-- 
+2.55.0.windows.3
+

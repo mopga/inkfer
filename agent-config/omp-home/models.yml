@@ -1,0 +1,79 @@
+# oh-my-pi -> Strata (шлюз приложения). Основа: вывод `strata connect omp`; добавлено supportsToolChoice: false
+# (обход issue can1357/oh-my-pi#12129: служебный запрос с tool_choice: none меняет начало промпта).
+providers:
+  strata:
+    baseUrl: http://127.0.0.1:47831/v1
+    api: openai-completions
+    auth: none
+    compat:
+      supportsDeveloperRole: false
+      supportsToolChoice: false
+    models:
+      - id: iq3_s
+        name: Qwen3.8-Flash-Next (Strata, local)
+        reasoning: true
+        input: [text]
+        contextWindow: 262144
+        maxTokens: 32768
+        thinking:
+          mode: effort
+          efforts: [minimal, low, medium, high]
+          defaultLevel: medium
+        cost: {input: 0, output: 0, cacheRead: 0, cacheWrite: 0}
+
+  # Inkling 2 Mini (локальный движок на порту 8081; запуск — ярлык «Inkling», см. inkling\README.md).
+  # Провайдер strata выше не тронут: возврат на Qwen — выбор модели strata/iq3_s (modelRoles.default в config.yml).
+  inkling:
+    baseUrl: http://127.0.0.1:8081/v1
+    api: openai-completions
+    auth: none
+    compat:
+      supportsDeveloperRole: false
+      supportsToolChoice: false
+    models:
+      # Идентификаторы по профилям запуска (inkling\profiles.json): движок профиля отвечает на свой id,
+      # окно контекста у каждого своё. id «inkling» — для стендовых прогонов (окно 131072).
+      - id: inkling-speed
+        name: Inkling 2 Mini — скорость (131k, local)
+        reasoning: true
+        input: [text, image]
+        contextWindow: 131072
+        maxTokens: 32768
+        thinking:
+          mode: effort
+          efforts: [minimal, low, medium, high]
+          defaultLevel: medium
+        cost: {input: 0, output: 0, cacheRead: 0, cacheWrite: 0}
+      - id: inkling-balanced
+        name: Inkling 2 Mini — баланс (262k, local)
+        reasoning: true
+        input: [text, image]
+        contextWindow: 262144
+        maxTokens: 32768
+        thinking:
+          mode: effort
+          efforts: [minimal, low, medium, high]
+          defaultLevel: medium
+        cost: {input: 0, output: 0, cacheRead: 0, cacheWrite: 0}
+      - id: inkling-max
+        name: Inkling 2 Mini — макс. контекст (524k, local)
+        reasoning: true
+        input: [text, image]
+        contextWindow: 524288
+        maxTokens: 32768
+        thinking:
+          mode: effort
+          efforts: [minimal, low, medium, high]
+          defaultLevel: medium
+        cost: {input: 0, output: 0, cacheRead: 0, cacheWrite: 0}
+      - id: inkling
+        name: Inkling 2 Mini (local)
+        reasoning: true
+        input: [text, image]
+        contextWindow: 131072
+        maxTokens: 32768
+        thinking:
+          mode: effort
+          efforts: [minimal, low, medium, high]
+          defaultLevel: medium
+        cost: {input: 0, output: 0, cacheRead: 0, cacheWrite: 0}

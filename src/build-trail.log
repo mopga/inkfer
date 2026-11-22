@@ -1,0 +1,31 @@
+[1/25] Stamping NINFER build id from git (build-time)
+-- NINFER build id will be marked dirty -- product sources differ from HEAD:
+ M src/models/inkling2/executor.cpp
+ M src/models/inkling2/executor.h
+ M src/runtime/engine/inkling2_core.cpp
+-- NINFER build id: 2026-11-21.4-12-g88caff1-dirty
+[2/25] Building CXX object CMakeFiles\ninfer_runtime.dir\generated\runtime_dispatch.cpp.obj
+[3/25] Building CXX object src\runtime\CMakeFiles\ninfer_runtime_support.dir\engine\device_profile_build_id.cpp.obj
+[4/25] Linking CXX static library src\runtime\ninfer_runtime_support.lib
+[5/25] Building CXX object apps\CMakeFiles\ninfer.dir\launcher\main.cpp.obj
+[6/25] Building CXX object apps\CMakeFiles\ninfer_app_cli.dir\cli\main.cpp.obj
+[7/25] Building CXX object apps\CMakeFiles\ninfer-serve.dir\launcher\main.cpp.obj
+[8/25] Building CXX object apps\CMakeFiles\ninfer-calibrate.dir\launcher\main.cpp.obj
+[9/25] Building CXX object apps\CMakeFiles\ninfer_app_perplexity.dir\perplexity\main.cpp.obj
+[10/25] Building CXX object src\models\CMakeFiles\ninfer_model_runtime.dir\inkling2\executor.cpp.obj
+[11/25] Building CXX object apps\CMakeFiles\ninfer-perplexity.dir\launcher\main.cpp.obj
+[12/25] Linking CXX static library src\models\ninfer_model_runtime.lib
+[13/25] Building CXX object apps\CMakeFiles\ninfer-ngram-profile.dir\launcher\main.cpp.obj
+[14/25] Building CXX object apps\CMakeFiles\ninfer_app_serve.dir\serve\main.cpp.obj
+[15/25] Building CXX object bench\CMakeFiles\ninfer_bench.dir\__\apps\launcher\main.cpp.obj
+[16/25] Building CXX object src\runtime\CMakeFiles\ninfer_engine.dir\engine\inkling2_core.cpp.obj
+[17/25] Building CXX object src\runtime\CMakeFiles\ninfer_engine.dir\engine\engine.cpp.obj
+[18/25] Linking CXX static library src\runtime\ninfer_engine.lib
+[19/25] Linking CXX shared library portable\backends\cuda13\ninfer-runtime.dll
+[20/25] Linking CXX executable portable\ninfer.exe
+[21/25] Linking CXX executable portable\ninfer-serve.exe
+[22/25] Linking CXX executable portable\ninfer-calibrate.exe
+[23/25] Linking CXX executable portable\ninfer-perplexity.exe
+[24/25] Linking CXX executable portable\ninfer-ngram-profile.exe
+[25/25] Linking CXX executable portable\ninfer_bench.exe
+build_exit=0

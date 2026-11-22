@@ -1,0 +1,17 @@
+[chunk-512k-vis]       0 warmup prompt=22 cached=0 ttft=0.17s prefill=181.8 gen=60 decode=114.6/108.7 vram=15249 rss=34.65 avail=16.45 disk=0 
+[chunk-512k-vis]  131072 cold   prompt=132476 cached=0 ttft=50.63s prefill=2620.9 gen=292 decode=104.5/103.3 vram=15266 rss=36.37 avail=14.75 disk=0 
+[chunk-512k-vis]  131072 turn1  prompt=132567 cached=132475 ttft=0.52s prefill=207.1 gen=500 decode=90.0/89.5 vram=15266 rss=36.38 avail=14.74 disk=0 
+[chunk-512k-vis]  131072 turn2  prompt=132706 cached=132566 ttft=0.48s prefill=319.0 gen=227 decode=91.0/89.7 vram=15266 rss=36.38 avail=14.76 disk=0 
+[chunk-512k-vis]  131072 turn3  prompt=132781 cached=132705 ttft=0.47s prefill=179.4 gen=300 decode=98.1/97.4 vram=15266 rss=36.38 avail=14.76 disk=0 
+[chunk-512k-vis]  262144 cold   prompt=260274 cached=32768 ttft=123.15s prefill=1849.5 gen=292 decode=79.1/78.1 vram=15266 rss=38.68 avail=12.46 disk=0 
+[chunk-512k-vis]  262144 turn1  prompt=260365 cached=260273 ttft=0.69s prefill=148.5 gen=500 decode=69.0/68.7 vram=15252 rss=38.68 avail=12.57 disk=0 
+[chunk-512k-vis]  262144 turn2  prompt=260675 cached=260364 ttft=0.87s prefill=396.1 gen=300 decode=85.3/84.2 vram=15252 rss=38.69 avail=12.53 disk=0 
+[chunk-512k-vis]  262144 turn3  prompt=260722 cached=260674 ttft=0.65s prefill=82.6 gen=300 decode=72.4/71.7 vram=15252 rss=38.69 avail=12.53 disk=0 
+[chunk-512k-vis]  393216 cold   prompt=391315 cached=32768 ttft=240.79s prefill=1490.3 gen=241 decode=63.9/63.3 vram=15258 rss=38.72 avail=12.44 disk=0 
+[chunk-512k-vis]  393216 turn1  prompt=391406 cached=391314 ttft=0.93s prefill=112.3 gen=500 decode=55.7/55.4 vram=15252 rss=38.72 avail=12.49 disk=0 
+[chunk-512k-vis]  393216 turn2  prompt=391535 cached=391405 ttft=0.93s prefill=155.7 gen=300 decode=76.2/75.5 vram=15252 rss=38.72 avail=12.49 disk=0 
+[chunk-512k-vis]  393216 turn3  prompt=391582 cached=391534 ttft=0.88s prefill=62.6 gen=300 decode=59.1/58.4 vram=15252 rss=38.72 avail=12.49 disk=0 
+[chunk-512k-vis]  507904 cold   prompt=503618 cached=32768 ttft=368.85s prefill=1277.5 gen=279 decode=50.5/50.1 vram=15252 rss=38.75 avail=12.45 disk=0 
+[chunk-512k-vis]  507904 turn1  prompt=503709 cached=503617 ttft=1.11s prefill=92.9 gen=500 decode=43.7/43.6 vram=15250 rss=38.75 avail=12.59 disk=0 
+[chunk-512k-vis]  507904 turn2  prompt=503764 cached=503708 ttft=1.01s prefill=62.6 gen=300 decode=57.6/57.1 vram=15250 rss=38.75 avail=12.6 disk=0 
+[chunk-512k-vis]  507904 turn3  prompt=503811 cached=503763 ttft=1.09s prefill=50.5 gen=300 decode=49.3/48.9 vram=15250 rss=38.75 avail=12.6 disk=0 

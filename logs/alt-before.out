@@ -1,0 +1,20 @@
+ready after 2s
+== alttest-before, build ninfer-trail, host store 3072 MiB, 05:50:06
+A1: prompt 39221, cached 0 (0.0 %), 18.18 s | 'Получено, журнал A принят.'
+B1: prompt 29466, cached 0 (0.0 %), 12.65 s | ''
+A2: prompt 39717, cached 39220 (98.7 %), 1.1 s | ''
+B2: prompt 29955, cached 24576 (82.0 %), 3.42 s | ''
+A3: prompt 40203, cached 32768 (81.5 %), 5.22 s | ''
+B3: prompt 30441, cached 24576 (80.7 %), 3.67 s | ''
+B4: prompt 30935, cached 30440 (98.4 %), 0.93 s | ''
+B5: prompt 31421, cached 30934 (98.5 %), 0.93 s | ''
+B6: prompt 31911, cached 31420 (98.5 %), 0.98 s | ''
+B7: prompt 32393, cached 31910 (98.5 %), 0.96 s | ''
+B8: prompt 32878, cached 32392 (98.5 %), 1.02 s | ''
+B9: prompt 33368, cached 32877 (98.5 %), 1.0 s | ''
+A4: prompt 40690, cached 0 (0.0 %), 18.65 s | ''
+FAIL: A after 7 requests of B in a row: 0 of 40690 tokens from the cache, 18.65 s
+2026-11-22 05:50:42.462  INFO  req#4 done | openai-chat | output limit | prompt 29,955 | output 60 | cache 24,576 (82.0%, long anchor) | TTFT 2.9s | total 3.4s | prefill 1.86k tok/s | decode 129.3 tok
+2026-11-22 05:50:47.687  INFO  req#5 done | openai-chat | output limit | prompt 40,203 | output 60 | cache 32,768 (81.5%, long anchor) | TTFT 4.8s | total 5.2s | prefill 1.57k tok/s | decode 137.1 tok
+2026-11-22 05:50:51.357  INFO  req#6 done | openai-chat | output limit | prompt 30,441 | output 60 | cache 24,576 (80.7%, long anchor) | TTFT 3.2s | total 3.7s | prefill 1.86k tok/s | decode 124.0 tok
+alt check finished 05:51:17, exit 1

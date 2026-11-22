@@ -1,0 +1,7 @@
+4.99 s | length | ```python def merge_intervals(intervals):     """     Merge overlappin
+4.71 s | stop | В быстрой сортировке выбирается опорный элемент, и все элементы сравни
+2.88 s | stop | $.a[0] $.a[1] $.a[2].b $.c
+3.44 s | stop | Elapsed time: 14:35 → 17:10   - 14:35 to 17:35 = 3 hours   - 17:10 is 
+3.45 s | stop | ```sql SELECT customer_id, SUM(total) AS total_spent FROM orders WHERE
+4.13 s | length | ```rust fn longest_common_prefix(strings: &[&str]) -> String {     if 
+1.19 s | tool_calls | [('read_file', '{"path":"config/app.yaml"}')]

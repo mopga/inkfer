@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+# large or machine-local things that stay out of the repository
+engines/
+toolchain/
+shortcuts/
+src/ninfer-all/
+src/basalt/
+src/build-ninfer-pr393/
+agent-tests/repos/
+agent-tests/done/
+agent-tests/runs/*/sessions/
+logs/*.requests.jsonl
+start_inkling.log
+*.exe
+*.dll
+*.lnk
+*.gguf
+*.ninfer
+*.basalt

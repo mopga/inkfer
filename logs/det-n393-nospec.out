@@ -1,0 +1,7 @@
+3.05 s | length | []
+2.92 s | length | Быстрая сортировка делит массив вокруг опорного элемента, и на каждом 
+2.91 s | length | $.a[0] $.a[1] $.a[2].b 
+2.84 s | length | Total elapsed time: 14:35 → 17:10   - 14:35 to 17:35 = 3 hours   - 17:
+2.1 s | stop | ```sql SELECT customer_id, SUM(total) AS total_orders FROM orders WHER
+2.89 s | length | []
+0.86 s | tool_calls | [('read_file', '{"path":"config/app.yaml"}')]

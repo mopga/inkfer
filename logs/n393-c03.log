@@ -1,0 +1,5 @@
+ninfer-serve: CUDA 13 backend
+2026-11-22 04:53:48.717  INFO  build 2026-11-21.4+2026-11-21.4-12-g88caff1 (nvcc 13.4.92, 120a)
+2026-11-22 04:53:48.722  INFO  starting engine
+2026-11-22 04:53:48.829  ERROR startup failed | starting engine | 108 ms
+2026-11-22 04:53:48.829  ERROR Inkling 2 has no --draft-confidence, n-gram copy proposals or archive, --mtp-attention-window or proposal head, --adaptive-mtp only with --spec dspark and --draft-min-p only with --spec dspine or dspark

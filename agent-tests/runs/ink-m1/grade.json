@@ -1,0 +1,191 @@
+{
+ "run": "ink-m1",
+ "params": "model=inkling/inkling-max prompt=C:/distrib/strata-tuning/inkling/agent-tests/prompts/t1-analysis.md thinking=high maxtime=60m extra= args=",
+ "steps": {
+  "step1": {
+   "requests": 47,
+   "input": 84489,
+   "output": 24847,
+   "cache_read": 2490020,
+   "max_prompt": 101540,
+   "gen_s": 270.0623653,
+   "ttft_s": 82.85594660000002,
+   "tools": {
+    "bash": 6,
+    "glob": 1,
+    "read": 19,
+    "grep": 20,
+    "write": 1
+   },
+   "tool_errors": 6,
+   "denied": 6,
+   "bad_stops": 0,
+   "compactions": 0,
+   "final_text": "Готово. Создан `ANALYSIS.md` — ответы по коду с ссылками `файл:строка`, плюс раздел «Замечания» с расхождениями.\n\nКлючевые пункты:\n\n1. `STRATA_ADMIT_SHORT_FIRST` (`serve/server.py:359`): по умолчанию `0` — порядок выключен («whoever gets the lock first»). `STRATA_ADMIT_MAX_WAIT_S` (`serve/server.py:362`): по умолчанию `30.0` с — длинному запросу не дают откладываться дольше этого (задумано: после этого он считается коротким).\n2. `admission_limit` (serve/server.py:4866-4869): `max(1, batch) + max_queue`; предела нет (`None`), если `max_queue` не задан.\n3. `queue` (serve/server.py:4902-4909): `running` — `len(live_reqs)` или busy-флаг; `queued` — `status[\"queued\"]` (счётчик `Service.run`); `limit` — `admission_limit()`.\n4. `retry_after_for` (serve/server.py:7481-7487): `1` если ожидающих нет, иначе `1 + min(queued, 10)` (`RETRY_AFTER_MAX=10`, 7478) — максимум **11**, не 10 как говорят комментарий и docs/QUEUE.md.\n5. Последовательный путь: `QUEUE_BEAT_S = 10.0` (serve/server.py:288), keep-alive `yield \"ping\", None` каждые 10 с (6296/6306). Batch-путь использует литерал `10.0` в `_take_control` (2127).\n6. Не более `SOLO_AGAIN_MAX = 2` раз, при остатке `max_tokens` ≥ `SOLO_AGAIN_MIN_LEFT = 32`, плюс: не embeddings, движок с `slot_cache`, `STRATA_PARALLEL_SOLO != \"0\"`, ровно один busy-слот и `waiting == 0`, `stop_sent` не был выставлен (2530-2533), а фактический возврат — BDONE со `cancel` (2544-2561).\n7. Правило #656: `BYIELD <slot>` при длинном чтении ради ждущего короче (по docstring — «под половину», по коду — «не длиннее 2×»). Решение — `_shorter_waiting` (2224-2227); вызывается в `give_way()` (solo, 2306-2322) и `ask()` (admission, 2446-2463), оба — при `yield < YIELDS_MAX (2)` и не-embeddings.\n8. `_terminal_event_locked` (4871-4883): событий 9 — queued/admitted/reading/first_token/finished/cancelled/disconnected/timeout/error (неизвестное событие отбрасывается); outcome 6 — stop/length/cancel/disconnect/timeout/error (любое другое переписывается в `error`).\n\nЗамечания (не исправлены): расхождение `_admit_next` (`and` вместо `or` — короткие идут первыми только после ожидания `MAX_WAIT_S`, а длинный, прогревшийся, — не считается коротким вообще), `_shorter_waiting` (docstring «под половину» vs код `plen * 2`), `Retry-After` (docstring/docs «не больше 10» vs код `1 + min(queued, 10)` → 11), а также heartbeat литерал вместо `QUEUE_BEAT_S` и `1 + max_queue` при `batch == 0`.",
+   "wall_s": 355,
+   "tool_calls": 47,
+   "cache_pct": 96.7,
+   "decode_tps": 92.0
+  },
+  "step2": {
+   "requests": 69,
+   "input": 47200,
+   "output": 33237,
+   "cache_read": 10181820,
+   "max_prompt": 182431,
+   "gen_s": 416.7557030000004,
+   "ttft_s": 172.60098559999994,
+   "tools": {
+    "read": 30,
+    "grep": 7,
+    "bash": 12,
+    "todo": 2,
+    "edit": 16,
+    "eval": 1
+   },
+   "tool_errors": 11,
+   "denied": 5,
+   "bad_stops": 0,
+   "compactions": 0,
+   "final_text": "Три исправления применены (`git diff` сверён), новые тесты зелёные. Полный прогон всех модулей запущен в фоне (`bg_1`, таймаут 3600 с). Пока идёт — жду его завершения; в него попасть сюда не могу, итог `BUGFIX.md` запишу после.",
+   "wall_s": 700,
+   "tool_calls": 68,
+   "cache_pct": 99.5,
+   "decode_tps": 79.8
+  },
+  "step3": {
+   "requests": 1,
+   "input": 427,
+   "output": 1662,
+   "cache_read": 183212,
+   "max_prompt": 183639,
+   "gen_s": 25.094423300000003,
+   "ttft_s": 1.9633082000000002,
+   "tools": {},
+   "tool_errors": 0,
+   "denied": 0,
+   "bad_stops": 0,
+   "compactions": 0,
+   "final_text": "По памяти о сессии:\n\n1. Вторая переменная — `STRATA_ADMIT_MAX_WAIT_S`; значение по умолчанию — **30.0 секунд** (`ADMIT_MAX_WAIT_S = _timeout_env(\"STRATA_ADMIT_MAX_WAIT_S\", 30.0) or 0.0`, неположительное/нечитаемое → `0.0`).\n\n2. `SOLO_AGAIN_MAX = 2` (serve/server.py:2211) и `SOLO_AGAIN_MIN_LEFT = 32` (serve/server.py:2212).\n\n3. `queued`, `admitted`, `reading`, `first_token`, `finished`, `cancelled`, `disconnected`, `timeout`, `error`.\n\n4. A — `_admit_next`: `0 if e[0] <= ADMIT_SHORT_FIRST or now - e[1] >= ADMIT_MAX_WAIT_S else 1` (было `and`). B — `retry_after_for`: `return 1 if queued < 1 else min(1 + queued, RETRY_AFTER_MAX)` (было `1 + min(queued, RETRY_AFTER_MAX)`). C — `_shorter_waiting`: `return any(e[0] <= plen / 2 for e in self.wait_lens)` (было `e[0] <= plen * 2`; докстринг при этом обновлён до «at most half»).\n\n5. A — `test_short_first_puts_a_chat_at_the_limit_first` (serve/test_admit_order.py). B — `test_admission_full_429_retry_after_capped_at_the_boundary` (serve/test_parallel.py). C — три теста в serve/test_parallel_yield.py: `test_no_way_given_to_a_prompt_above_half`, `test_way_given_to_a_prompt_at_most_half`, плюс новый класс `ShorterWaitingRule` с `test_exactly_half_gives_way_just_above_it_does_not` и `test_an_empty_queue_gives_way`.\n\n6. Честно: последний полный прогон (`serve.test_admit_order serve.test_parallel_yield serve.test_yield_accounting serve.test_parallel`) был уведён в фоновую задачу `bg_1` (таймаут 3600 с), и её результат в этой сессии я **не получил** — числа тестов и итоговый OK/FAILED неизвестен, `BUGFIX.md` с выводом этого прогона я не успел написать. Последние завершённые прогоны: 4 теста OK (границы C + unit-тесты) и 7 тестов OK (новые A/B + соседние #656-тесты).\n\n7. Создан: `ANALYSIS.md` (первая задача). Изменены: `serve/server.py` (три исправления), `serve/test_admit_order.py`, `serve/test_parallel.py`, `serve/test_parallel_yield.py` (новые тесты). `BUGFIX.md` **не создан** — ожидала результат фонового прогона.",
+   "wall_s": 28,
+   "tool_calls": 0,
+   "cache_pct": 99.8,
+   "decode_tps": 66.2
+  }
+ },
+ "analysis": {
+  "score": 15,
+  "of": 15,
+  "checks": {
+   "1a SHORT_FIRST, по умолчанию 0 = выключено": true,
+   "1b MAX_WAIT_S = 30": true,
+   "2a limit = max(1, batch) + max_queue": true,
+   "2b нет предела при max_queue None": true,
+   "3 running / queued / limit": true,
+   "4a формула 1 + min(queued, …)": true,
+   "4b RETRY_AFTER_MAX = 10": true,
+   "5 QUEUE_BEAT_S = 10 с": true,
+   "6a SOLO_AGAIN_MAX = 2": true,
+   "6b SOLO_AGAIN_MIN_LEFT = 32": true,
+   "6c прочие условия (slot_cache, PARALLEL_SOLO, embeddings)": true,
+   "7a _shorter_waiting": true,
+   "7b YIELDS_MAX / два места вызова": true,
+   "8a все 9 событий": true,
+   "8b все 6 outcome": true
+  },
+  "refs": 54,
+  "noticed": {
+   "A (_admit_next: and вместо or)": true,
+   "B (Retry-After до 11)": true,
+   "C (_shorter_waiting: вдвое длиннее)": true
+  },
+  "noticed_n": 3
+ },
+ "bugfix": {
+  "fixed": {
+   "B": true,
+   "C": true,
+   "A": true,
+   "A_detail": [
+    true,
+    true,
+    true
+   ]
+  },
+  "fixed_n": 3,
+  "server_diff": [
+   "4",
+   "4"
+  ],
+  "changed": [
+   "serve/server.py",
+   "serve/test_admit_order.py",
+   "serve/test_parallel.py",
+   "serve/test_parallel_yield.py",
+   "ANALYSIS.md"
+  ],
+  "new_tests": [
+   "test_short_first_puts_a_chat_at_the_limit_first",
+   "test_a_long_request_that_waited_too_long_goes_first",
+   "test_admission_full_429_retry_after_capped_at_the_boundary",
+   "test_queue_timeout_serial_fifo_returns_429_and_recovers",
+   "test_no_way_given_to_a_prompt_above_half",
+   "test_way_given_to_a_prompt_at_most_half",
+   "test_left_alone_it_goes_back_to_the_solo_path",
+   "test_exactly_half_gives_way_just_above_it_does_not",
+   "test_an_empty_queue_gives_way"
+  ],
+  "suite": {
+   "ran": 79,
+   "ok": true,
+   "fail": ""
+  },
+  "suite_mods": [
+   "serve.test_admit_order",
+   "serve.test_parallel",
+   "serve.test_parallel_yield",
+   "serve.test_yield_accounting"
+  ],
+  "old_code": {
+   "ran": 79,
+   "ok": false,
+   "fail": "failures=8",
+   "failing": [
+    "test_admission_full_429_retry_after_capped_at_the_boundary",
+    "test_admission_full_429_retry_after_follows_the_waiting_count",
+    "test_exactly_half_gives_way_just_above_it_does_not",
+    "test_no_way_given_to_a_long_one",
+    "test_no_way_given_to_a_long_one_between_far_apart_progress_lines",
+    "test_no_way_given_to_a_prompt_above_half",
+    "test_short_first_puts_a_chat_at_the_limit_first",
+    "test_short_first_puts_the_chat_before_the_agent_reads"
+   ],
+   "new_failing": [
+    "test_admission_full_429_retry_after_capped_at_the_boundary",
+    "test_exactly_half_gives_way_just_above_it_does_not",
+    "test_no_way_given_to_a_prompt_above_half",
+    "test_short_first_puts_a_chat_at_the_limit_first"
+   ]
+  },
+  "bugfix_md": {
+   "exists": false,
+   "funcs": 0,
+   "tests_named": 0
+  }
+ },
+ "retention": {
+  "score": 8,
+  "of": 8,
+  "checks": {
+   "1 MAX_WAIT_S = 30": true,
+   "2 SOLO_AGAIN_MAX = 2 и MIN_LEFT = 32": true,
+   "3 все 9 событий": true,
+   "4 три функции": true,
+   "4 выражения (or / min(...MAX) / *2 <= plen)": true,
+   "5 имена своих тестов (не меньше трёх)": true,
+   "6 число тестов последнего прогона": true,
+   "7 изменённые файлы": true
+  },
+  "tool_calls": 0
+ }
+}

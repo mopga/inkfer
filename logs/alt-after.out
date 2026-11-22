@@ -1,0 +1,6 @@
+OK: A after 7 requests of B in a row: 32768 of 40690 tokens from the cache, 5.62 s (after one request of B: 32768 of 40203, 5.21 s)
+2026-11-22 05:55:40.334  INFO  req#4 done | openai-chat | output limit | prompt 29,955 | output 60 | cache 24,576 (82.0%, long anchor) | TTFT 3.0s | total 3.4s | prefill 1.84k tok/s | decode 130.3 tok
+2026-11-22 05:55:45.545  INFO  req#5 done | openai-chat | output limit | prompt 40,203 | output 60 | cache 32,768 (81.5%, long anchor) | TTFT 4.8s | total 5.2s | prefill 1.57k tok/s | decode 136.8 tok
+2026-11-22 05:55:49.239  INFO  req#6 done | openai-chat | output limit | prompt 30,441 | output 60 | cache 24,576 (80.7%, long anchor) | TTFT 3.2s | total 3.7s | prefill 1.86k tok/s | decode 124.0 tok
+2026-11-22 05:56:00.738  INFO  req#13 done | openai-chat | output limit | prompt 40,690 | output 60 | cache 32,768 (80.5%, long anchor) | TTFT 5.1s | total 5.6s | prefill 1.57k tok/s | decode 115.7 to
+alt check finished 05:56:02, exit 0

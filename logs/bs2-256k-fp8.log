@@ -1,0 +1,145 @@
+[server] legend   pp=prompt read  tg=generation  c=cached  acc=drafts accepted  dl=tokens per window  hit=expert cache  pcie=routed experts over PCIe
+[server] inkling  ctx=262144 kv=fp8 reserve=1024MiB spec=8 temp=1.0
+[server] engine log: C:\Users\USER\.cache\basalt\2b08fb19f5761911\engine.log
+[server] ready    http://127.0.0.1:8081/v1  openai+anthropic  stats http://127.0.0.1:8081/
+[server] planning weight allocation
+[server] placed   cuda0 5.3GiB 2.1s
+[server] placed   ram 11.9GiB 3.0s
+[server] loaded   17.1GiB 3.4s  cuda0=5.3GiB ram=11.8GiB
+[server] weights  loaded, ctx=262144 images=off
+[server] thinking budget 32 tokens, output cap 64 (answer-room auto)
+[server] live | s1 tg=12/64 | total 0t/s
+[server] thinking budget reached (32 tokens), wrapping up
+[server] s1 done  pp=22/0c 0.7s  tg=39 55.5t/s acc=44% dl=1.9  ttft=0.8s  end=stop  hit=75.6%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] s1 read  pp=19415/66009 3709t/s 5s
+[server] s1 read  pp=42713/66009 3830t/s 11s
+[server] s1 read  pp=62128/66009 3737t/s 17s
+[server] live | s1 tg=53/500 53.6t/s | total 54t/s
+[server] live | s1 tg=161/500 52.4t/s | total 52t/s
+[server] s1 done  pp=66009/0c 16.6s 3970t/s  tg=240 54.6t/s acc=74% dl=3.2  ttft=16.7s  end=stop  hit=71.6%  pcie=0.0%
+[server] thinking budget 300 tokens, output cap 600 (answer-room auto)
+[server] live | s1 tg=30/600 58.4t/s | total 58t/s
+[server] live | s1 tg=140/600 54.6t/s | total 55t/s
+[server] live | s1 tg=234/600 51.2t/s | total 51t/s
+[server] live | s1 tg=287/600 43.6t/s | total 44t/s
+[server] live | s1 tg=356/600 41.4t/s | total 41t/s
+[server] live | s1 tg=423/600 39.8t/s | total 40t/s
+[server] live | s1 tg=483/600 38.2t/s | total 38t/s
+[server] live | s1 tg=550/600 37.5t/s | total 37t/s
+[server] s1 done  pp=66100/66008c 0.5s  tg=600 38.2t/s acc=46% dl=1.7  ttft=0.5s  end=length  hit=71.3%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] live | s1 tg=19/500 | total 0t/s
+[server] live | s1 tg=133/500 52.6t/s | total 53t/s
+[server] s1 done  pp=66512/66099c 0.5s  tg=213 46.3t/s acc=55% dl=2.0  ttft=0.5s  end=stop  hit=75.2%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] s1 read  pp=20480/131052 3763t/s 5s
+[server] s1 read  pp=40960/131052 3858t/s 11s
+[server] s1 read  pp=61440/131052 3747t/s 16s
+[server] s1 read  pp=77824/131052 3626t/s 21s
+[server] s1 read  pp=94208/131052 3499t/s 27s
+[server] s1 read  pp=110592/131052 3372t/s 33s
+[server] s1 read  pp=126976/131052 3249t/s 39s
+[server] live | s1 tg=47/500 47.2t/s | total 47t/s
+[server] live | s1 tg=144/500 46.8t/s | total 47t/s
+[server] thinking budget reached (250 tokens), wrapping up
+[server] live | s1 tg=253/500 48.2t/s | total 48t/s
+[server] s1 done  pp=131052/0c 39.1s 3353t/s  tg=283 48.9t/s acc=96% dl=3.0  ttft=39.1s  end=stop  hit=64.4%  pcie=0.0%
+[server] thinking budget 300 tokens, output cap 600 (answer-room auto)
+[server] live | s1 tg=64/600 43.2t/s | total 43t/s
+[server] live | s1 tg=154/600 43.8t/s | total 44t/s
+[server] live | s1 tg=233/600 41.8t/s | total 42t/s
+[server] thinking budget reached (300 tokens), wrapping up
+[server] live | s1 tg=310/600 40.7t/s | total 41t/s
+[server] live | s1 tg=360/600 37.2t/s | total 37t/s
+[server] live | s1 tg=429/600 36.6t/s | total 37t/s
+[server] live | s1 tg=480/600 34.8t/s | total 35t/s
+[server] live | s1 tg=533/600 33.7t/s | total 34t/s
+[server] s1 done  pp=131143/131051c 0.5s  tg=600 33.9t/s acc=38% dl=1.7  ttft=0.6s  end=length  hit=64.5%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] live | s1 tg=18/500 | total 0t/s
+[server] live | s1 tg=109/500 43.0t/s | total 43t/s
+[server] live | s1 tg=214/500 46.7t/s | total 47t/s
+[server] thinking budget reached (250 tokens), wrapping up
+[server] live | s1 tg=254/500 38.4t/s | total 38t/s
+[server] s1 done  pp=131476/131142c 0.5s  tg=285 42.3t/s acc=68% dl=2.0  ttft=0.6s  end=stop  hit=69.1%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] s1 read  pp=20095/196914 3768t/s 5s
+[server] s1 read  pp=44209/196914 3884t/s 11s
+[server] s1 read  pp=64304/196914 3782t/s 17s
+[server] s1 read  pp=84399/196914 3653t/s 23s
+[server] s1 read  pp=100475/196914 3540t/s 28s
+[server] s1 read  pp=116551/196914 3428t/s 34s
+[server] s1 read  pp=132627/196914 3318t/s 40s
+[server] s1 read  pp=148703/196914 3214t/s 46s
+[server] s1 read  pp=164779/196914 3115t/s 53s
+[server] s1 read  pp=176836/196914 3044t/s 58s
+[server] s1 read  pp=188893/196914 2976t/s 63s
+[server] live | s1 tg=1/500 | total 0t/s
+[server] live | s1 tg=81/500 39.1t/s | total 39t/s
+[server] live | s1 tg=164/500 39.7t/s | total 40t/s
+[server] s1 done  pp=196914/0c 65.3s 3015t/s  tg=245 41.7t/s acc=78% dl=2.9  ttft=65.4s  end=stop  hit=63.9%  pcie=0.0%
+[server] thinking budget 300 tokens, output cap 600 (answer-room auto)
+[server] live | s1 tg=14/600 | total 0t/s
+[server] live | s1 tg=93/600 38.1t/s | total 38t/s
+[server] live | s1 tg=168/600 37.0t/s | total 37t/s
+[server] live | s1 tg=223/600 34.0t/s | total 34t/s
+[server] live | s1 tg=266/600 30.9t/s | total 31t/s
+[server] live | s1 tg=310/600 29.1t/s | total 29t/s
+[server] live | s1 tg=355/600 28.0t/s | total 28t/s
+[server] live | s1 tg=404/600 27.3t/s | total 27t/s
+[server] live | s1 tg=457/600 27.2t/s | total 27t/s
+[server] live | s1 tg=504/600 26.7t/s | total 27t/s
+[server] live | s1 tg=553/600 26.4t/s | total 26t/s
+[server] live | s1 tg=597/600 25.9t/s | total 26t/s
+[server] s1 done  pp=197005/196913c 0.6s  tg=600 25.9t/s acc=35% dl=1.4  ttft=0.6s  end=length  hit=63.7%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] live | s1 tg=45/500 32.4t/s | total 32t/s
+[server] live | s1 tg=127/500 36.9t/s | total 37t/s
+[server] live | s1 tg=213/500 38.9t/s | total 39t/s
+[server] thinking budget reached (250 tokens), wrapping up
+[server] live | s1 tg=254/500 33.6t/s | total 34t/s
+[server] s1 done  pp=197454/197004c 0.6s  tg=282 36.2t/s acc=46% dl=2.2  ttft=0.7s  end=stop  hit=64.4%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] s1 read  pp=20225/250779 3732t/s 5s
+[server] s1 read  pp=40450/250779 3825t/s 11s
+[server] s1 read  pp=60675/250779 3720t/s 16s
+[server] s1 read  pp=76855/250779 3604t/s 21s
+[server] s1 read  pp=93035/250779 3480t/s 27s
+[server] s1 read  pp=109215/250779 3353t/s 33s
+[server] s1 read  pp=125395/250779 3232t/s 39s
+[server] s1 read  pp=141575/250779 3116t/s 45s
+[server] s1 read  pp=153710/250779 3033t/s 51s
+[server] s1 read  pp=165845/250779 2953t/s 56s
+[server] s1 read  pp=177980/250779 2877t/s 62s
+[server] s1 read  pp=190115/250779 2805t/s 68s
+[server] s1 read  pp=202250/250779 2736t/s 74s
+[server] s1 read  pp=214385/250779 2669t/s 80s
+[server] s1 read  pp=226520/250779 2606t/s 87s
+[server] s1 read  pp=238655/250779 2545t/s 94s
+[server] live | s1 tg=1/500 | total 0t/s
+[server] live | s1 tg=79/500 38.1t/s | total 38t/s
+[server] live | s1 tg=158/500 38.2t/s | total 38t/s
+[server] live | s1 tg=244/500 39.2t/s | total 39t/s
+[server] s1 done  pp=250779/0c 98.5s 2546t/s  tg=281 39.4t/s acc=82% dl=2.9  ttft=98.5s  end=stop  hit=61.3%  pcie=0.0%
+[server] thinking budget 300 tokens, output cap 600 (answer-room auto)
+[server] live | s1 tg=46/600 34.4t/s | total 34t/s
+[server] live | s1 tg=112/600 33.0t/s | total 33t/s
+[server] live | s1 tg=188/600 34.3t/s | total 34t/s
+[server] live | s1 tg=263/600 34.8t/s | total 35t/s
+[server] thinking budget reached (300 tokens), wrapping up
+[server] live | s1 tg=302/600 31.2t/s | total 31t/s
+[server] live | s1 tg=344/600 29.3t/s | total 29t/s
+[server] live | s1 tg=394/600 28.6t/s | total 29t/s
+[server] live | s1 tg=443/600 27.8t/s | total 28t/s
+[server] live | s1 tg=484/600 27.0t/s | total 27t/s
+[server] live | s1 tg=528/600 26.4t/s | total 26t/s
+[server] live | s1 tg=585/600 26.5t/s | total 27t/s
+[server] s1 done  pp=250870/250778c 0.6s  tg=600 27.5t/s acc=37% dl=1.7  ttft=0.7s  end=length  hit=56.1%  pcie=0.0%
+[server] thinking budget 250 tokens, output cap 500 (answer-room auto)
+[server] live | s1 tg=40/500 29.8t/s | total 30t/s
+[server] live | s1 tg=112/500 31.8t/s | total 32t/s
+[server] live | s1 tg=190/500 34.1t/s | total 34t/s
+[server] live | s1 tg=250/500 33.0t/s | total 33t/s
+[server] thinking budget reached (250 tokens), wrapping up
+[server] s1 done  pp=251203/250869c 0.7s  tg=284 32.6t/s acc=64% dl=2.2  ttft=0.7s  end=stop  hit=60.8%  pcie=0.0%

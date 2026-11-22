@@ -1,0 +1,190 @@
+ninfer-serve: CUDA 13 backend
+2026-11-22 15:47:11.600  INFO  build 2026-11-21.4+2026-11-21.4-14-ga9df5bf-dirty (nvcc 13.4.92, 120a)
+2026-11-22 15:47:11.604  INFO  starting engine
+2026-11-22 15:47:11.749  INFO  engine | device profile nvidia-geforce-rtx-5080-sm120: 115 routed keys (built in: RTX 5080 at 360 W, 2026-10-16; GGUF, NVFP4 W4A8-int and cuBLAS prefill routes at 360 W, 2026-11-19)
+2026-11-22 15:47:12.299  INFO  loading weights | 15.3 GiB
+2026-11-22 15:47:15.186  INFO  weights ready | 15.3 GiB | 2.9s | 5.31 GiB/s
+2026-11-22 15:47:16.466  INFO  CUDA graphs ready | 845 ms
+2026-11-22 15:47:16.467  INFO  engine | Inkling 2: 1 sequence(s), prompt chunks of 2048 tokens, rk4v4 KV 6968 MiB at most, growing with the sequences beside an elastic expert cache, workspace 1370 MiB
+2026-11-22 15:47:16.499  INFO  engine | Inkling 2: experts in pinned host memory, cache 7946 MiB (1822 slots), 2 layer bank(s) 1337 MiB, metadata 0.4 MiB, pinned delivery 0.6 MiB, pinned expert sources 13385 MiB
+2026-11-22 15:47:16.499  INFO  engine | Inkling 2: missing experts split between copies and 8 pinned threads (by measured speeds); cache seeded from the built-in profile
+2026-11-22 15:47:16.499  INFO  engine | Inkling 2: vision tower in pinned host memory through a window of two device slots (110 MiB of device memory beside the weights, 580 MiB of workspace an image), up to 4096 prompt positions per image
+2026-11-22 15:47:16.499  INFO  engine | Inkling 2: DSpark drafter, 3 layers over a block of 8, up to 3 drafts a round for one decoding request; its head table and contexts 99 MiB
+Inkling 2: trail points every 16384 prompt tokens, up to 19 of 213 MiB in host memory
+2026-11-22 15:47:17.461  INFO  engine ready | Inkling-2-Mini-UD-IQ4_XS | total 5.9s | weights 1.95 GiB | CUDA sync auto
+2026-11-22 15:47:17.461  INFO  capacity | KV 524,288 tokens, rk4v4, explicit | pages 0/0 | runtime 17.3 GiB | free 312.3 MiB
+2026-11-22 15:47:17.461  INFO  context cache | 1 active + 1 cached device states | host 0 states, 20.0 GiB KV | private 2 | shared 7 | anchors 2
+2026-11-22 15:47:17.461  INFO  media | 16 preprocess workers | cache 1.00 GiB | live 2.00 GiB
+2026-11-22 15:47:17.600  INFO  listening on http://127.0.0.1:8082 | model inkling-max | auth disabled
+2026-11-22 15:47:17.600  INFO  api base http://127.0.0.1:8082/v1
+2026-11-22 15:47:32.864  INFO  req#1 started | openai-chat non-stream | 1 message | max output 300 | thinking off
+2026-11-22 15:47:35.263  INFO  req#1 done | openai-chat | output limit | prompt 34 | output 300 | cache 0 (0.0%) | TTFT 262 ms | total 2.4s | prefill 132.2 tok/s | decode 139.9 tok/s | dspark accepted 177/302 (58.6%)
+2026-11-22 15:47:35.264  INFO  req#2 started | openai-chat non-stream | 1 message | max output 300 | thinking off
+2026-11-22 15:47:37.611  INFO  throughput | 5.0s | prefill 15.0 tok/s (75 tok) | decode 110.1 tok/s (551 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:47:38.059  INFO  req#2 done | openai-chat | output limit | prompt 41 | output 300 | cache 0 (0.0%) | TTFT 188 ms | total 2.8s | prefill 223.3 tok/s | decode 114.7 tok/s | dspark accepted 122/309 (39.5%)
+2026-11-22 15:47:38.060  INFO  req#3 started | openai-chat non-stream | 1 message | max output 300 | thinking off
+2026-11-22 15:47:40.190  INFO  req#3 done | openai-chat | output limit | prompt 59 | output 300 | cache 0 (0.0%) | TTFT 210 ms | total 2.1s | prefill 286.6 tok/s | decode 155.7 tok/s | dspark accepted 188/288 (65.3%)
+2026-11-22 15:47:40.191  INFO  req#4 started | openai-chat non-stream | 1 message | max output 300 | thinking off
+2026-11-22 15:47:42.187  INFO  req#4 done | openai-chat | output limit | prompt 51 | output 300 | cache 0 (0.0%) | TTFT 198 ms | total 2.0s | prefill 263.4 tok/s | decode 166.2 tok/s | dspark accepted 187/284 (65.8%)
+2026-11-22 15:47:42.189  INFO  req#5 started | openai-chat non-stream | 1 message | max output 300 | thinking off
+2026-11-22 15:47:42.607  INFO  throughput | 5.0s | prefill 33.4 tok/s (167 tok) | decode 134.9 tok/s (674 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:47:43.866  INFO  req#5 done | openai-chat | stop token | prompt 57 | output 203 | cache 0 (0.0%) | TTFT 216 ms | total 1.7s | prefill 269.0 tok/s | decode 138.2 tok/s | dspark accepted 120/191 (62.8%)
+2026-11-22 15:47:43.867  INFO  req#6 started | openai-chat non-stream | 1 message | max output 300 | thinking off
+2026-11-22 15:47:46.009  INFO  req#6 done | openai-chat | output limit | prompt 36 | output 300 | cache 0 (0.0%) | TTFT 174 ms | total 2.1s | prefill 211.1 tok/s | decode 151.9 tok/s | dspark accepted 168/247 (68.0%)
+2026-11-22 15:47:46.031  INFO  req#7 started | openai-chat non-stream | 1 message | max output 300 | thinking off | tools 1
+2026-11-22 15:47:46.666  INFO  req#7 done | openai-chat | tool calls 1 | prompt 135 | output 68 | cache 0 (0.0%) | TTFT 238 ms | total 635 ms | prefill 578.2 tok/s | decode 168.4 tok/s | dspark accepted 49/52 (94.2%)
+2026-11-22 15:47:47.609  INFO  throughput | 5.0s | prefill 34.2 tok/s (171 tok) | decode 109.2 tok/s (546 tok) | running 0 | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:47:55.086  INFO  req#8 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 23.7 ms
+2026-11-22 15:47:57.602  INFO  throughput | 5.0s | prefill 120.0 tok/s (599 tok) | decode 42.5 tok/s (212 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:00.507  INFO  req#8 done | openai-chat | stop token | prompt 599 | output 520 | cache 0 (0.0%) | TTFT 675 ms | total 5.4s | prefill 2.13k tok/s | decode 108.8 tok/s | dspark accepted 181/448 (40.4%)
+2026-11-22 15:48:00.805  INFO  req#9 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 30.4 ms
+2026-11-22 15:48:02.614  INFO  throughput | 5.0s | prefill 121.3 tok/s (608 tok) | decode 97.0 tok/s (486 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:02.702  INFO  req#9 done | openai-chat | stop token | prompt 608 | output 195 | cache 0 (0.0%) | TTFT 352 ms | total 1.9s | prefill 2.28k tok/s | decode 123.2 tok/s | dspark accepted 110/197 (55.8%)
+2026-11-22 15:48:02.825  INFO  req#10 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 2, prepared 20.2 ms
+2026-11-22 15:48:04.873  INFO  req#10 done | openai-chat | stop token | prompt 730 | output 230 | cache 0 (0.0%) | TTFT 353 ms | total 2.1s | prefill 2.62k tok/s | decode 133.5 tok/s | dspark accepted 133/252 (52.8%)
+2026-11-22 15:48:05.120  INFO  req#11 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 27.6 ms
+2026-11-22 15:48:07.611  INFO  throughput | 5.0s | prefill 254.9 tok/s (1,274 tok) | decode 105.6 tok/s (528 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:09.695  INFO  req#11 done | openai-chat | stop token | prompt 544 | output 534 | cache 0 (0.0%) | TTFT 341 ms | total 4.6s | prefill 2.07k tok/s | decode 125.1 tok/s | dspark accepted 298/538 (55.4%)
+2026-11-22 15:48:09.957  INFO  req#12 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 29.3 ms
+2026-11-22 15:48:12.126  INFO  req#12 done | openai-chat | stop token | prompt 596 | output 262 | cache 0 (0.0%) | TTFT 359 ms | total 2.2s | prefill 2.19k tok/s | decode 141.9 tok/s | dspark accepted 164/264 (62.1%)
+2026-11-22 15:48:12.255  INFO  req#13 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 30.8 ms
+2026-11-22 15:48:12.603  INFO  throughput | 5.0s | prefill 242.4 tok/s (1,210 tok) | decode 103.4 tok/s (516 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:17.614  INFO  throughput | 5.0s | decode 133.1 tok/s (667 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:22.613  INFO  throughput | 5.0s | decode 121.8 tok/s (609 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:25.850  INFO  req#13 done | openai-chat | stop token | prompt 614 | output 1,627 | cache 0 (0.0%) | TTFT 354 ms | total 13.6s | prefill 2.28k tok/s | decode 122.5 tok/s | dspark accepted 861/1,753 (49.1%)
+2026-11-22 15:48:26.113  INFO  req#14 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 160 ms
+2026-11-22 15:48:27.601  INFO  throughput | 5.0s | decode 70.2 tok/s (350 tok) | running 0 | waiting 1 | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:32.613  INFO  throughput | 5.0s | prefill 601.3 tok/s (3,013 tok) | decode 152.3 tok/s (763 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:37.601  INFO  throughput | 5.0s | decode 158.6 tok/s (791 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:38.224  INFO  req#14 done | openai-chat | stop token | prompt 3,013 | output 1,642 | cache 0 (0.0%) | TTFT 2.7s | total 12.3s | prefill 3.56k tok/s | decode 170.8 tok/s | dspark accepted 1,113/1,406 (79.2%)
+2026-11-22 15:48:38.521  INFO  req#15 started | openai-chat stream | 2 messages | max output 4,000 | thinking off | media 1, prepared 863 us | tools 1
+2026-11-22 15:48:40.224  INFO  req#15 done | openai-chat | tool calls 1 | prompt 706 | output 200 | cache 0 (0.0%) | TTFT 327 ms | total 1.7s | prefill 2.55k tok/s | decode 144.5 tok/s | dspark accepted 128/194 (66.0%)
+2026-11-22 15:48:40.505  INFO  req#16 started | openai-chat stream | 4 messages | max output 4,000 | thinking off | media 1, prepared 1.44 ms | tools 1
+2026-11-22 15:48:42.614  INFO  throughput | 5.0s | prefill 155.4 tok/s (779 tok) | decode 105.3 tok/s (528 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:44.673  INFO  req#16 done | openai-chat | stop token | prompt 778 | output 417 | cache 705 (90.6%, shared prefix) | TTFT 247 ms | total 4.2s | prefill 299.7 tok/s | decode 106.1 tok/s | dspark accepted 192/493 (38.9%)
+2026-11-22 15:48:44.807  INFO  req#17 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 592 us
+2026-11-22 15:48:46.183  INFO  req#17 done | openai-chat | stop token | prompt 578 | output 154 | cache 0 (0.0%) | TTFT 336 ms | total 1.4s | prefill 2.08k tok/s | decode 147.0 tok/s | dspark accepted 100/144 (69.4%)
+2026-11-22 15:48:46.225  INFO  req#18 started | openai-chat stream | 3 messages | max output 4,000 | thinking off | media 1, prepared 714 us
+2026-11-22 15:48:47.605  INFO  throughput | 5.0s | prefill 130.4 tok/s (651 tok) | decode 97.6 tok/s (487 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:49.148  INFO  req#18 done | openai-chat | stop token | prompt 650 | output 339 | cache 577 (88.8%, shared prefix) | TTFT 253 ms | total 2.9s | prefill 291.6 tok/s | decode 126.6 tok/s | dspark accepted 184/391 (47.1%)
+2026-11-22 15:48:49.549  INFO  req#19 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 121 ms
+2026-11-22 15:48:52.603  INFO  throughput | 5.0s | decode 36.6 tok/s (183 tok) | running 1 (prefill 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:48:57.614  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:02.614  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:07.610  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:12.607  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:17.607  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:22.602  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:27.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:32.615  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:37.605  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:42.602  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:47.605  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:52.604  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:49:57.614  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:02.603  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:07.611  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:12.603  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:17.605  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:22.612  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:27.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:32.610  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:37.606  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:42.606  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:47.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:52.603  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:50:57.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:02.613  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:07.613  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:12.607  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:17.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:22.607  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:27.602  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:32.603  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:37.598  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:42.612  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:47.610  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:52.605  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:51:57.603  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:02.601  INFO  throughput | 5.0s | prefill 66.3k tok/s (331,545 tok) | decode 45.8 tok/s (229 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:52:07.602  INFO  throughput | 5.0s | decode 84.8 tok/s (424 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:52:07.760  INFO  req#19 done | openai-chat | stop token | prompt 331,545 | output 671 | cache 0 (0.0%) | TTFT 3m 9.5s | total 3m 18.3s | prefill 1.77k tok/s | decode 75.7 tok/s | dspark accepted 394/601 (65.6%)
+2026-11-22 15:52:07.963  INFO  req#20 started | openai-chat stream | 1 message | max output 4,000 | thinking off | media 1, prepared 124 ms
+2026-11-22 15:52:12.602  INFO  throughput | 5.0s | decode 3.6 tok/s (18 tok) | running 1 (prefill 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:52:17.610  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:22.611  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:27.599  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:32.611  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:37.611  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:42.605  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:47.599  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:52.605  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:52:57.601  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:02.599  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:07.609  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:12.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:17.599  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:22.610  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:27.604  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:32.604  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:37.611  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:42.602  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:47.602  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:52.599  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:53:57.604  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:02.611  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:07.611  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:12.609  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:17.603  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:22.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:27.607  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:32.604  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:37.602  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:42.601  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:47.597  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:52.598  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:54:57.600  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:55:02.598  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:55:07.598  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:55:12.604  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:55:17.597  INFO  throughput | 5.0s | prefill 65.9k tok/s (329,088 tok) | decode 25.6 tok/s (128 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:55:22.604  INFO  throughput | 5.0s | decode 65.1 tok/s (326 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:55:27.597  INFO  throughput | 5.0s | decode 63.9 tok/s (319 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:55:29.174  INFO  req#20 done | openai-chat | stop token | prompt 329,088 | output 856 | cache 0 (0.0%) | TTFT 3m 7.9s | total 3m 21.3s | prefill 1.76k tok/s | decode 63.8 tok/s | dspark accepted 446/852 (52.3%)
+2026-11-22 15:55:32.601  INFO  throughput | 5.0s | decode 16.6 tok/s (83 tok) | running 0 | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:55:56.347  INFO  req#21 started | openai-chat stream | 1 message | max output 64 | thinking off
+2026-11-22 15:55:57.596  INFO  throughput | 5.0s | prefill 4.4 tok/s (22 tok) | decode 8.6 tok/s (43 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:55:57.708  INFO  req#21 done | openai-chat | stop token | prompt 22 | output 60 | cache 0 (0.0%) | TTFT 893 ms | total 1.4s | prefill 129.6 tok/s | decode 126.0 tok/s | dspark accepted 32/67 (47.8%)
+2026-11-22 15:55:57.764  INFO  req#22 started | openai-chat stream | 1 message | max output 300 | thinking off
+2026-11-22 15:56:01.817  INFO  req#22 done | openai-chat | stop token | prompt 8,437 | output 239 | cache 0 (0.0%) | TTFT 2.3s | total 4.1s | prefill 3.62k tok/s | decode 138.6 tok/s | dspark accepted 149/224 (66.5%)
+2026-11-22 15:56:01.835  INFO  req#23 started | openai-chat stream | 3 messages | max output 500 | thinking off
+2026-11-22 15:56:02.595  INFO  throughput | 5.0s | prefill 1.71k tok/s (8,529 tok) | decode 63.2 tok/s (316 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:56:06.107  INFO  req#23 done | openai-chat | output limit | prompt 8,528 | output 500 | cache 8,436 (98.9%, shared prefix) | TTFT 264 ms | total 4.3s | prefill 358.2 tok/s | decode 124.5 tok/s | dspark accepted 262/490 (53.5%)
+2026-11-22 15:56:06.110  INFO  req#24 started | openai-chat stream | 5 messages | max output 300 | thinking off
+2026-11-22 15:56:07.609  INFO  throughput | 5.0s | prefill 9.2 tok/s (46 tok) | decode 115.9 tok/s (581 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:56:07.814  INFO  req#24 done | openai-chat | stop token | prompt 8,573 | output 157 | cache 8,527 (99.5%, shared prefix) | TTFT 217 ms | total 1.7s | prefill 218.8 tok/s | decode 104.8 tok/s | dspark accepted 71/169 (42.0%)
+2026-11-22 15:56:07.817  INFO  req#25 started | openai-chat stream | 7 messages | max output 300 | thinking off
+2026-11-22 15:56:10.319  INFO  req#25 done | openai-chat | output limit | prompt 8,645 | output 300 | cache 8,572 (99.2%, shared prefix) | TTFT 267 ms | total 2.5s | prefill 281.3 tok/s | decode 133.7 tok/s | dspark accepted 180/280 (64.3%)
+2026-11-22 15:56:10.509  INFO  req#26 started | openai-chat stream | 1 message | max output 300 | thinking off
+2026-11-22 15:56:12.594  INFO  throughput | 5.0s | prefill 14.6 tok/s (73 tok) | decode 63.4 tok/s (316 tok) | running 1 (prefill 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:56:17.596  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:22.609  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:27.602  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:32.598  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:37.596  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:42.610  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:47.601  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:52.608  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:56:57.604  INFO  throughput | 5.0s | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-22 15:57:02.604  INFO  throughput | 5.0s | prefill 26.3k tok/s (131,572 tok) | decode 34.8 tok/s (174 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:57:03.970  INFO  req#26 done | openai-chat | output limit | prompt 131,572 | output 300 | cache 0 (0.0%) | TTFT 50.4s | total 53.5s | prefill 2.62k tok/s | decode 94.8 tok/s | dspark accepted 164/290 (56.6%)
+2026-11-22 15:57:03.995  INFO  req#27 started | openai-chat stream | 3 messages | max output 500 | thinking off
+Inkling 2: host store full, dropped the last state of a conversation (331544 tokens, 4341 MiB); a larger --host-cache-mib keeps more of them
+2026-11-22 15:57:07.608  INFO  throughput | 5.0s | prefill 13.0 tok/s (65 tok) | decode 83.1 tok/s (416 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:57:10.305  INFO  req#27 done | openai-chat | output limit | prompt 131,636 | output 500 | cache 131,571 (100.0%, shared prefix) | TTFT 420 ms | total 6.3s | prefill 160.3 tok/s | decode 84.6 tok/s | dspark accepted 223/560 (39.8%)
+2026-11-22 15:57:10.357  INFO  req#28 started | openai-chat stream | 5 messages | max output 300 | thinking off
+2026-11-22 15:57:12.603  INFO  throughput | 5.0s | prefill 39.2 tok/s (196 tok) | decode 77.9 tok/s (389 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-22 15:57:14.018  INFO  req#28 done | openai-chat | output limit | prompt 131,831 | output 300 | cache 131,635 (99.9%, shared prefix) | TTFT 484 ms | total 3.7s | prefill 431.5 tok/s | decode 93.9 tok/s | dspark accepted 152/305 (49.8%)
+2026-11-22 15:57:14.030  INFO  req#29 started | openai-chat stream | 7 messages | max output 300 | thinking off
+2026-11-22 15:57:17.562  INFO  req#29 done | openai-chat | output limit | prompt 131,878 | output 300 | cache 131,830 (100.0%, shared prefix) | TTFT 419 ms | total 3.5s | prefill 121.2 tok/s | decode 95.8 tok/s | dspark accepted 170/297 (57.2%)
+2026-11-22 15:57:17.601  INFO  throughput | 5.0s | prefill 9.6 tok/s (48 tok) | decode 84.2 tok/s (421 tok) | running 0 | batch 1.00 | host 0.0% (0 us)
